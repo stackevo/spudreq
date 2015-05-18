@@ -72,7 +72,22 @@ chartering a working group for the further development of a SPUD protocol.
 
 ## Motivation
 
-[EDITOR'S NOTE: why do this?]
+A number of efforts to create new transport protocols or experiment with new
+network behaviors have been built on top of UDP, as it traverses firewalls and 
+other middleboxes more commonly than new protocols do.  Each such effort must, 
+however,either manage its flows within common middlebox assumptions for UDP 
+or train the  middleboxes on the new protocol (thus losing the benefit of 
+using UDP). A common substrate for UDP-based transports would allow each effort
+to re-use a set of shared methods for notifying middleboxes of the flows' 
+semantics, thus avoiding both the limitations of current flow semantics and
+the need to re-invent the mechanism for notifying the middlebox of the new 
+semantics.
+
+As a concrete example, it is common for some middleboxes  to tear down required 
+state (such as NAT bindings) very rapidly for UDP flows.   By notifying the
+path that a particular transport using UDP maintains session state and explicitly
+signals session start and stop using the substrate, the using protocol may avoid
+the need for heartbeat traffic.
 
 # Terminology
 
