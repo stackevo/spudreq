@@ -34,35 +34,36 @@ The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meet
 
 # Introduction
 
-An outcome the outcomes of the IAB workshop on Stack Evolution in a Middlebox
+An outcome of the IAB workshop on Stack Evolution in a Middlebox
 Internet (SEMI) {{I-D.trammell-semi-report}}, held in Zurich in January 2015,
 was a discussion on the creation of a substrate protocol to support the
 deployment of new transport protocols in the Internet. Assuming that a way
 forward for transport evolution in user space would involve encapsulation in
-UDP datagrams, the workshop identified that it may be useful to have a
+UDP datagrams, the workshop noted that it may be useful to have a
 facility built atop UDP to provide minimal signaling of the semantics of a
-flow that would otherwise be available in TCP: at the very least, indications
-of first and last packets in a flow to assist firewalls and NATs in policy
+flow that would otherwise be available in TCP. At the very least, indications
+of first and last packets in a flow may assist firewalls and NATs in policy
 decision and state maintenance. Further transport semantics would be used by
 the protocol running atop this facility, but would only be visible to the
-endpoints, as the transport protocol headers themselves would be encrypted
-along with the payload to prevent inspection or modification, e.g. using DTLS
-{{RFC6347}} as a subtransport {{I-D.huitema-tls-dtls-as-subtransport}}. This
-facility could also provide minimal application-to-path and
-path-to-application signaling, though there was less agreement exactly what
-should or could be signaled here.
+endpoints, as the transport protocol headers themselves would be encrypted,
+along with the payload, to prevent inspection or modification.  This encryption 
+might be accomplished by using DTLS {{RFC6347}} as a subtransport {{I-D.huitema-tls-dtls-as-subtransport}}
+or by other suitable methods. This facility could also provide minimal 
+application-to-path and path-to-application signaling, though there was 
+less agreement about what should or could be signaled here.
 
-The Substrate Protocol for User Datagrams was held at IETF 92 in Dallas in
-March 2015 to develop this concept further. Clear from discussion before and
-during the SPUD BoF, and drawing on experience with previous
-endpoint-to-middle and middle-to-endpoint signaling approaches, is that any
-selective exposure of traffic metadata outside a relatively restricted trust
-domain must be declarative as opposed to imperative, non-negotiated, and
-advisory. Each exposed parameter should also be independently verifiable, so
-that each entity can assign its own trust to other entities. Basic transport
-over the substrate must continue working even if signaling is ignored or
-stripped, to support incremental deployment. These restrictions on vocabulary
-are discussed further in {{I-D.trammell-stackevo-newtea}}.
+The Substrate Protocol for User Datagrams BoF was held at IETF 92 in Dallas in
+March 2015 to develop this concept further. It is clear from discussion before and
+during the SPUD BoF that any selective exposure of traffic metadata outside a 
+relatively restricted trust domain must be advisory, non-negotiated, and declarative 
+rather than imperative. This conclusion matches experience with previous
+endpoint-to-middle and middle-to-endpoint signaling approaches. As with other
+metadata systems, exposure of specific elements must be carefully assessed for
+privacy risks and the total of exposed elements must be so assessed.  Each exposed parameter 
+should also be independently verifiable, so that each entity can assign its own trust 
+to other entities. Basic transport over the substrate must continue working even if 
+signaling is ignored or stripped, to support incremental deployment. These restrictions 
+on vocabulary are discussed further in {{I-D.trammell-stackevo-newtea}}.  
 
 This document defines a specific set of requirements for a SPUD protocol,
 based on analysis on a target set of applications to be developed on SPUD
