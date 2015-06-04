@@ -1,7 +1,7 @@
 ---
-title: IAB Workshop on Stack Evolution in a Middlebox Internet (SEMI) Report
-abbrev: SEMI Workshop
-docname: draft-trammell-semi-report-00
+title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
+abbrev: SPUD requirements
+docname: draft-trammell-stackevo-spud-req-00
 date: 2015-5-20
 category: info
 ipr: trust200902
@@ -32,7 +32,33 @@ The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meet
 
 --- middle
 
-# Introduction
+## Motivation
+
+A number of efforts to create new transport protocols or experiment with new
+network behaviors have been built on top of UDP, as it traverses firewalls and 
+other middleboxes more commonly than new protocols do.  Each such effort must, 
+however, either manage its flows within common middlebox assumptions for UDP 
+or train the  middleboxes on the new protocol (thus losing the benefit of 
+using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort
+to re-use a set of shared methods for notifying middleboxes of the flows' 
+semantics, thus avoiding both the limitations of current flow semantics and
+the need to re-invent the mechanism for notifying the middlebox of the new 
+semantics.
+
+As a concrete example, it is common for some middleboxes  to tear down required 
+state (such as NAT bindings) very rapidly for UDP flows. By notifying the
+path that a particular transport using UDP maintains session state and explicitly
+signals session start and stop using the substrate, the using protocol may avoid
+the need for heartbeat traffic.
+
+This document defines a specific set of requirements for a SPUD protocol,
+based on analysis on a target set of applications to be developed on SPUD
+developing experience with a prototype described in
+{{I-D.hildebrand-spud-prototype}}. It is intended as the basis for eventually
+chartering a working group for the further development of a SPUD protocol.
+
+
+# History
 
 An outcome of the IAB workshop on Stack Evolution in a Middlebox
 Internet (SEMI) {{I-D.trammell-semi-report}}, held in Zurich in January 2015,
@@ -52,7 +78,7 @@ or by other suitable methods. This facility could also provide minimal
 application-to-path and path-to-application signaling, though there was 
 less agreement about what should or could be signaled here.
 
-The Substrate Protocol for User Datagrams BoF was held at IETF 92 in Dallas in
+The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF 92 in Dallas in
 March 2015 to develop this concept further. It is clear from discussion before and
 during the SPUD BoF that any selective exposure of traffic metadata outside a 
 relatively restricted trust domain must be advisory, non-negotiated, and declarative 
@@ -63,32 +89,9 @@ privacy risks and the total of exposed elements must be so assessed.  Each expos
 should also be independently verifiable, so that each entity can assign its own trust 
 to other entities. Basic transport over the substrate must continue working even if 
 signaling is ignored or stripped, to support incremental deployment. These restrictions 
-on vocabulary are discussed further in {{I-D.trammell-stackevo-newtea}}.  
-
-This document defines a specific set of requirements for a SPUD protocol,
-based on analysis on a target set of applications to be developed on SPUD
-developing experience with a prototype described in
-{{I-D.hildebrand-spud-prototype}}. It is intended as the basis for eventually
-chartering a working group for the further development of a SPUD protocol.
-
-## Motivation
-
-A number of efforts to create new transport protocols or experiment with new
-network behaviors have been built on top of UDP, as it traverses firewalls and 
-other middleboxes more commonly than new protocols do.  Each such effort must, 
-however,either manage its flows within common middlebox assumptions for UDP 
-or train the  middleboxes on the new protocol (thus losing the benefit of 
-using UDP). A common substrate for UDP-based transports would allow each effort
-to re-use a set of shared methods for notifying middleboxes of the flows' 
-semantics, thus avoiding both the limitations of current flow semantics and
-the need to re-invent the mechanism for notifying the middlebox of the new 
-semantics.
-
-As a concrete example, it is common for some middleboxes  to tear down required 
-state (such as NAT bindings) very rapidly for UDP flows.   By notifying the
-path that a particular transport using UDP maintains session state and explicitly
-signals session start and stop using the substrate, the using protocol may avoid
-the need for heartbeat traffic.
+on vocabulary are discussed further in {{I-D.trammell-stackevo-newtea}}. This discussion includes
+privicy and trust concerns as well as the need for strong incentives for middlebox cooperation based
+on the information that are exposed.    
 
 # Terminology
 
@@ -98,37 +101,44 @@ the need for heartbeat traffic.
 
 [EDITOR'S NOTE: specific applications we think need this go here]
 
-# Initial requirements
+# Functional Requirements
 
-These are taken from {{I.D-hildebrand-spud-prototype}}. I believe these all apply beyond the prototype as well. Each of these should eventually get its own subsection, with some discussion motivating each requirement.
-
-- SPUD must enable multiple new transport semantics without requiring updates
-  to SPUD implementations in middleboxes.
-
-- Transport semantics and many properties of communication that endpoints
+Grouping of Packets: : Transport semantics and many properties of communication that endpoints
   may want to expose to middleboxes are bound to flows or groups of flows.
   SPUD must therefore provide a basic facility for associating packets
-  together (into what we call a "tube" for lack of a better term).
+  together (into what we call a "tube" for lack of a better term) 
+  and associate information to these groups of packets. 
+  If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header, 
+  however, not all packets need to have the same tube ID.  
 
-- SPUD and transports above SPUD must be implementable without requiring
-  kernel replacements or modules on the endpoints, and without having special
-  privilege (root or "jailbreak") on the endpoints.
+End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able communication with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band protocol are there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be to large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
 
-- SPUD must operate in the present Internet. In order to ensure deployment, it
-  must also be useful as an encapsulation between endpoints even before the
-  deployment of middleboxes that understand it.
+Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middlebox to signal information to the SPUD sender.  
 
-- SPUD must be low-overhead, specifically requiring very little effort to
-  recognize that a packet is a SPUD packet and to determine the tube it is
-  associated with.
+Extensibility: : SPUD must enable multiple new transport semantics without requiring updates
+  to SPUD implementations in middleboxes. 
+  
+Authentication: : SPUD must not require authentication. There any information that are provided in the basic SPUD protocol (without any extensions) must not require a trust relationship. However, if a trust relation already existing SPUD should support the exchange of authenticated information
 
-- SPUD must impose minimal restrictions on the transport protocols it
-  encapsulates.  SPUD must work in multipath, multicast, and mobile
-  environments.
+Integrity: : SPUD must provide a integrity to detect modifications of information that are not supposed to be changed deliberately or non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.
 
-- SPUD must provide incentives for development and deployment by multiple
-  communities.  These communities and incentives will be defined through the
-  prototyping process.
+# Non-Functional Requirements
+
+Middlebox Traversal: : SPUD must be able to traverse middlebox that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is know to be accepted on a large factor of paths in the Internet or even implement probing to figure out in advance which transport protocols will be accepted on a certain path.
+
+Low Overhead in Network Processing: : SPUD must be low-overhead, specifically requiring very little effort to
+  recognize that a packet is a SPUD packet and to determine the tube it is associated with.
+  
+Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operting systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition. 
+
+Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to ensure deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adaptation for both endpoints and middleboxes, and must maximize privacy (by minimizing information). Further SPUD should not rely on the network to forward packets reliably and assume that reordering or packet duplication can happen. SPUD must work in multipath, multicast, and multi-homing environments.
+
+Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate commonalities of existing protocol information middleboxes rely on to perform essential in-network functionality must be identified. These information should be included in SPUD and might add additional restriction to the overlying transport. One example is that SPUD is like to impose bidiectional communication for all transport on top of it. However, even though UDP is only an unidirectional protocol, many communication on top of UDP are bidirectional any. For those service where only unidirectional communication is needed SPUD should potentially not be applied.
+  
+Minimum Header Overhead: : To not effectively reduce network performance, the information and coding used in SPUD should be optimized to use a minimum amount of additional bits.
+
+No additional start-up latency: : SPUD should not introduce additional start-up latency for the overlying (non-connection-oriented) transport protocols.
+  
 
 # Poorly organized notes from the 13 May call
 
@@ -165,6 +175,14 @@ These are taken from {{I.D-hildebrand-spud-prototype}}. I believe these all appl
   middlebox discovery: based on some property of traffic passing through a
   middlebox, it may expose some information which can be used to initiate a
   conversation over some other protocol.
+  
+# Discussion & Open Questions
+
+- Which packets do need to have a spud header? Does all packet of a 5-tuple flow have to have a SPUD header? Currently we say yes (see first requirement on grouping).
+
+- Is spud information always per tube or can a spud packet also have per packet information?
+
+- How does the discovery work?
 
 # Security Considerations
 
