@@ -109,22 +109,23 @@ Grouping of Packets: : Transport semantics and many properties of communication 
   together (into what we call a "tube" for lack of a better term) 
   and associate information to these groups of packets. 
   If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header, 
-  however, not all packets need to have the same tube ID.  
+  however, not all packets of the same 5-tuple need to have the same tube ID 
+  but all paket with the same tube IP need to belong to the same 5-tuple.  
 
-End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able communication with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band protocol are there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be to large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
+End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signal protocol or there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be to large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
 
-Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middlebox to signal information to the SPUD sender.  
+Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middlebox to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out of band signaling is used, there is no relibility as traffic might be lost or completely blocked. 
 
 Extensibility: : SPUD must enable multiple new transport semantics without requiring updates
   to SPUD implementations in middleboxes. 
   
-Authentication: : SPUD must not require authentication. There any information that are provided in the basic SPUD protocol (without any extensions) must not require a trust relationship. However, if a trust relation already existing SPUD should support the exchange of authenticated information
+Authentication: : SPUD must not require authentication. Therefore any information that is provided in the basic SPUD protocol (without any extensions) must not require a trust relationship. However, if a trust relation already exists, SPUD should support the exchange of authenticated information.
 
-Integrity: : SPUD must provide a integrity to detect modifications of information that are not supposed to be changed deliberately or non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.
+Integrity: : SPUD must provide integrity to detect modifications of information that are not supposed to be changed deliberately or non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.
 
 # Non-Functional Requirements
 
-Middlebox Traversal: : SPUD must be able to traverse middlebox that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is know to be accepted on a large factor of paths in the Internet or even implement probing to figure out in advance which transport protocols will be accepted on a certain path.
+Middlebox Traversal: : SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is know to be accepted on a large factor of paths in the Internet or even implement probing to figure out in advance which transport protocols will be accepted on a certain path.
 
 Low Overhead in Network Processing: : SPUD must be low-overhead, specifically requiring very little effort to
   recognize that a packet is a SPUD packet and to determine the tube it is associated with.
