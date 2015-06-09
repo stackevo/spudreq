@@ -91,7 +91,7 @@ should also be independently verifiable, so that each entity can assign its own 
 to other entities. Basic transport over the substrate must continue working even if 
 signaling is ignored or stripped, to support incremental deployment. These restrictions 
 on vocabulary are discussed further in {{I-D.trammell-stackevo-newtea}}. This discussion includes
-privicy and trust concerns as well as the need for strong incentives for middlebox cooperation based
+privacy and trust concerns as well as the need for strong incentives for middlebox cooperation based
 on the information that are exposed.    
 
 # Terminology
@@ -111,11 +111,11 @@ Grouping of Packets: : Transport semantics and many properties of communication 
   and associate information to these groups of packets. 
   If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header, 
   however, not all packets of the same 5-tuple need to have the same tube ID 
-  but all paket with the same tube IP need to belong to the same 5-tuple.  
+  but all packets with the same tube ID need to belong to the same 5-tuple.  
 
-End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signal protocol or there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be to large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
+End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signal protocol or there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be too large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
 
-Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middlebox to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out of band signaling is used, there is no relibility as traffic might be lost or completely blocked. 
+Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middleboxes to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out-of-band signaling is used, there is no reliability as traffic might be lost or completely blocked. 
 
 Extensibility: : SPUD must enable multiple new transport semantics without requiring updates
   to SPUD implementations in middleboxes. 
@@ -131,13 +131,13 @@ Middlebox Traversal: : SPUD must be able to traverse middleboxes that are not SP
 Low Overhead in Network Processing: : SPUD must be low-overhead, specifically requiring very little effort to
   recognize that a packet is a SPUD packet and to determine the tube it is associated with.
   
-Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operting systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition. 
+Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition. 
 
 Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to ensure deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adaptation for both endpoints and middleboxes, and must maximize privacy (by minimizing information). Further SPUD should not rely on the network to forward packets reliably and assume that reordering or packet duplication can happen. SPUD must work in multipath, multicast, and multi-homing environments.
 
-Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate commonalities of existing protocol information middleboxes rely on to perform essential in-network functionality must be identified. These information should be included in SPUD and might add additional restriction to the overlying transport. One example is that SPUD is like to impose bidiectional communication for all transport on top of it. However, even though UDP is only an unidirectional protocol, many communication on top of UDP are bidirectional any. For those service where only unidirectional communication is needed SPUD should potentially not be applied.
+Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necesary to factor out the information that middleboxes commonly rely on. This information should be included in SPUD and might add additional restrictions to the overlying transport. One example is that SPUD is likely to impose bidirectional communication for all transports on top of it. However, even though UDP is only an unidirectional protocol, many communications on top of UDP are bidirectional any. For those service where only unidirectional communication is needed SPUD should potentially not be applied.
   
-Minimum Header Overhead: : To not effectively reduce network performance, the information and coding used in SPUD should be optimized to use a minimum amount of additional bits.
+Minimum Header Overhead: : To avoid effectively reduce network performance, the information and coding used in SPUD should be designed to use a minimum amount of additional bits.
 
 No additional start-up latency: : SPUD should not introduce additional start-up latency for the overlying (non-connection-oriented) transport protocols.
   
