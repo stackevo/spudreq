@@ -19,6 +19,7 @@ author:
     country: Switzerland
 
 informative:
+  RFC6347:
   I-D.hardie-spud-use-cases:
   I-D.hildebrand-spud-prototype:
   I-D.huitema-tls-dtls-as-subtransport:
