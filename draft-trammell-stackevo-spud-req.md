@@ -1,7 +1,7 @@
 ---
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
-docname: draft-trammell-stackevo-spud-req-00
+docname: draft-trammell-stackevo-spud-req-latest
 date: 2015-5-20
 category: info
 ipr: trust200902
