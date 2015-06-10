@@ -1,0 +1,678 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+<style type="text/css">
+@viewport {
+  zoom: 1.0;
+  width: extend-to-zoom;
+}
+
+@-ms-viewport {
+  width: extend-to-zoom;
+  zoom: 1.0;
+}
+
+body {
+  font: 11pt cambria, helvetica, arial, sans-serif;
+  font-size-adjust: 0.5;
+  line-height: 130%;
+  margin: 1em auto;
+  max-width: 700px;
+}
+
+.title, .filename, h1, h2, h3, h4 {
+  font-family: candara, helvetica, arial, sans-serif;
+  font-size-adjust: 0.5;
+}
+.title { font-size: 150%; }
+h1 { font-size: 130%; }
+h2 { font-size: 120%; }
+h3, h4 { font-size: 110%; }
+
+table {
+  margin-left: 0em;
+}
+table.header {
+  width: 100%;
+}
+
+table.header td {
+  background-color: inherit;
+  color: black;
+}
+
+samp, tt, code, pre {
+  font: 11pt consolas, monospace;
+  font-size-adjust: none;
+}
+
+pre.text, pre.text2 {
+  width: 90%;
+}
+
+dt {
+  float: left; clear: left;
+  margin: 0.5em 0.5em 0 0;
+}
+dt:first-child {
+  margin-top: 0;
+}
+dd {
+  margin: 0.5em 0 0 2em;
+}
+dd p, dd ul {
+  margin-top: 0; margin-bottom: 0;
+}
+dd *+p {
+  margin-top: 0.5em;
+}
+
+ol, ul {
+  padding: 0;
+  margin: 0.5em 0 0.5em 2em;
+}
+ul.toc, ul.toc ul {
+  margin: 0 0 0 1.5em;
+}
+ul.toc a:first-child {
+  display: inline-block;
+  min-width: 1.2em;
+}
+</style>
+
+  <link href="#rfc.toc" rel="Contents"/>
+<link href="#rfc.section.1" rel="Chapter" title="1 Motivation"/>
+<link href="#rfc.section.2" rel="Chapter" title="2 History"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 Terminology"/>
+<link href="#rfc.section.4" rel="Chapter" title="4 Use Cases"/>
+<link href="#rfc.section.5" rel="Chapter" title="5 Functional Requirements"/>
+<link href="#rfc.section.6" rel="Chapter" title="6 Non-Functional Requirements"/>
+<link href="#rfc.section.7" rel="Chapter" title="7 Poorly organized notes from the 13 May call"/>
+<link href="#rfc.section.8" rel="Chapter" title="8 Discussion &amp; Open Questions"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
+<link href="#rfc.section.10" rel="Chapter" title="10 IANA Considerations"/>
+<link href="#rfc.section.11" rel="Chapter" title="11 Contributors"/>
+<link href="#rfc.references" rel="Chapter" title="12 Informative References"/>
+<link href="#rfc.authors" rel="Chapter"/>
+
+
+  <meta name="generator" content="xml2rfc version 2.4.8 - http://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Trammell, B., Ed." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-trammell-stackevo-spud-req-00" />
+  <meta name="dct.issued" scheme="ISO8601" content="2015-5-20" />
+  <meta name="dct.abstract" content="The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document defines a set of requirements for this protocol." />
+  <meta name="description" content="The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document defines a set of requirements for this protocol." />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+  <td class="left">Network Working Group</td>
+  <td class="right">B. Trammell, Ed.</td>
+</tr>
+<tr>
+  <td class="left">Internet-Draft</td>
+  <td class="right">ETH Zurich</td>
+</tr>
+<tr>
+  <td class="left">Intended status: Informational</td>
+  <td class="right">May 20, 2015</td>
+</tr>
+<tr>
+  <td class="left">Expires: November 21, 2015</td>
+  <td class="right"></td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)<br />
+  <span class="filename">draft-trammell-stackevo-spud-req-00</span></p>
+  
+  <h1 id="rfc.abstract">
+  <a href="#rfc.abstract">Abstract</a>
+</h1>
+<p>The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document defines a set of requirements for this protocol.</p>
+<h1 id="rfc.status">
+  <a href="#rfc.status">Status of This Memo</a>
+</h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on November 21, 2015.</p>
+<h1 id="rfc.copyrightnotice">
+  <a href="#rfc.copyrightnotice">Copyright Notice</a>
+</h1>
+<p>Copyright (c) 2015 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+<h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#motivation" id="motivation">Motivation</a></h1>
+<p id="rfc.section.1.p.1">A number of efforts to create new transport protocols or experiment with new network behaviors have been built on top of UDP, as it traverses firewalls and other middleboxes more commonly than new protocols do.  Each such effort must, however, either manage its flows within common middlebox assumptions for UDP or train the  middleboxes on the new protocol (thus losing the benefit of using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort to re-use a set of shared methods for notifying middleboxes of the flows&#8217; semantics, thus avoiding both the limitations of current flow semantics and the need to re-invent the mechanism for notifying the middlebox of the new semantics.</p>
+<p id="rfc.section.1.p.2">As a concrete example, it is common for some middleboxes  to tear down required state (such as NAT bindings) very rapidly for UDP flows. By notifying the path that a particular transport using UDP maintains session state and explicitly signals session start and stop using the substrate, the using protocol may avoid the need for heartbeat traffic.</p>
+<p id="rfc.section.1.p.3">This document defines a specific set of requirements for a SPUD protocol, based on analysis on a target set of applications to be developed on SPUD developing experience with a prototype described in <a href="#I-D.hildebrand-spud-prototype">[I-D.hildebrand-spud-prototype]</a>. It is intended as the basis for eventually chartering a working group for the further development of a SPUD protocol.</p>
+<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#history" id="history">History</a></h1>
+<p id="rfc.section.2.p.1">An outcome of the IAB workshop on Stack Evolution in a Middlebox Internet (SEMI) <a href="#I-D.trammell-semi-report">[I-D.trammell-semi-report]</a>, held in Zurich in January 2015, was a discussion on the creation of a substrate protocol to support the deployment of new transport protocols in the Internet. Assuming that a way forward for transport evolution in user space would involve encapsulation in UDP datagrams, the workshop noted that it may be useful to have a facility built atop UDP to provide minimal signaling of the semantics of a flow that would otherwise be available in TCP. At the very least, indications of first and last packets in a flow may assist firewalls and NATs in policy decision and state maintenance. Further transport semantics would be used by the protocol running atop this facility, but would only be visible to the endpoints, as the transport protocol headers themselves would be encrypted, along with the payload, to prevent inspection or modification.  This encryption might be accomplished by using DTLS <a href="#RFC6347">[RFC6347]</a> as a subtransport <a href="#I-D.huitema-tls-dtls-as-subtransport">[I-D.huitema-tls-dtls-as-subtransport]</a> or by other suitable methods. This facility could also provide minimal application-to-path and path-to-application signaling, though there was less agreement about what should or could be signaled here.</p>
+<p id="rfc.section.2.p.2">The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF 92 in Dallas in March 2015 to develop this concept further. It is clear from discussion before and during the SPUD BoF that any selective exposure of traffic metadata outside a relatively restricted trust domain must be advisory, non-negotiated, and declarative rather than imperative. This conclusion matches experience with previous endpoint-to-middle and middle-to-endpoint signaling approaches. As with other metadata systems, exposure of specific elements must be carefully assessed for privacy risks and the total of exposed elements must be so assessed.  Each exposed parameter should also be independently verifiable, so that each entity can assign its own trust to other entities. Basic transport over the substrate must continue working even if signaling is ignored or stripped, to support incremental deployment. These restrictions on vocabulary are discussed further in <a href="#I-D.trammell-stackevo-newtea">[I-D.trammell-stackevo-newtea]</a>. This discussion includes privacy and trust concerns as well as the need for strong incentives for middlebox cooperation based on the information that are exposed.    </p>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#terminology" id="terminology">Terminology</a></h1>
+<p id="rfc.section.3.p.1">[EDITOR&#8217;S NOTE: todo]</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#use-cases" id="use-cases">Use Cases</a></h1>
+<p id="rfc.section.4.p.1">[EDITOR&#8217;S NOTE: specific applications we think need this go here]</p>
+<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#functional-requirements" id="functional-requirements">Functional Requirements</a></h1>
+<p id="rfc.section.5.p.1">Grouping of Packets: : Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows.  SPUD must therefore provide a basic facility for associating packets together (into what we call a &#8220;tube&#8221; for lack of a better term) and associate information to these groups of packets.  If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header, however, not all packets of the same 5-tuple need to have the same tube ID but all packets with the same tube ID need to belong to the same 5-tuple.  </p>
+<p id="rfc.section.5.p.2">End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signal protocol or there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be too large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.</p>
+<p id="rfc.section.5.p.3">Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middleboxes to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out-of-band signaling is used, there is no reliability as traffic might be lost or completely blocked. </p>
+<p id="rfc.section.5.p.4">Extensibility: : SPUD must enable multiple new transport semantics without requiring updates to SPUD implementations in middleboxes. </p>
+<p id="rfc.section.5.p.5">Authentication: : SPUD must not require authentication. Therefore any information that is provided in the basic SPUD protocol (without any extensions) must not require a trust relationship. However, if a trust relation already exists, SPUD should support the exchange of authenticated information.</p>
+<p id="rfc.section.5.p.6">Integrity: : SPUD must provide integrity to detect modifications of information that are not supposed to be changed deliberately or non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.</p>
+<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#non-functional-requirements" id="non-functional-requirements">Non-Functional Requirements</a></h1>
+<p id="rfc.section.6.p.1">Middlebox Traversal: : SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is know to be accepted on a large factor of paths in the Internet or even implement probing to figure out in advance which transport protocols will be accepted on a certain path.</p>
+<p id="rfc.section.6.p.2">Low Overhead in Network Processing: : SPUD must be low-overhead, specifically requiring very little effort to recognize that a packet is a SPUD packet and to determine the tube it is associated with.</p>
+<p id="rfc.section.6.p.3">Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or &#8220;jailbreak&#8221;) on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition. </p>
+<p id="rfc.section.6.p.4">Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to ensure deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adaptation for both endpoints and middleboxes, and must maximize privacy (by minimizing information). Further SPUD should not rely on the network to forward packets reliably and assume that reordering or packet duplication can happen. SPUD must work in multipath, multicast, and multi-homing environments.</p>
+<p id="rfc.section.6.p.5">Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necesary to factor out the information that middleboxes commonly rely on. This information should be included in SPUD and might add additional restrictions to the overlying transport. One example is that SPUD is likely to impose bidirectional communication for all transports on top of it. However, even though UDP is only an unidirectional protocol, many communications on top of UDP are bidirectional any. For those service where only unidirectional communication is needed SPUD should potentially not be applied.</p>
+<p id="rfc.section.6.p.6">Minimum Header Overhead: : To avoid effectively reduce network performance, the information and coding used in SPUD should be designed to use a minimum amount of additional bits.</p>
+<p id="rfc.section.6.p.7">No additional start-up latency: : SPUD should not introduce additional start-up latency for the overlying (non-connection-oriented) transport protocols.</p>
+<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#poorly-organized-notes-from-the-13-may-call" id="poorly-organized-notes-from-the-13-may-call">Poorly organized notes from the 13 May call</a></h1>
+<p id="rfc.section.7.p.1">[EDITOR&#8217;S NOTE: blame Brian for the fact that this is a grab-bag of thoughts.]</p>
+<p/>
+
+<ul>
+  <li>We must address the tradeoff between extensibility and privacy preservation.  While scoping the Tube ID to a five-tuple will reduce or eliminate its usefulness for tracking (as well as fixing problems with ID collision in NAT environments), one concern raised at the BoF is that a completely extensible mechanism for binding information to tubes, if taken together with an ability for middleboxes to arbitrarily add information to a tube, could make it easier for devices other than the endpoints to bind additional identifiers in-band for tracking purposes.</li>
+  <li>In general, we should piggyback SPUD as much as possible on the semantics of the overlying transport.</li>
+  <li>One of the main goals in transport evolution is to support a spectrum in terms of reliability, as opposed to just TCP&#8217;s &#8220;reliable and in order&#8221; and UDP&#8217;s &#8220;thanks for the packet, good luck!&#8221;. In this case, we cannot rely on the underlying transport to provide reliable retransmission, so if we are piggybacking an in-band signal over the overlying transport, that signaling must either be best-effort-tolerant, the endpoints will need (and the middleboxes may need) to know something about the overlying transport&#8217;s reliability mechanism, or the substrate will need to provide its own reliability for signaling. Key exchange, for example, requires reliable transport.</li>
+  <li>If reliable in-band signaling is not available, then signaling requiring reliability (mainly key exchange) can happen out-of-band.</li>
+  <li>Related: Will it be necessary to build a feedback channel into SPUD if the overlying transport doesn&#8217;t provide it? Further related: can we declare transports without a feedback channel to be out of scope (as they are by definition not congestion controlled without a feedback channel, and therefore potentially dangerous to use in the Internet)?</li>
+  <li>There are different security considerations for different security contexts.  The end-to-end context is one; anything that only needs to be seen by the path shouldn&#8217;t be exposed in SPUD, but rather by the overlying transport.  There are multiple different types of end-to-middle context based on levels of trust between end and middle &#8211; is the middlebox on the same network as the endpoint, under control of the same owner? Is there some contract between the application user and the middlebox operator? We need to define the different kinds of relationships here more concretely.</li>
+  <li>The final approach may mix in-band signaling with out-of-band signaling.  It&#8217;s possible the middle-to-end signaling in band will be primarily about middlebox discovery: based on some property of traffic passing through a middlebox, it may expose some information which can be used to initiate a conversation over some other protocol.</li>
+</ul>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#discussion-open-questions" id="discussion-open-questions">Discussion &amp; Open Questions</a></h1>
+<p/>
+
+<ul>
+  <li>Which packets do need to have a spud header? Does all packet of a 5-tuple flow have to have a SPUD header? Currently we say yes (see first requirement on grouping).</li>
+  <li>Is spud information always per tube or can a spud packet also have per packet information?</li>
+  <li>How does the discovery work?</li>
+</ul>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<p id="rfc.section.9.p.1">[EDITOR&#8217;S NOTE: point to security- (and privacy-) relevant requirements here.]</p>
+<h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.10.p.1">This document has no actions for IANA.</p>
+<h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
+<p id="rfc.section.11.p.1">This document is the work of the SPUD Design Team within the IAB IP Stack Evolution program: Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Mirja Kuehlewind.</p>
+<p id="rfc.section.11.p.2">[EDITOR&#8217;S NOTE: make this a real contributor&#8217;s section once we figure out how to make kramdown do that&#8230;]</p>
+<h1 id="rfc.references"><a href="#rfc.references">12.</a> Informative References</h1>
+<table>
+  <tbody>
+    <tr>
+      <td class="reference">
+        <b id="RFC6347">[RFC6347]</b>
+      </td>
+      <td class="top"><a>Rescorla, E.</a> and <a>N. Modadugu</a>, "<a href="http://tools.ietf.org/html/rfc6347">Datagram Transport Layer Security Version 1.2</a>", RFC 6347, January 2012.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.hardie-spud-use-cases">[I-D.hardie-spud-use-cases]</b>
+      </td>
+      <td class="top"><a>Hardie, T.</a>, "<a href="http://tools.ietf.org/html/draft-hardie-spud-use-cases-01">Use Cases for SPUD</a>", Internet-Draft draft-hardie-spud-use-cases-01, February 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.hildebrand-spud-prototype">[I-D.hildebrand-spud-prototype]</b>
+      </td>
+      <td class="top"><a>Hildebrand, J.</a> and <a>B. Trammell</a>, "<a href="http://tools.ietf.org/html/draft-hildebrand-spud-prototype-03">Substrate Protocol for User Datagrams (SPUD) Prototype</a>", Internet-Draft draft-hildebrand-spud-prototype-03, March 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.huitema-tls-dtls-as-subtransport">[I-D.huitema-tls-dtls-as-subtransport]</b>
+      </td>
+      <td class="top"><a>Huitema, C.</a>, <a>Rescorla, E.</a> and <a>J. Jana</a>, "<a href="http://tools.ietf.org/html/draft-huitema-tls-dtls-as-subtransport-00">DTLS as Subtransport protocol</a>", Internet-Draft draft-huitema-tls-dtls-as-subtransport-00, March 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.trammell-stackevo-newtea">[I-D.trammell-stackevo-newtea]</b>
+      </td>
+      <td class="top"><a>Trammell, B.</a>, "<a href="http://tools.ietf.org/html/draft-trammell-stackevo-newtea-01">Thoughts a New Transport Encapsulation Architecture</a>", Internet-Draft draft-trammell-stackevo-newtea-01, May 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.trammell-semi-report">[I-D.trammell-semi-report]</b>
+      </td>
+      <td class="top"><a>Trammell, B.</a> and <a>M. Kuehlewind</a>, "<a href="http://tools.ietf.org/html/draft-trammell-semi-report-01">IAB Workshop on Stack Evolution in a Middlebox Internet (SEMI) Report</a>", Internet-Draft draft-trammell-semi-report-01, May 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-rtcweb-data-channel">[I-D.ietf-rtcweb-data-channel]</b>
+      </td>
+      <td class="top"><a>Jesup, R.</a>, <a>Loreto, S.</a> and <a>M. Tuexen</a>, "<a href="http://tools.ietf.org/html/draft-ietf-rtcweb-data-channel-13">WebRTC Data Channels</a>", Internet-Draft draft-ietf-rtcweb-data-channel-13, January 2015.</td>
+    </tr>
+  </tbody>
+</table>
+<h1 id="rfc.authors">
+  <a href="#rfc.authors">Author's Address</a>
+</h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Brian Trammell</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Trammell</span>
+	  </span>
+	</span>
+	<span class="org vcardline">ETH Zurich</span>
+	<span class="adr">
+	  <span class="vcardline">Gloriastrasse 35</span>
+
+	  <span class="vcardline">
+		<span class="locality">8092 Zurich</span>,  
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline">Switzerland</span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:ietf@trammell.ch">ietf@trammell.ch</a></span>
+
+  </address>
+</div>
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Motivation</a></li>
+<li>2.   <a href="#rfc.section.2">History</a></li>
+<li>3.   <a href="#rfc.section.3">Terminology</a></li>
+<li>4.   <a href="#rfc.section.4">Use Cases</a></li>
+<li>5.   <a href="#rfc.section.5">Functional Requirements</a></li>
+<li>6.   <a href="#rfc.section.6">Non-Functional Requirements</a></li>
+<li>7.   <a href="#rfc.section.7">Poorly organized notes from the 13 May call</a></li>
+<li>8.   <a href="#rfc.section.8">Discussion &amp; Open Questions</a></li>
+<li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
+<li>10.   <a href="#rfc.section.10">IANA Considerations</a></li>
+<li>11.   <a href="#rfc.section.11">Contributors</a></li>
+<li>12.   <a href="#rfc.references">Informative References</a></li>
+<li><a href="#rfc.authors">Author's Address</a></li>
+
+
+  </ul>
+
+  
+
+</body>
+</html>
