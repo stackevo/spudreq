@@ -36,17 +36,17 @@ The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meet
 ## Motivation
 
 A number of efforts to create new transport protocols or experiment with new
-network behaviors have been built on top of UDP, as it traverses firewalls and 
-other middleboxes more commonly than new protocols do.  Each such effort must, 
-however, either manage its flows within common middlebox assumptions for UDP 
-or train the  middleboxes on the new protocol (thus losing the benefit of 
+network behaviors have been built on top of UDP, as it traverses firewalls and
+other middleboxes more commonly than new protocols do.  Each such effort must,
+however, either manage its flows within common middlebox assumptions for UDP
+or train the  middleboxes on the new protocol (thus losing the benefit of
 using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort
-to re-use a set of shared methods for notifying middleboxes of the flows' 
+to re-use a set of shared methods for notifying middleboxes of the flows'
 semantics, thus avoiding both the limitations of current flow semantics and
-the need to re-invent the mechanism for notifying the middlebox of the new 
+the need to re-invent the mechanism for notifying the middlebox of the new
 semantics.
 
-As a concrete example, it is common for some middleboxes  to tear down required 
+As a concrete example, it is common for some middleboxes  to tear down required
 state (such as NAT bindings) very rapidly for UDP flows. By notifying the
 path that a particular transport using UDP maintains session state and explicitly
 signals session start and stop using the substrate, the using protocol may avoid
@@ -73,26 +73,26 @@ of first and last packets in a flow may assist firewalls and NATs in policy
 decision and state maintenance. Further transport semantics would be used by
 the protocol running atop this facility, but would only be visible to the
 endpoints, as the transport protocol headers themselves would be encrypted,
-along with the payload, to prevent inspection or modification.  This encryption 
+along with the payload, to prevent inspection or modification.  This encryption
 might be accomplished by using DTLS {{RFC6347}} as a subtransport {{I-D.huitema-tls-dtls-as-subtransport}}
-or by other suitable methods. This facility could also provide minimal 
-application-to-path and path-to-application signaling, though there was 
+or by other suitable methods. This facility could also provide minimal
+application-to-path and path-to-application signaling, though there was
 less agreement about what should or could be signaled here.
 
 The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF 92 in Dallas in
 March 2015 to develop this concept further. It is clear from discussion before and
-during the SPUD BoF that any selective exposure of traffic metadata outside a 
-relatively restricted trust domain must be advisory, non-negotiated, and declarative 
+during the SPUD BoF that any selective exposure of traffic metadata outside a
+relatively restricted trust domain must be advisory, non-negotiated, and declarative
 rather than imperative. This conclusion matches experience with previous
 endpoint-to-middle and middle-to-endpoint signaling approaches. As with other
 metadata systems, exposure of specific elements must be carefully assessed for
-privacy risks and the total of exposed elements must be so assessed.  Each exposed parameter 
-should also be independently verifiable, so that each entity can assign its own trust 
-to other entities. Basic transport over the substrate must continue working even if 
-signaling is ignored or stripped, to support incremental deployment. These restrictions 
+privacy risks and the total of exposed elements must be so assessed.  Each exposed parameter
+should also be independently verifiable, so that each entity can assign its own trust
+to other entities. Basic transport over the substrate must continue working even if
+signaling is ignored or stripped, to support incremental deployment. These restrictions
 on vocabulary are discussed further in {{I-D.trammell-stackevo-newtea}}. This discussion includes
 privacy and trust concerns as well as the need for strong incentives for middlebox cooperation based
-on the information that are exposed.    
+on the information that are exposed.
 
 # Terminology
 
@@ -107,19 +107,18 @@ on the information that are exposed.
 Grouping of Packets: : Transport semantics and many properties of communication that endpoints
   may want to expose to middleboxes are bound to flows or groups of flows.
   SPUD must therefore provide a basic facility for associating packets
-  together (into what we call a "tube" for lack of a better term) 
-  and associate information to these groups of packets. 
-  If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header, 
-  however, not all packets of the same 5-tuple need to have the same tube ID 
-  but all packets with the same tube ID need to belong to the same 5-tuple.  
+  together (into what we call a "tube" ,for lack of a better term)
+  and associate information to these groups of packets.
+  If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header.
+  Only packets with the same tube ID and 5-tuple are considered to belong to the same tube. 
 
 End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signal protocol or there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be too large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
 
-Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middleboxes to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out-of-band signaling is used, there is no reliability as traffic might be lost or completely blocked. 
+Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middleboxes to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out-of-band signaling is used, there is no reliability as traffic might be lost or completely blocked.
 
 Extensibility: : SPUD must enable multiple new transport semantics without requiring updates
-  to SPUD implementations in middleboxes. 
-  
+  to SPUD implementations in middleboxes.
+
 Authentication: : The basic SPUD protocol must not require any authentication or a priori trust relationship to function.  However, SPUD should support the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established (either in-band our out-of-band).
 
 Integrity: : SPUD must provide integrity to detect modifications of
@@ -134,17 +133,17 @@ Middlebox Traversal: : SPUD must be able to traverse middleboxes that are not SP
 
 Low Overhead in Network Processing: : SPUD must be low-overhead, specifically requiring very little effort to
   recognize that a packet is a SPUD packet and to determine the tube it is associated with.
-  
-Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition. 
+
+Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition.
 
 Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to maximize deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adoption by both endpoints and middleboxes, and must maximize privacy (by minimizing information exposed). Further, SPUD must be robust to packet loss, duplication and reordering by the underlying network service.  SPUD must work in multipath, multicast, and multi-homing environments.
 
 Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necesary to factor out the information that middleboxes commonly rely on. This information should be included in SPUD and might add additional restrictions to the overlying transport. One example is that SPUD is likely to impose bidirectional communication for all transports on top of it. However, even though UDP is n unidirectional protocol, many communications on top of UDP are bidirectional anyway. For those services where only unidirectional communication is needed SPUD should potentially not be applied.
-  
+
 Minimum Header Overhead: : To avoid reducing network performance, the information and coding used in SPUD should be designed to use a minimum amount of additional bits.
 
 No additional start-up latency: : SPUD should not introduce additional start-up latency for the overlying (non-connection-oriented) transport protocols.
-  
+
 
 # Poorly organized notes from the 13 May call
 
@@ -181,7 +180,7 @@ No additional start-up latency: : SPUD should not introduce additional start-up 
   middlebox discovery: based on some property of traffic passing through a
   middlebox, it may expose some information which can be used to initiate a
   conversation over some other protocol.
-  
+
 # Discussion & Open Questions
 
 - Which packets do need to have a spud header? Does all packet of a 5-tuple flow have to have a SPUD header? Currently we say yes (see first requirement on grouping).
