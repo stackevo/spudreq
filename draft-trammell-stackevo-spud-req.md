@@ -104,20 +104,13 @@ on the information that are exposed.
 
 # Functional Requirements
 
-Grouping of Packets: : Transport semantics and many properties of communication that endpoints
-  may want to expose to middleboxes are bound to flows or groups of flows.
-  SPUD must therefore provide a basic facility for associating packets
-  together (into what we call a "tube" ,for lack of a better term)
-  and associate information to these groups of packets.
-  If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header.
-  Only packets with the same tube ID and 5-tuple are considered to belong to the same tube. 
+Grouping of Packets: : Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows. SPUD must therefore provide a basic facility for associating packets together (into what we call a "tube" ,for lack of a better term) and associate information to these groups of packets. If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header. Only packets with the same tube ID and 5-tuple are considered to belong to the same tube. (29.6. call: Not quite. There are three requirements here. (1) Need to be able to tie per-tube properties to all packets in the tube. How this happens is open. (2) Not allow additional trackability across 5-tuples. (3) Mitigate blind MOTS attacks. Discuss tradeoffs here. Maybe we need a Tube ID section? Talk about mapping streams in multistream protocols to tubes?)
 
 End-point to Path Signaling: : SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signal protocol or there must be a pre-known relationship to middleboxes at are on the path. However, the overhead to setup a relationship to all SPUD-aware middleboxes on a certain path might be too large, therefore SPUD must provide in-band signal but might in addition also offer mechanism for out-of-band signaling.
 
 Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-aware middleboxes to signal information to the SPUD sender. This channel can either be relayed of the receiver or a direct communication from the middlebox to the sender. However if out-of-band signaling is used, there is no reliability as traffic might be lost or completely blocked.
 
-Extensibility: : SPUD must enable multiple new transport semantics without requiring updates
-  to SPUD implementations in middleboxes.
+Extensibility: : SPUD must enable multiple new transport semantics without requiring updates to SPUD implementations in middleboxes.
 
 Authentication: : The basic SPUD protocol must not require any authentication or a priori trust relationship to function.  However, SPUD should support the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established (either in-band our out-of-band).
 
@@ -154,7 +147,7 @@ No additional start-up latency: : SPUD should not introduce additional start-up 
   usefulness for tracking (as well as fixing problems with ID collision in NAT
   environments), one concern raised at the BoF is that a completely extensible
   mechanism for binding information to tubes, if taken together with an ability for middleboxes to arbitrarily add information to a tube, could make
-  it easier for devices other than the endpoints to bind additional identifiers in-band for tracking purposes.
+  it easier for devices other than the endpoints to bind additional identifiers in-band for tracking purposes. [Addressed.]
 
 - In general, we should piggyback SPUD as much as possible on the semantics of
   the overlying transport.
@@ -181,13 +174,19 @@ No additional start-up latency: : SPUD should not introduce additional start-up 
   middlebox, it may expose some information which can be used to initiate a
   conversation over some other protocol.
 
-# Discussion & Open Questions
+# Discussion & Open Questions (post 29.6.)
 
 - Which packets do need to have a spud header? Does all packet of a 5-tuple flow have to have a SPUD header? Currently we say yes (see first requirement on grouping).
 
-- Is spud information always per tube or can a spud packet also have per packet information?
+- Is spud information always per tube or can a spud packet also have per packet information? We don't know enough yet, discuss the tradeoffs...
 
-- How does the discovery work?
+- How does the discovery work? Three issues here -- first, we need to deal with protocols that sometimes run over spud and not. We need to deal with handling cases where spud doesn't work. We need to deal with cases where the working-ness of spud is dynamic. Second, we need to find spud-talking things on the path. Third, we need to discover which bits of the vocabulary are supported. Fourth, we need for endpoints to be able to figure out which overtransports are in use. Non-requirement: allowing the path to discover overtransports.
+
+- consider adding draft-hardie use cases text here...
+
+- ecn?
+
+- Issues #5 and #6: split out endpoint authentication vs middlebox authentication. (1) detecting modification my non-spud path, (2) by spud-path, (3) packet injection. (Verify these are captured.)
 
 # Security Considerations
 
