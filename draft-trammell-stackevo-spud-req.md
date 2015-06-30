@@ -120,24 +120,28 @@ Middlebox to End-point Signal: : SPUD must provide a signaling channel for SPUD-
 Extensibility: : SPUD must enable multiple new transport semantics without requiring updates
   to SPUD implementations in middleboxes. 
   
-Authentication: : SPUD must not require authentication. Therefore any information that is provided in the basic SPUD protocol (without any extensions) must not require a trust relationship. However, if a trust relation already exists, SPUD should support the exchange of authenticated information.
+Authentication: : The basic SPUD protocol must not require any authentication or a priori trust relationship to function.  However, SPUD should support the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established (either in-band our out-of-band).
 
-Integrity: : SPUD must provide integrity to detect modifications of information that are not supposed to be changed deliberately or non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.
+Integrity: : SPUD must provide integrity to detect modifications of
+information that are not supposed to be changed deliberately or
+non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.
+
+Privacy: : SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.  [QUESTION: can/should endpoints be allowed to make different choices?  Minimal amount always trumps?  Need to be careful here about embedding policy in mechanism...]
 
 # Non-Functional Requirements
 
-Middlebox Traversal: : SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is know to be accepted on a large factor of paths in the Internet or even implement probing to figure out in advance which transport protocols will be accepted on a certain path.
+Middlebox Traversal: : SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is known to be accepted on a large fraction of paths in the Internet, or implement some form of probing to determine in advance which transport protocols will be accepted on a certain path.
 
 Low Overhead in Network Processing: : SPUD must be low-overhead, specifically requiring very little effort to
   recognize that a packet is a SPUD packet and to determine the tube it is associated with.
   
 Implementability in User-Space: : To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition. 
 
-Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to ensure deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adaptation for both endpoints and middleboxes, and must maximize privacy (by minimizing information). Further SPUD should not rely on the network to forward packets reliably and assume that reordering or packet duplication can happen. SPUD must work in multipath, multicast, and multi-homing environments.
+Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to maximize deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adoption by both endpoints and middleboxes, and must maximize privacy (by minimizing information exposed). Further, SPUD must be robust to packet loss, duplication and reordering by the underlying network service.  SPUD must work in multipath, multicast, and multi-homing environments.
 
-Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necesary to factor out the information that middleboxes commonly rely on. This information should be included in SPUD and might add additional restrictions to the overlying transport. One example is that SPUD is likely to impose bidirectional communication for all transports on top of it. However, even though UDP is only an unidirectional protocol, many communications on top of UDP are bidirectional any. For those service where only unidirectional communication is needed SPUD should potentially not be applied.
+Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necesary to factor out the information that middleboxes commonly rely on. This information should be included in SPUD and might add additional restrictions to the overlying transport. One example is that SPUD is likely to impose bidirectional communication for all transports on top of it. However, even though UDP is n unidirectional protocol, many communications on top of UDP are bidirectional anyway. For those services where only unidirectional communication is needed SPUD should potentially not be applied.
   
-Minimum Header Overhead: : To avoid effectively reduce network performance, the information and coding used in SPUD should be designed to use a minimum amount of additional bits.
+Minimum Header Overhead: : To avoid reducing network performance, the information and coding used in SPUD should be designed to use a minimum amount of additional bits.
 
 No additional start-up latency: : SPUD should not introduce additional start-up latency for the overlying (non-connection-oriented) transport protocols.
   
