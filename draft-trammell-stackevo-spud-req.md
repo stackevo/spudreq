@@ -2,7 +2,7 @@
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
 docname: draft-trammell-stackevo-spud-req-latest
-date: 2015-5-20
+date: 2015-7-1
 category: info
 ipr: trust200902
 
@@ -17,8 +17,17 @@ author:
     street: Gloriastrasse 35
     city: 8092 Zurich
     country: Switzerland
-
+  -
+    ins: M. Kuehlewind
+    name: Mirja Kuehlewind
+    role: editor
+    org: ETH Zurich
+    email: ietf@trammell.ch
+    street: Gloriastrasse 35
+    city: 8092 Zurich
+    country: Switzerland
 informative:
+  RFC2827:
   RFC6347:
   I-D.hardie-spud-use-cases:
   I-D.hildebrand-spud-prototype:
@@ -98,13 +107,13 @@ on the information that are exposed.
 
 This document uses the following terms
 
-Overtransport: : A transport protocol that uses SPUD for middlebox signaling and traversal.
+- Overlying transport: : A transport protocol that uses SPUD for middlebox signaling and traversal.
 
-Endpoint: : A node that sends or receives a packet. In this document, this term may refer to either the SPUD implementation on this node, the overtransport implementation on this node, or the applications running over that overtransport.
+- Endpoint: : A node that sends or receives a packet. In this document, this term may refer to either the SPUD implementation on this node, the overlying transport implementation on this node, or the applications running over that overlying transport.
 
-Path: : The set of Internet Protocol nodes a given packet traverses from endpoint to endpoint.
+- Path: : The set of Internet Protocol nodes a given packet traverses from endpoint to endpoint.
 
-Middlebox: : A device on the path that makes decisions about forwarding behavior based on other than IP or sub-IP addressing information, and/or that modifies the packet before forwarding.
+- Middlebox: : A device on the path that makes decisions about forwarding behavior based on other than IP or sub-IP addressing information, and/or that modifies the packet before forwarding.
 
 # Use Cases
 
@@ -112,7 +121,7 @@ Middlebox: : A device on the path that makes decisions about forwarding behavior
 
 # Functional Requirements
 
-The following requirements detail the services that SPUD must provide to overtransports, endpoints, and middleboxes using SPUD.
+The following requirements detail the services that SPUD must provide to overlying transports, endpoints, and middleboxes using SPUD.
 
 ## Grouping of Packets
 
@@ -134,15 +143,17 @@ The basic SPUD protocol must not require any authentication or a priori trust re
 
 SPUD must provide integrity protection of SPUD-encapsulated packets, though the details of this integrity protection are still open; see {{tradeoffs-in-integrity-protection}}. At the very least, endpoints should be able to:
 
-1. detect packet modifications by non-SPUD-aware middleboxes along the path
+1. detect simple transmission errors over at least whatever headers SPUD uses its own signaling.
 
-2. detect the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoint.
+2. detect packet modifications by non-SPUD-aware middleboxes along the path
 
-SPUD must provide integrity to detect modifications of information that are not supposed to be changed deliberately or non-deliberately by (SPUD-aware or not-SPUD-aware) middleboxes.
+3. detect the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoint.
+
+The decision of how to handle integrity check failures other than case (1) may be left up to the overlying transport.
 
 ## Privacy
 
-SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.  [QUESTION: can/should endpoints be allowed to make different choices?  Minimal amount always trumps?  Need to be careful here about embedding policy in mechanism...]
+SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.
 
 # Non-Functional Requirements
 
@@ -158,79 +169,171 @@ SPUD must be low-overhead, specifically requiring very little effort to recogniz
 
 ## Implementability in User-Space
 
-To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD has to be naturally encapsulated in UDP or at least a possibility to encapsulate SPUD in UDP must be specified in addition.
+To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD must provide an UDP-based encapsulation, either exclusively or as a mandatory-to-implement feature.
 
-Incremental Deployability in an Untrusted, Unreliable Environment: :  SPUD must operate in the present Internet. In order to maximize deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adoption by both endpoints and middleboxes, and must maximize privacy (by minimizing information exposed). Further, SPUD must be robust to packet loss, duplication and reordering by the underlying network service.  SPUD must work in multipath, multicast, and multi-homing environments.
+## Incremental Deployability in an Untrusted, Unreliable Environment
 
-Minimum restriction on the overlying transport: : SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necesary to factor out the information that middleboxes commonly rely on. This information should be included in SPUD and might add additional restrictions to the overlying transport. One example is that SPUD is likely to impose bidirectional communication for all transports on top of it. However, even though UDP is n unidirectional protocol, many communications on top of UDP are bidirectional anyway. For those services where only unidirectional communication is needed SPUD should potentially not be applied.
+SPUD must operate in the present Internet. In order to maximize deployment, it should also be useful as an encapsulation between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adoption by both endpoints and middleboxes, and must maximize privacy (by minimizing information exposed). Further, SPUD must be robust to packet loss, duplication and reordering by the underlying network service.  SPUD must work in multipath, multicast, and endpoint multi-homing environments.
 
-Minimum Header Overhead: : To avoid reducing network performance, the information and coding used in SPUD should be designed to use a minimum amount of additional bits.
+Incremental deployability likely requires limitations of the vocabulary used in signaling, to ensure that each actor in a nontrusted environment has incentives to participate in the signaling protocol honestly; see {{I-D.trammell-stackevo-newtea}} for more.
 
-No additional start-up latency: : SPUD should not introduce additional start-up latency for the overlying (non-connection-oriented) transport protocols.
+## Minimum restriction on the overlying transport
 
-# Open Questions
+SPUD must impose minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necessary to factor out the information that middleboxes commonly rely on and endpoints are commonly willing to expose. This information should be included in SPUD, and might itself impose additional restrictions to the overlying transport. One example is that SPUD is likely to impose at least return routability and the presence of a feedback channel between endpoints, this being necessary for protection against reflection, amplification, and trivial state exhaustion attacks; see {{return-routability-and-feedback}} for more.
+
+## Minimum Header Overhead
+
+To avoid reducing network performance, the information and coding used in SPUD should be designed to use the minimum necessary amount of additional space in encapsulation headers.
+
+## No additional start-up latency
+
+SPUD should not introduce additional start-up latency for overlying transports.
+
+# Open questions and discussion
+
+The preceding requirements reflect the present best understanding of the authors of the functional and technical requirements on an encapsulation-based protocol for common middlebox-endpoint cooperation for overlying transports. There remain a few large open questions and points for discussion, detailed in the subsections below.
 
 ## Tradeoffs in tube identifiers
 
-If SPUD is used, all packets of a 5-tuple flow must carry the SPUD header. Only packets with the same tube ID and 5-tuple are considered to belong to the same tube. (29.6. call: Not quite. There are three requirements here. (1) Need to be able to tie per-tube properties to all packets in the tube. How this happens is open. (2) Not allow additional trackability across 5-tuples. (3) Mitigate blind MOTS attacks. Discuss tradeoffs here. Maybe we need a Tube ID section? Talk about mapping streams in multistream protocols to tubes?)
+Grouping packets into tubes requires some sort of notional tube identifier;
+for purposes of this discussion we will assume this identifier to be a simple
+vector of N bits. The properties of the tube identifier are subject to
+tradeoffs on the requirements for privacy, secuity, ease of implementation,
+and header overhead efficiency.
 
-We must address the tradeoff between extensibility and privacy preservation.
-  While scoping the Tube ID to a five-tuple will reduce or eliminate its
-  usefulness for tracking (as well as fixing problems with ID collision in NAT
-  environments), one concern raised at the BoF is that a completely extensible
-  mechanism for binding information to tubes, if taken together with an ability for middleboxes to arbitrarily add information to a tube, could make
-  it easier for devices other than the endpoints to bind additional identifiers in-band for tracking purposes. [Addressed.]
+We first assume that the 5-tuple of source and destination IP address, UDP (or
+other transport protocol) port, and IP protocol identifier (17 for UDP) is
+used in the Internet as an existing flow identifier, due to the widespread
+deployment of network address and port translation. The question then arises
+whether tube identifiers should be scoped to 5-tuples (i.e., a tube is
+identified by a 6-tuple including the tube identifier) or should be separate,
+and presumed to be globally unique.
+
+If globally unique, N must be sufficiently large to reduce to negligibility
+the probability of collision among multiple tubes having the same identifier
+along the same path during some period of time. An advantage of globally
+unique tube identifiers is they allow migration of per-tube state across
+multiple five-tuples for mobility support in multipath protocols. However,
+globally unique tube identifiers would also introduce new possibilities for
+user and node tracking, with a serious negative impact on privacy.
+
+In the case of 5-tuple-scoped identifiers, mobility must be supported
+separately by each overlying transport. N must still be sufficiently large,
+and the bits in the identifier sufficiently random, that possession of a valid
+tube ID implies that a node can observe packets belonging to the tube. This
+reduces the chances of success of blind packet injection attacks of packets
+with guessed valid tube IDs.
+
+## Property binding
+
+Related to identifier scope is the scope of properties bound to SPUD packets
+by endpoints. SPUD may support both per-tube properties as well as per-packet
+properties. Properties signaled per packet reduce state requirements at
+middleboxes, but also increase per-packet overhead. It is likely that both
+types of property binding are necessary, but the selection of which properties
+to bind how must be undertaken carefully.
 
 ## Tradeoffs in integrity protection
 
-Split out endpoint authentication vs middlebox authentication. (1) detecting modification my non-spud path, (2) by spud-path, (3) packet injection. (Verify these are captured.)
+In order to protect the integrity of information carried by SPUD against
+trivial forging by malicious devices along the path, it is necessary to be
+able to authenticate the originator of that information. We presume that the
+authentication of endpoints is a generally desirable property, and to be
+handled by the overlying transport; in this case, SPUD can borrow that
+authentication to protect the integrity of endpoint-originated information.
 
-# Poorly organized notes from the 13 May call
+However, in the Internet, it is not in the general case possible for the
+endpoint to authenticate every middlebox that might see packets it sends and
+receives. In this case information produced by middleboxes may enjoy less
+integrity protection than that produced by endpoints.
 
-[EDITOR'S NOTE: blame Brian for the fact that this is a grab-bag of thoughts.]
+## Return routability and feedback
 
-- In general, we should piggyback SPUD as much as possible on the semantics of
-  the overlying transport.
+We have identified a requirement to support as wide a range of overlying
+transports as possible and feasible, in order to maximize SPUD's potential for
+improving the evolvability of the transport stack. However, it is possible
+that imposing a return routability requirement on overlying transports is
+necessary to reduce the usefuless of SPUD as a vector for reflection and
+amplification attacks, and to defend SPUD itself against trivial state
+exhaustion attacks.
 
-- One of the main goals in transport evolution is to support a spectrum in
-  terms of reliability, as opposed to just TCP's "reliable and in order" and
-  UDP's "thanks for the packet, good luck!". In this case, we cannot rely on the underlying transport to provide reliable retransmission, so if we are piggybacking an in-band signal over the overlying transport, that signaling
-  must either be best-effort-tolerant, the endpoints will need (and the middleboxes may need) to know something about the overlying transport's reliability mechanism, or the substrate will need to provide its own reliability for signaling. Key exchange, for example, requires reliable transport.
+The ease of forging source addresses in UDP together with the only limited
+deployment of network egress filtering {{RFC2827}} means that UDP traffic
+presently lacks a return routability guarantee. This has led in part to the
+present situation wherein UDP traffic may be blocked by firewalls when not
+explicitly needed by an organization as part of its Internet connectivity. In
+addition, to defend against state exhaustion attacks on middleboxes, SPUD may
+need to see a first packet in a reverse direction on a tube to consider that
+tube acknowledged and valid.
 
-- If reliable in-band signaling is not available, then signaling requiring
-  reliability (mainly key exchange) can happen out-of-band.
+Return routability is therefore probably a minimal property of any overlying
+transport, and a minimal property of any transport that can be responsibly
+deployed at scale in the Internet. Related is the presence of a feedback
+channel in the reverse direction of a flow; as with the ACK stream in TCP,
+this supports congestion control, also a minimal feature of responsibly
+deployed protocols.
 
-- Related: Will it be necessary to build a feedback channel
-  into SPUD if the overlying transport doesn't provide it? Further related: can we declare transports without a feedback channel to be out of scope (as they are by definition not congestion controlled without a feedback channel, and therefore potentially dangerous to use in the Internet)?
+## In-band, out-of-band, piggybacked, and interleaved signaling
 
-- There are different security considerations for different security contexts.
-  The end-to-end context is one; anything that only needs to be seen by the
-  path shouldn't be exposed in SPUD, but rather by the overlying transport.
-  There are multiple different types of end-to-middle context based on levels of trust between end and middle -- is the middlebox on the same network as the endpoint, under control of the same owner? Is there some contract between the application user and the middlebox operator? We need to define the different kinds of relationships here more concretely.
+Discussions about SPUD to date have focused on the possibility of in-band
+signaling from endpoints to middleboxes and back -- the signaling channel
+happens on the same 5-tuple as the data carried by the overlying transport.
+This arrangement would have the advantage that it does not require
+foreknowledge of the identity and addresses of devices along the path by
+endpoints and vice versa, but does add complexity to the signaling protocol.
 
-- The final approach may mix in-band signaling with out-of-band signaling.
-  It's possible the middle-to-end signaling in band will be primarily about
-  middlebox discovery: based on some property of traffic passing through a
-  middlebox, it may expose some information which can be used to initiate a
-  conversation over some other protocol.
+In-band signaling can be either piggybacked on the overlying transport or
+interleaved with it. Piggybacked signaling uses some number of bits in each
+packet generated by the overlying transport to achieve signaling. It requires
+either reducing the MTU available to the overlying transport (and telling the
+overlying transport about this MTU reduction), or opportunistically using bits
+between the network-layer MTU and the bits actually used by the transport.
+This is more complicated in the case of middleboxes that wish to add
+information to piggybacked-signaling packets, and may require the endpoints to
+introduce "scratch space" in the packets for potential middlebox signaling
+use, further increasing complexity and overhead. In any case, a SPUD using
+piggybacked signaling is at the mercy of the overlying transport's
+transmission scheduler to actually decide when to send packets. However,
+piggybacked signaling has the benefit that SPUD can use the overlying
+transport's reliability mechanisms to meet any reliability requirements it has
+for its own use (e.g. in key exchange). Piggyback signaling is also the only
+way to achieve per-packet signaling as in {{property-binding}}.
 
-# Discussion & Open Questions (post 29.6.)
+Interleaved signaling uses SPUD-only packets on the same 5-tuple with the same
+tube identifier to achieve signaling. This reduces complexity and sidesteps
+MTU problems, but is only applicable to per-tube signaling. It also would
+require SPUD to provide its own reliability mechanisms if per-tube signaling
+requires relability, and still needs to interact well with the overlying
+transport's transmission scheduler.
 
-- Which packets do need to have a spud header? Does all packet of a 5-tuple flow have to have a SPUD header? Currently we say yes (see first requirement on grouping).
+Out-of-band signaling uses direct connections between endpoints and
+middleboxes, separate from the overlying transport -- connections that are
+perhaps negotiated by in-band signaling. A key disadvantage here is that
+out-of-band signaling packets may not take the same path as the packets in the
+overlying transport.
 
-- Is spud information always per tube or can a spud packet also have per packet information? We don't know enough yet, discuss the tradeoffs...
+The final approach may consist of a mix all three signaling types.
 
-- How does the discovery work? Three issues here -- first, we need to deal with protocols that sometimes run over spud and not. We need to deal with handling cases where spud doesn't work. We need to deal with cases where the working-ness of spud is dynamic. Second, we need to find spud-talking things on the path. Third, we need to discover which bits of the vocabulary are supported. Fourth, we need for endpoints to be able to figure out which overtransports are in use. Non-requirement: allowing the path to discover overtransports.
+## Continuum of trust among endpoints and middleboxes
 
-- consider adding draft-hardie use cases text here...
+There are different security considerations for different security contexts.
+The end-to-end context is one; anything that only needs to be seen by the path
+shouldn't be exposed in SPUD, but rather by the overlying transport. There are
+multiple different types of end-to-middle context based on levels of trust
+between end and middle -- is the middlebox on the same network as the
+endpoint, under control of the same owner? Is there some contract between the
+application user and the middlebox operator? It may make sense for SPUD to
+support different levels of trust than the default ("untrusted, but presumed
+honest due to limitations on the signaling vocabulary") and
+fully-authenticated; this needs to be explored further.
 
-- ecn?
+## Discovery and capability exposure
 
-- Issues #5 and #6: split out endpoint authentication vs middlebox authentication. (1) detecting modification my non-spud path, (2) by spud-path, (3) packet injection. (Verify these are captured.)
+There are three open issues in discovery and capability exposure. First, endpoints need to be able to discover whether SPUD is supported along a path or not, and to fall back to some other approach to achieve the goals of the overlying transport if not. Second, endpoints need to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes, and vice versa. Third, endpoints may need to discover and negotiate which overlying transports are available for a given interaction. On this third point, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
 
 # Security Considerations
 
-[EDITOR'S NOTE: point to security- (and privacy-) relevant requirements here.]
+The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information ({{authentication}}, {{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}}); protection against attacks ({{tradeoffs-in-tube-identifiers}} and {{return-routability-and-feedback}}); and the trust relationships among endpoints and middleboxes {{continuum-of-trust-among-endpoints-and-middleboxes}}. These will be further addressed in protocol definition work following from these requirements.
 
 # IANA Considerations
 
@@ -238,6 +341,6 @@ This document has no actions for IANA.
 
 # Contributors
 
-This document is the work of the SPUD Design Team within the IAB IP Stack Evolution program: Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Mirja Kuehlewind.
+This document is the work of the SPUD focus area within the IAB IP Stack Evolution program: in addition to the editors, David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
 
 [EDITOR'S NOTE: make this a real contributor's section once we figure out how to make kramdown do that...]
