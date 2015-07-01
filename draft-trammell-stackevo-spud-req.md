@@ -299,11 +299,12 @@ addition, to defend against state exhaustion attacks on middleboxes, SPUD may
 need to see a first packet in a reverse direction on a tube to consider that
 tube acknowledged and valid.
 
-Return routability is therefore probably a minimal property of any overlying
-transport, and a minimal property of any transport that can be responsibly
-deployed at scale in the Internet. Related is the presence of a feedback
-channel in the reverse direction of a flow; as with the ACK stream in TCP,
-this supports congestion control, also a minimal feature of responsibly
+Return routability is therefore a minimal property of any transport that can
+be responsibly deployed at scale in the Internet, and therefore over SPUD,
+whether the overlying transport guarantees return routability itself or this
+guarantee is provided implicitly by SPUD.  Related is the presence of a
+feedback channel in the reverse direction of a flow; as with the ACK stream in
+TCP, this supports congestion control, also a minimal feature of responsibly
 deployed protocols.
 
 ## In-band, out-of-band, piggybacked, and interleaved signaling
