@@ -27,14 +27,13 @@ author:
     city: 8092 Zurich
     country: Switzerland
 informative:
+  RFC0792:
   RFC2827:
   RFC6347:
-  I-D.hardie-spud-use-cases:
   I-D.hildebrand-spud-prototype:
   I-D.huitema-tls-dtls-as-subtransport:
   I-D.trammell-stackevo-newtea:
   I-D.trammell-semi-report:
-  I-D.ietf-rtcweb-data-channel:
 
 --- abstract
 
@@ -117,7 +116,7 @@ This document uses the following terms
 
 # Use Cases
 
-[EDITOR'S NOTE: specific applications we think need this go here? reference draft-kuehlewind-spud-use-cases
+[EDITOR'S NOTE: specific applications we think need this go here? reference draft-kuehlewind-spud-use-cases.]
 
 # Functional Requirements
 
@@ -129,7 +128,41 @@ Transport semantics and many properties of communication that endpoints may want
 
 ## Endpoint to Path Signaling
 
-SPUD must be able to provide information from the end-point(s) to all SPUD-aware nodes on the path. To be able to potentially communicate with all SPUD-aware middleboxes on the path SPUD must either be designed as an in-band signaling protocol, or there must be a pre-existing relationship between the endpoint and the SPUD-aware middleboxes along the path. Since it is implausible that an endpoint has these relationships to all SPUD-aware middleboxes on a certain path in the context of the Internet, SPUD must provide in-band signaling. SPUD may in addition also offer mechanisms for out-of-band signaling when it is appropriate to use.
+SPUD must be able to provide information from the end-point(s) to all
+SPUD-aware nodes on the path. To be able to potentially communicate with all
+SPUD-aware middleboxes on the path SPUD must either be designed as an in-band
+signaling protocol, or there must be a pre-existing relationship between the
+endpoint and the SPUD-aware middleboxes along the path. Since it is
+implausible that an endpoint has these relationships to all SPUD-aware
+middleboxes on a certain path in the context of the Internet, SPUD must
+provide in-band signaling. SPUD may in addition also offer mechanisms for
+out-of-band signaling when it is appropriate to use. See
+{{in-band-out-of-band-piggybacked-and-interleaved-signaling}} for more
+discussion.
+
+The primary use case for endpoint to path signaling, making use of packet
+grouping, is the binding of limited related semantics (start-tube and
+stop-tube) to a group of packets which are semantically related in terms of
+the application or overlying transport. By explicitly signaling start and stop
+semantics, a flow allows middleboxes to use those signals for setting up and
+tearing down their relevant state (NAT bindings, firewall pinholes), rather
+than requiring the middlebox to infer this state from continued traffic. At
+best, this would allow the application to refrain from sending heartbeat
+traffic, which might result in reduced radio utilization (and thus greater
+battery life) on mobile platforms.
+
+## Path to Endpoint Signaling
+
+SPUD may also provide some facility for SPUD-aware nodes on the path to signal
+some property of the path relative to a tube to the endpoints and other
+SPUD-aware nodes on the path. The primary use case for path to application
+signaling is parallel to the use of ICMP [RFC0792], in that it describes a set
+of conditions (including errors) that applies to the datagrams as they
+traverse the path.  This usage is, however, not a pure replacement for ICMP
+but a "5-tuple ICMP" which would traverse NATs in the same way as the traffic
+related to it, and be deliverable to the application with appropriate tube
+information. See {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}
+for more discussion on tradeoffs here.
 
 ## Extensibility
 
@@ -312,7 +345,17 @@ perhaps negotiated by in-band signaling. A key disadvantage here is that
 out-of-band signaling packets may not take the same path as the packets in the
 overlying transport.
 
-The final approach may consist of a mix all three signaling types.
+Signaling of path-to-endpoint information, in the case that a middlebox wants
+to signal something to the sender of the packet, raises the added problem of
+either (1) requiring the middlebox to send the information to the receiver for
+later reflection back to the sender, which has the disadvantage of complexity,
+or (2) requiring out-of-band direct signaling back to the sender, which in
+turn either requires the middlebox to spoof the source address and port of the
+receiver to ensure equivalent NAT treatment, or some other NAT-traversal
+approach.
+
+The tradeoffs here must be carefully weighed, and the final approach may use a
+mix of all these communication patterns.
 
 ## Continuum of trust among endpoints and middleboxes
 
