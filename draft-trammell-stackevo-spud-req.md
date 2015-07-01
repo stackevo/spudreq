@@ -372,7 +372,9 @@ fully-authenticated; this needs to be explored further.
 
 ## Discovery and capability exposure
 
-There are three open issues in discovery and capability exposure. First, endpoints need to be able to discover whether SPUD is supported along a path or not, and to fall back to some other approach to achieve the goals of the overlying transport if not. Second, endpoints need to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes, and vice versa. Third, endpoints may need to discover and negotiate which overlying transports are available for a given interaction. On this third point, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
+There are three open issues in discovery and capability exposure. First, an endpoint need to discover if the other communication endpoint understand SPUD. Second, endpoints need test whether SPUD is ptentially not supported along a path by blocking or stripping the spud header, and to fall back to some other approach to achieve the goals of the overlying transport if not. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa. 
+
+In addition endpoints may need to discover and negotiate which overlying transports are available for a given interaction. SPUD could assist here. However, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
 
 # Security Considerations
 
