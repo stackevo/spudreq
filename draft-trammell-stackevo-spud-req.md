@@ -259,6 +259,7 @@ with guessed valid tube IDs.
 
 [Editor's note: What to do at start-up if multiple tubes are use within one 5-tuple? Send mutiple SPUD start messages or one with multiple tube IDs?]
 
+
 ## Property binding
 
 Related to identifier scope is the scope of properties bound to SPUD packets
