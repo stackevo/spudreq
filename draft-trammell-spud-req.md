@@ -34,7 +34,6 @@ informative:
   I-D.huitema-tls-dtls-as-subtransport:
   I-D.trammell-stackevo-newtea:
   I-D.iab-semi-report:
-  I-D.kuehlewind-spud-use-cases:
 
 --- abstract
 
