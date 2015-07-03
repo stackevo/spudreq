@@ -45,7 +45,7 @@ The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meet
 
 A number of efforts to create new transport protocols or experiment with new
 network behaviors have been built on top of UDP, as it traverses firewalls and
-other middleboxes more commonly than new protocols do.  Each such effort must,
+other middleboxes more readily than new protocols do.  Each such effort must,
 however, either manage its flows within common middlebox assumptions for UDP
 or train the  middleboxes on the new protocol (thus losing the benefit of
 using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort
@@ -116,6 +116,27 @@ This document uses the following terms
 
 # Use Cases
 
+The primary use case for endpoint to path signaling, making use of packet
+grouping, is the binding of limited related semantics (start-tube and
+stop-tube) to a group of packets which are semantically related in terms of
+the application or overlying transport. By explicitly signaling start and stop
+semantics, a flow allows middleboxes to use those signals for setting up and
+tearing down their relevant state (NAT bindings, firewall pinholes), rather
+than requiring the middlebox to infer this state from continued traffic. At
+best, this would allow the application to refrain from sending heartbeat
+traffic, which might result in reduced radio utilization (and thus greater
+battery life) on mobile platforms.
+
+SPUD may also provide some facility for SPUD-aware nodes on the path to signal
+some property of the path relative to a tube to the endpoints and other
+SPUD-aware nodes on the path. The primary use case for path to application
+signaling is parallel to the use of ICMP [RFC0792], in that it describes a set
+of conditions (including errors) that applies to the datagrams as they
+traverse the path. This usage is, however, not a pure replacement for ICMP
+but a "5-tuple ICMP" which would traverse NATs in the same way as the traffic
+related to it, and be deliverable to the application with appropriate tube
+information.
+
 [EDITOR'S NOTE: specific applications we think need this go here? reference draft-kuehlewind-spud-use-cases.]
 
 # Functional Requirements
@@ -124,7 +145,7 @@ The following requirements detail the services that SPUD must provide to overlyi
 
 ## Grouping of Packets
 
-Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows. SPUD must therefore provide a basic facility for associating packets together (into what we call a "tube" ,for lack of a better term) and associate information to these groups of packets. The simplest mechanisms for association would involve the addition of an identifier to each packet in a tube; current thoughts on the tradeoffs on requirements and constraints on this identifier space are given in {{tradeoffs-in-tube-identifiers}}.
+Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows. SPUD must therefore provide a basic facility for associating packets together (into what we call a "tube" ,for lack of a better term) and associate information to these groups of packets. The simplest mechanisms for association would involve the addition of an identifier to each packet in a tube. The tube ID must be bi-directional to support state establishment and is scoped to the forward and backward five-tuple due to privacy concern. Current thoughts on the tradeoffs on requirements and constraints on this identifier space are given in {{tradeoffs-in-tube-identifiers}}. 
 
 ## Endpoint to Path Signaling
 
@@ -140,28 +161,11 @@ out-of-band signaling when it is appropriate to use. See
 {{in-band-out-of-band-piggybacked-and-interleaved-signaling}} for more
 discussion.
 
-The primary use case for endpoint to path signaling, making use of packet
-grouping, is the binding of limited related semantics (start-tube and
-stop-tube) to a group of packets which are semantically related in terms of
-the application or overlying transport. By explicitly signaling start and stop
-semantics, a flow allows middleboxes to use those signals for setting up and
-tearing down their relevant state (NAT bindings, firewall pinholes), rather
-than requiring the middlebox to infer this state from continued traffic. At
-best, this would allow the application to refrain from sending heartbeat
-traffic, which might result in reduced radio utilization (and thus greater
-battery life) on mobile platforms.
 
 ## Path to Endpoint Signaling
 
-SPUD may also provide some facility for SPUD-aware nodes on the path to signal
-some property of the path relative to a tube to the endpoints and other
-SPUD-aware nodes on the path. The primary use case for path to application
-signaling is parallel to the use of ICMP [RFC0792], in that it describes a set
-of conditions (including errors) that applies to the datagrams as they
-traverse the path.  This usage is, however, not a pure replacement for ICMP
-but a "5-tuple ICMP" which would traverse NATs in the same way as the traffic
-related to it, and be deliverable to the application with appropriate tube
-information. See {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}
+SPUD must be able to provide information from a SPUD-aware middlebox to the endpoint. 
+See {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}
 for more discussion on tradeoffs here.
 
 ## Extensibility
@@ -170,7 +174,7 @@ SPUD must enable multiple new transport semantics without requiring updates to S
 
 ## Authentication
 
-The basic SPUD protocol must not require any authentication or a priori trust relationship between endpoints and middleboxes to function.  However, SPUD should support the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established, either in-band our out-of-band.
+The basic SPUD protocol must not require any authentication or a priori trust relationship between endpoints and middleboxes to function.  However, SPUD should support the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established, either in-band or out-of-band.
 
 ## Integrity
 
@@ -222,6 +226,10 @@ To avoid reducing network performance, the information and coding used in SPUD s
 
 SPUD should not introduce additional start-up latency for overlying transports.
 
+## Reliability and Duplication
+
+As any information provided by SPUD is anyway opportunistic, we assume for know that SPUD does not have to provide reliability and any SPUD mechanism using SPUD information must handle duplication of information. However, this decision also depends on the signal type used by SPUD, as further discussed in {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}, and currently assumes that there are no SPUD information that would need to be split over multiple packets. 
+
 # Open questions and discussion
 
 The preceding requirements reflect the present best understanding of the authors of the functional and technical requirements on an encapsulation-based protocol for common middlebox-endpoint cooperation for overlying transports. There remain a few large open questions and points for discussion, detailed in the subsections below.
@@ -257,8 +265,16 @@ tube ID implies that a node can observe packets belonging to the tube. This
 reduces the chances of success of blind packet injection attacks of packets
 with guessed valid tube IDs.
 
-[Editor's note: What to do at start-up if multiple tubes are use within one 5-tuple? Send mutiple SPUD start messages or one with multiple tube IDs?]
-
+Further using multiple tube identifiers within one 5-tuple also raises some 
+protocol design questions: Can one packet belong to multiple tubes? Do all packets
+in a flive-tuple flow have to belong to one tube? Can/Must the backward flow have the
+same tube ID or a different one? Especially at connection start-up, depending on 
+the semantics of the overlying transport protocol, there likely might be only one 
+packet to start multiple streams/tubes. Can this start message signal multiple 
+tube IDs at once or do we need an own start message for each tube? Or is it in
+this case not possible to have multiple tubes within one five-tuple? These 
+questions have to be further investigated based on the semantic of existing
+transport protocols.
 
 ## Property binding
 
@@ -287,11 +303,11 @@ integrity protection than that produced by endpoints.
 
 We have identified a requirement to support as wide a range of overlying
 transports as possible and feasible, in order to maximize SPUD's potential for
-improving the evolvability of the transport stack. However, it is possible
+improving the evolvability of the transport stack. <!--However, it is possible
 that imposing a return routability requirement on overlying transports is
 necessary to reduce the usefuless of SPUD as a vector for reflection and
 amplification attacks, and to defend SPUD itself against trivial state
-exhaustion attacks.
+exhaustion attacks.-->
 
 The ease of forging source addresses in UDP together with the only limited
 deployment of network egress filtering {{RFC2827}} means that UDP traffic
@@ -303,12 +319,17 @@ need to see a first packet in a reverse direction on a tube to consider that
 tube acknowledged and valid.
 
 Return routability is therefore a minimal property of any transport that can
-be responsibly deployed at scale in the Internet, and therefore over SPUD,
+be responsibly deployed at scale in the Internet. Therefore SPUD should enforce 
+bidirectional communication at start-up, no matter if this is also provided by 
+overlying protocol or not.
+<!--, and therefore over SPUD,
 whether the overlying transport guarantees return routability itself or this
-guarantee is provided implicitly by SPUD.  Related is the presence of a
+guarantee is provided implicitly by SPUD. -->
+ 
+<!--Related is the presence of a
 feedback channel in the reverse direction of a flow; as with the ACK stream in
 TCP, this supports congestion control, also a minimal feature of responsibly
-deployed protocols.
+deployed protocols.-->
 
 ## In-band, out-of-band, piggybacked, and interleaved signaling
 
@@ -325,29 +346,35 @@ packet generated by the overlying transport to achieve signaling. It requires
 either reducing the MTU available to the overlying transport (and telling the
 overlying transport about this MTU reduction), or opportunistically using bits
 between the network-layer MTU and the bits actually used by the transport.
-This is more complicated in the case of middleboxes that wish to add
+
+This is even more complicated in the case of middleboxes that wish to add
 information to piggybacked-signaling packets, and may require the endpoints to
 introduce "scratch space" in the packets for potential middlebox signaling
-use, further increasing complexity and overhead. In any case, a SPUD using
+use, further increasing complexity and overhead. In any case, a SPUD sender
+would effectively request SPUD information from a middlebox that respectively
+the middlebox would be able to insert the requested information into this place holder.
+
+However, a SPUD using
 piggybacked signaling is at the mercy of the overlying transport's
-transmission scheduler to actually decide when to send packets. However,
+transmission scheduler to actually decide when to send packets. At the same time,
 piggybacked signaling has the benefit that SPUD can use the overlying
 transport's reliability mechanisms to meet any reliability requirements it has
-for its own use (e.g. in key exchange). Piggyback signaling is also the only
+for its own use (e.g. in key exchange). This would require SPUD to understand the 
+semantics of the overlying protocol but can reduce overhead. Piggyback signaling is also the only
 way to achieve per-packet signaling as in {{property-binding}}.
 
 Interleaved signaling uses SPUD-only packets on the same 5-tuple with the same
 tube identifier to achieve signaling. This reduces complexity and sidesteps
 MTU problems, but is only applicable to per-tube signaling. It also would
 require SPUD to provide its own reliability mechanisms if per-tube signaling
-requires relability, and still needs to interact well with the overlying
+requires reliability, and still needs to interact well with the overlying
 transport's transmission scheduler.
 
 Out-of-band signaling uses direct connections between endpoints and
 middleboxes, separate from the overlying transport -- connections that are
 perhaps negotiated by in-band signaling. A key disadvantage here is that
 out-of-band signaling packets may not take the same path as the packets in the
-overlying transport.
+overlying transport and therefore connectivity cannot be guaranteed.
 
 Signaling of path-to-endpoint information, in the case that a middlebox wants
 to signal something to the sender of the packet, raises the added problem of
@@ -359,7 +386,12 @@ receiver to ensure equivalent NAT treatment, or some other NAT-traversal
 approach.
 
 The tradeoffs here must be carefully weighed, and the final approach may use a
-mix of all these communication patterns.
+mix of all these communication patterns where SPUD provides different signaling 
+patterns for different use case. E.g. a middlebox might need to generate out-of-band signals 
+for error messages or can provide requested information in-band and feedback over the receiver 
+if a minimum or maximum value from all SPUD-aware middleboxes on path should be discovered.
+
+
 
 ## Continuum of trust among endpoints and middleboxes
 
@@ -376,7 +408,7 @@ fully-authenticated; this needs to be explored further.
 
 ## Discovery and capability exposure
 
-There are three open issues in discovery and capability exposure. First, an endpoint need to discover if the other communication endpoint understand SPUD. Second, endpoints need test whether SPUD is ptentially not supported along a path by blocking or stripping the spud header, and to fall back to some other approach to achieve the goals of the overlying transport if not. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa. 
+There are three open issues in discovery and capability exposure. First, an endpoint needs to discover if the other communication endpoint understands SPUD. Second, endpoints need test whether SPUD is potentially not supported along a path because of middleboxes that block SPUD packets or strip the SPUD header. In this case a SPUD sender needs to fall back to some other approach to achieve the goals of the overlying transport if not. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa. 
 
 In addition endpoints may need to discover and negotiate which overlying transports are available for a given interaction. SPUD could assist here. However, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
 
