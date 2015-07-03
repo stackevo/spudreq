@@ -1,7 +1,7 @@
 ---
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
-docname: draft-trammell-stackevo-spud-req-latest
+docname: draft-trammell-spud-req-latest
 date: 2015-7-1
 category: info
 ipr: trust200902
@@ -33,7 +33,8 @@ informative:
   I-D.hildebrand-spud-prototype:
   I-D.huitema-tls-dtls-as-subtransport:
   I-D.trammell-stackevo-newtea:
-  I-D.trammell-semi-report:
+  I-D.iab-semi-report:
+  I-D.kuehlewind-spud-use-cases:
 
 --- abstract
 
@@ -60,47 +61,50 @@ path that a particular transport using UDP maintains session state and explicitl
 signals session start and stop using the substrate, the using protocol may reduce or avoid
 the need for heartbeat traffic.
 
-This document defines a specific set of requirements for a SPUD protocol,
+This document defines a specific set of requirements for a SPUD facility,
 based on analysis on a target set of applications to be developed on SPUD
 developing experience with a prototype described in
-{{I-D.hildebrand-spud-prototype}}. It is intended as the basis for eventually
-chartering a working group for the further development of a SPUD protocol.
-
+{{I-D.hildebrand-spud-prototype}}. It is intended as the basis for determining
+the next steps to make progress in this space, including eventually chartering
+an working group for specific protocol engineering work.
 
 # History
 
-An outcome of the IAB workshop on Stack Evolution in a Middlebox
-Internet (SEMI) {{I-D.trammell-semi-report}}, held in Zurich in January 2015,
-was a discussion on the creation of a substrate protocol to support the
-deployment of new transport protocols in the Internet. Assuming that a way
-forward for transport evolution in user space would involve encapsulation in
-UDP datagrams, the workshop noted that it may be useful to have a
-facility built atop UDP to provide minimal signaling of the semantics of a
-flow that would otherwise be available in TCP. At the very least, indications
-of first and last packets in a flow may assist firewalls and NATs in policy
-decision and state maintenance. Further transport semantics would be used by
-the protocol running atop this facility, but would only be visible to the
-endpoints, as the transport protocol headers themselves would be encrypted,
-along with the payload, to prevent inspection or modification.  This encryption
-might be accomplished by using DTLS {{RFC6347}} as a subtransport {{I-D.huitema-tls-dtls-as-subtransport}}
-or by other suitable methods. This facility could also provide minimal
-application-to-path and path-to-application signaling, though there was
-less agreement about what should or could be signaled here.
+An outcome of the IAB workshop on Stack Evolution in a Middlebox Internet
+(SEMI) {{I-D.iab-semi-report}}, held in Zurich in January 2015, was a
+discussion on the creation of a substrate protocol to support the deployment
+of new transport protocols in the Internet. Assuming that a way forward for
+transport evolution in user space would involve encapsulation in UDP
+datagrams, the workshop noted that it may be useful to have a facility built
+atop UDP to provide minimal signaling of the semantics of a flow that would
+otherwise be available in TCP. At the very least, indications of first and
+last packets in a flow may assist firewalls and NATs in policy decision and
+state maintenance. Further transport semantics would be used by the protocol
+running atop this facility, but would only be visible to the endpoints, as the
+transport protocol headers themselves would be encrypted, along with the
+payload, to prevent inspection or modification.  This encryption might be
+accomplished by using DTLS {{RFC6347}} as a subtransport
+{{I-D.huitema-tls-dtls-as-subtransport}} or by other suitable methods. This
+facility could also provide minimal application-to-path and
+path-to-application signaling, though there was less agreement about what
+should or could be signaled here.
 
-The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF 92 in Dallas in
-March 2015 to develop this concept further. It is clear from discussion before and
-during the SPUD BoF that any selective exposure of traffic metadata outside a
-relatively restricted trust domain must be advisory, non-negotiated, and declarative
-rather than imperative. This conclusion matches experience with previous
-endpoint-to-middle and middle-to-endpoint signaling approaches. As with other
-metadata systems, exposure of specific elements must be carefully assessed for
-privacy risks and the total of exposed elements must be so assessed.  Each exposed parameter
-should also be independently verifiable, so that each entity can assign its own trust
-to other entities. Basic transport over the substrate must continue working even if
-signaling is ignored or stripped, to support incremental deployment. These restrictions
-on vocabulary are discussed further in {{I-D.trammell-stackevo-newtea}}. This discussion includes
-privacy and trust concerns as well as the need for strong incentives for middlebox cooperation based
-on the information that are exposed.
+The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF 92 in
+Dallas in March 2015 to develop this concept further. It is clear from
+discussion before and during the SPUD BoF that any selective exposure of
+traffic metadata outside a relatively restricted trust domain must be
+advisory, non-negotiated, and declarative rather than imperative. This
+conclusion matches experience with previous endpoint-to-middle and
+middle-to-endpoint signaling approaches. As with other metadata systems,
+exposure of specific elements must be carefully assessed for privacy risks and
+the total of exposed elements must be so assessed.  Each exposed parameter
+should also be independently verifiable, so that each entity can assign its
+own trust to other entities. Basic transport over the substrate must continue
+working even if signaling is ignored or stripped, to support incremental
+deployment. These restrictions on vocabulary are discussed further in
+{{I-D.trammell-stackevo-newtea}}. This discussion includes privacy and trust
+concerns as well as the need for strong incentives for middlebox cooperation
+based on the information that are exposed.
 
 # Terminology
 
@@ -116,7 +120,7 @@ This document uses the following terms
 
 # Use Cases
 
-[EDITOR'S NOTE: specific applications we think need this go here? reference draft-kuehlewind-spud-use-cases.]
+An analysis of use cases, drawn in part from discussions at the SEMI workshop and the SPUD BoF, is given in {{I-D.kuehlewind-spud-use-cases}}.
 
 # Functional Requirements
 
@@ -376,7 +380,7 @@ fully-authenticated; this needs to be explored further.
 
 ## Discovery and capability exposure
 
-There are three open issues in discovery and capability exposure. First, an endpoint need to discover if the other communication endpoint understand SPUD. Second, endpoints need test whether SPUD is ptentially not supported along a path by blocking or stripping the spud header, and to fall back to some other approach to achieve the goals of the overlying transport if not. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa. 
+There are three open issues in discovery and capability exposure. First, an endpoint need to discover if the other communication endpoint understand SPUD. Second, endpoints need test whether SPUD is ptentially not supported along a path by blocking or stripping the spud header, and to fall back to some other approach to achieve the goals of the overlying transport if not. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa.
 
 In addition endpoints may need to discover and negotiate which overlying transports are available for a given interaction. SPUD could assist here. However, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
 
@@ -390,6 +394,6 @@ This document has no actions for IANA.
 
 # Contributors
 
-This document is the work of the SPUD focus area within the IAB IP Stack Evolution program: in addition to the editors, David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
+This document is the work of the SPUD group within the IAB IP Stack Evolution program; in addition to the editors: David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
 
 [EDITOR'S NOTE: make this a real contributor's section once we figure out how to make kramdown do that...]
