@@ -239,7 +239,7 @@ The preceding requirements reflect the present best understanding of the authors
 Grouping packets into tubes requires some sort of notional tube identifier;
 for purposes of this discussion we will assume this identifier to be a simple
 vector of N bits. The properties of the tube identifier are subject to
-tradeoffs on the requirements for privacy, secuity, ease of implementation,
+tradeoffs on the requirements for privacy, security, ease of implementation,
 and header overhead efficiency.
 
 We first assume that the 5-tuple of source and destination IP address, UDP (or
@@ -267,7 +267,7 @@ with guessed valid tube IDs.
 
 Further using multiple tube identifiers within one 5-tuple also raises some 
 protocol design questions: Can one packet belong to multiple tubes? Do all packets
-in a flive-tuple flow have to belong to one tube? Can/Must the backward flow have the
+in a five-tuple flow have to belong to one tube? Can/Must the backward flow have the
 same tube ID or a different one? Especially at connection start-up, depending on 
 the semantics of the overlying transport protocol, there likely might be only one 
 packet to start multiple streams/tubes. Can this start message signal multiple 
