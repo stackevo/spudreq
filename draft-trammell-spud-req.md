@@ -394,8 +394,6 @@ patterns for different use case. E.g. a middlebox might need to generate out-of-
 for error messages or can provide requested information in-band and feedback over the receiver
 if a minimum or maximum value from all SPUD-aware middleboxes on path should be discovered.
 
-
-
 ## Continuum of trust among endpoints and middleboxes
 
 There are different security considerations for different security contexts.
@@ -425,6 +423,6 @@ This document has no actions for IANA.
 
 # Contributors
 
-This document is the work of the SPUD group within the IAB IP Stack Evolution program; in addition to the editors: David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
+In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
 
 [EDITOR'S NOTE: make this a real contributor's section once we figure out how to make kramdown do that...]
