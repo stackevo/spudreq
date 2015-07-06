@@ -306,7 +306,8 @@ integrity protection than that produced by endpoints.
 
 We have identified a requirement to support as wide a range of overlying
 transports as possible and feasible, in order to maximize SPUD's potential for
-improving the evolvability of the transport stack. <!-- However, it is possible
+improving the evolvability of the transport stack. 
+<!-- However, it is possible
 that imposing a return routability requirement on overlying transports is
 necessary to reduce the usefuless of SPUD as a vector for reflection and
 amplification attacks, and to defend SPUD itself against trivial state
