@@ -22,7 +22,7 @@ author:
     name: Mirja Kuehlewind
     role: editor
     org: ETH Zurich
-    email: ietf@trammell.ch
+    email: mirja.kuehlewind@tik.ee.ethz.ch
     street: Gloriastrasse 35
     city: 8092 Zurich
     country: Switzerland
