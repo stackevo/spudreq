@@ -176,7 +176,7 @@ for more discussion on tradeoffs here.
 
 ## Extensibility
 
-SPUD must enable multiple new transport semantics without requiring updates to SPUD implementations in middleboxes.
+SPUD must enable multiple new transport semantics and application/path declarations without requiring updates to SPUD implementations in middleboxes.
 
 ## Authentication
 
@@ -234,7 +234,7 @@ SPUD should not introduce additional start-up latency for overlying transports.
 
 ## Reliability and Duplication
 
-As any information provided by SPUD is anyway opportunistic, we assume for know that SPUD does not have to provide reliability and any SPUD mechanism using SPUD information must handle duplication of information. However, this decision also depends on the signal type used by SPUD, as further discussed in {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}, and currently assumes that there are no SPUD information that would need to be split over multiple packets.
+As any information provided by SPUD is anyway opportunistic, we assume for now that SPUD does not have to provide reliability and any SPUD mechanism using SPUD information must handle duplication of information. However, this decision also depends on the signal type used by SPUD, as further discussed in {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}, and currently assumes that there are no SPUD information that would need to be split over multiple packets.
 
 # Open questions and discussion
 
@@ -421,7 +421,7 @@ In addition, endpoints may need to discover and negotiate which overlying transp
 
 ## Hard state vs. soft state
 
-The initial thinking on signaling envisions "hard state" in middleboxes that is established when the middlbox observes the start of a SPUD tube and is torn down when the middlebox observes the end (stop) of a SPUD tube.  Such state can be abandoned as a result of network topology changes (e.g., routing update in response to link or node failure).  An alternative is a "soft state" approach that requires periodic refresh of state in middleboxes, but cleanly times out and discards abandoned state.  SPUD has the opportunity to use different timeouts than the defaults that are required for current NAT and firewall pinhole maintenance.
+The initial thinking on signaling envisions "hard state" in middleboxes that is established when the middlbox observes the start of a SPUD tube and is torn down when the middlebox observes the end (stop) of a SPUD tube.  Such state can be abandoned as a result of network topology changes (e.g., routing update in response to link or node failure).  An alternative is a "soft state" approach that requires periodic refresh of state in middleboxes, but cleanly times out and discards abandoned state.  SPUD has the opportunity to use different timeouts than the defaults that are required for current NAT and firewall pinhole maintenance. Of course, applications will still have to detect non-SPUD middleboxes that use shorter timers.
 
 # Security Considerations
 
