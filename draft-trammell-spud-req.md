@@ -309,7 +309,7 @@ receives. In this case information produced by middleboxes may enjoy less
 integrity protection than that produced by endpoints.  In addition, endpoint
 authentication of middleboxes and vice-versa may be better conducted out-of-
 band (treating the middlebox as an endpoint for the authentication protocol)
-than in-band (treating the middlebox as a participant in a 3+ party communication.
+than in-band (treating the middlebox as a participant in a 3+ party communication).
 
 ## Return routability and feedback
 
@@ -332,7 +332,7 @@ enforce bidirectional communication at start-up, whether the overlying
 transport is bidirectional or not.  This excludes use of the UDP source
 port as an entropy input that does not accept traffic (i.e., for one-way
 communication, as is commonly done for unidirectional UDP tunnels, e.g.,
-MPLS in UDP {{RFC7510}}.
+MPLS in UDP {{RFC7510}}).
 
 ## In-band, out-of-band, piggybacked, and interleaved signaling
 
@@ -391,7 +391,7 @@ approach.
 
 The tradeoffs here must be carefully weighed, and the final approach may use a
 mix of all these communication patterns where SPUD provides different signaling
-patterns for different use case. E.g. a middlebox might need to generate out-of-band signals
+patterns for different use case. E.g., a middlebox might need to generate out-of-band signals
 for error messages or can provide requested information in-band and feedback over the receiver
 if a minimum or maximum value from all SPUD-aware middleboxes on path should be discovered.
 
@@ -410,7 +410,12 @@ fully-authenticated; this needs to be explored further.
 
 ## Discovery and capability exposure
 
-There are three open issues in discovery and capability exposure. First, an endpoint needs to discover if the other communication endpoint understands SPUD. Second, endpoints need test whether SPUD is potentially not supported along a path because of middleboxes that block SPUD packets or strip the SPUD header. In this case a SPUD sender needs to fall back to some other approach to achieve the goals of the overlying transport if not. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa.
+There are three open issues in discovery and capability
+exposure. First, an endpoint needs to discover if the other
+communication endpoint understands SPUD. Second, endpoints need test
+whether SPUD is potentially not usable along a path because of
+middleboxes that block SPUD packets or strip the SPUD header. If such
+impairments exist in the path, a SPUD sender needs to fall back to some other approach to achieve the goals of the overlying transport. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa.
 
 In addition endpoints may need to discover and negotiate which overlying transports are available for a given interaction. SPUD could assist here. However, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
 
