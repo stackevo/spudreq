@@ -1,8 +1,8 @@
 ---
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
-docname: draft-trammell-spud-req-latest
-date: 2015-7-1
+docname: draft-trammell-spud-req-00
+date: 2015-7-6
 category: info
 ipr: trust200902
 
@@ -37,7 +37,7 @@ informative:
 
 --- abstract
 
-The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document defines a set of requirements for this protocol.
+The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document proposes an initial set of requirements for such a protocol, and discusses tradeoffs to be made in further refining these requirements.
 
 --- middle
 
@@ -306,12 +306,7 @@ integrity protection than that produced by endpoints.
 
 We have identified a requirement to support as wide a range of overlying
 transports as possible and feasible, in order to maximize SPUD's potential for
-improving the evolvability of the transport stack. 
-<!-- However, it is possible
-that imposing a return routability requirement on overlying transports is
-necessary to reduce the usefuless of SPUD as a vector for reflection and
-amplification attacks, and to defend SPUD itself against trivial state
-exhaustion attacks. -->
+improving the evolvability of the transport stack.
 
 The ease of forging source addresses in UDP together with the only limited
 deployment of network egress filtering {{RFC2827}} means that UDP traffic
@@ -323,17 +318,9 @@ need to see a first packet in a reverse direction on a tube to consider that
 tube acknowledged and valid.
 
 Return routability is therefore a minimal property of any transport that can
-be responsibly deployed at scale in the Internet. Therefore SPUD should enforce
-bidirectional communication at start-up, no matter if this is also provided by
-overlying protocol or not.
-<!--, and therefore over SPUD,
-whether the overlying transport guarantees return routability itself or this
-guarantee is provided implicitly by SPUD. -->
-
-<!--Related is the presence of a
-feedback channel in the reverse direction of a flow; as with the ACK stream in
-TCP, this supports congestion control, also a minimal feature of responsibly
-deployed protocols.-->
+be responsibly deployed at scale in the Internet. Therefore SPUD should
+enforce bidirectional communication at start-up, whether the overlying
+transport is bidirectional or not.
 
 ## In-band, out-of-band, piggybacked, and interleaved signaling
 
