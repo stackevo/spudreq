@@ -412,12 +412,12 @@ fully-authenticated; this needs to be explored further.
 
 There are three open issues in discovery and capability
 exposure. First, an endpoint needs to discover if the other
-communication endpoint understands SPUD. Second, endpoints need test
+communication endpoint understands SPUD. Second, endpoints need to test
 whether SPUD is potentially not usable along a path because of
 middleboxes that block SPUD packets or strip the SPUD header. If such
 impairments exist in the path, a SPUD sender needs to fall back to some other approach to achieve the goals of the overlying transport. Third, endpoints might want to be able to discover SPUD-aware middleboxes along the path, and to discover which parts of the vocabulary that can be spoken by the endpoints are supported by those middleboxes as well as the other communication endpoint, and vice versa.
 
-In addition endpoints may need to discover and negotiate which overlying transports are available for a given interaction. SPUD could assist here. However, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
+In addition, endpoints may need to discover and negotiate which overlying transports are available for a given interaction. SPUD could assist here. However, it is explicitly not a goal of SPUD to expose information about the details of the overlying transport to middleboxes.
 
 ## Hard state vs. soft state
 
