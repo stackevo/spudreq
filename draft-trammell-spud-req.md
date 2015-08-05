@@ -198,6 +198,11 @@ The decision of how to handle integrity check failures other than case (1) may b
 
 SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.
 
+## Security Semantics
+
+The use of SPUD must not change the security semantics of the overlying protocol.  If the overlying protocol encrypts its payload, for example, the use of SPUD must not allow deep packet inspection systems to have access to the plaintext.  While a box along the path may indicate a particular flow is adminstratively prohibited or why it is prohibited, SPUD MUST NOT itself be used to negotiate the means to lift the prohibition.  
+
+
 # Non-Functional Requirements
 
 The following requirements detail the constraints on how the SPUD facility must meet its functional requirements.
