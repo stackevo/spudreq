@@ -51,13 +51,13 @@ The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meet
 
 --- middle
 
-## Motivation
+# Motivation
 
 A number of efforts to create new transport protocols or experiment with new
 network behaviors have been built on top of UDP, as it traverses firewalls and
 other middleboxes more readily than new protocols do.  Each such effort must,
 however, either manage its flows within common middlebox assumptions for UDP
-or train the  middleboxes on the new protocol (thus losing the benefit of
+or train the middleboxes on the new protocol (thus losing the benefit of
 using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort
 to re-use a set of shared methods for notifying middleboxes of the flows'
 semantics, thus avoiding both the limitations of current flow semantics and
@@ -154,15 +154,32 @@ but a "5-tuple ICMP" which would traverse NATs in the same way as the traffic
 related to it, and be deliverable to the application with appropriate tube
 information.
 
-[EDITOR'S NOTE: specific applications we think need this go here? reference or include from draft-kuehlewind-spud-use-cases.]
-
 # Functional Requirements
 
 The following requirements detail the services that SPUD must provide to overlying transports, endpoints, and middleboxes using SPUD.
 
-## Grouping of Packets
+## Grouping of Packets (into "tubes")
 
-Transport semantics and many properties of communication that endpoints may want to expose to middleboxes are bound to flows or groups of flows (five-tuples). SPUD must therefore provide a basic facility for associating packets together (into what we call a "tube" ,for lack of a better term) and associate information to these groups of packets. The simplest mechanisms for association would involve the addition of an identifier to each packet in a tube. The tube ID must be bi-directional to support state establishment and is scoped to the forward and backward five-tuple due to privacy concern. Current thoughts on the tradeoffs on requirements and constraints on this identifier space are given in {{tradeoffs-in-tube-identifiers}}.
+Transport semantics and many properties of communication that endpoints may
+want to expose to middleboxes are bound to flows or groups of flows (five-
+tuples). SPUD must therefore provide a basic facility for associating packets
+together (into what we call a "tube", for lack of a better term) and associate
+information to these groups of packets. Each packet in a SPUD "flow"
+(determined by 5-tuple) belongs to exactly one tube. Notionally, a tube
+consists of a set of packets with a set of common properties, that should
+therefore receive equivalent treatment from the network; these tubes may or may not be related to separate semantic entities in the overlying transport (e.g. SCTP streams).
+
+The simplest mechanisms for association involve the addition of an identifier
+to each packet in a tube. Current thoughts on the tradeoffs on requirements
+and constraints on this identifier space are given in {{tradeoffs-in-tube-
+identifiers}}.
+
+## Tube Start and End Signaling
+
+[EDITOR'S NOTE: summarize discussion and consensus on this point: tube startup
+needs to be explicitly signaled, needs to be cheap. tube end should be
+signaled but everyone has to be resilient to lost tube ends anyway. start and
+end probably apply only to a single tube at once. note to see {{hard-state-vs-soft-state}}]
 
 ## Endpoint to Path Signaling
 
@@ -203,13 +220,20 @@ endpoints.
 
 ## Integrity
 
-SPUD must provide integrity protection of SPUD-encapsulated packets, though the details of this integrity protection are still open; see {{tradeoffs-in-integrity-protection}}. At the very least, endpoints should be able to:
+SPUD must provide integrity protection of SPUD-encapsulated packets, though
+the details of this integrity protection are still open; see {{tradeoffs-in-
+integrity-protection}}. Endpoints should be able to:
 
-1. detect simple transmission errors over at least whatever headers SPUD uses its own signaling.
+1. detect simple transmission errors over whatever headers SPUD uses for its
+own signaling.
 
-2. detect packet modifications by non-SPUD-aware middleboxes along the path
+2. detect accidental packet modifications by non-SPUD-aware middleboxes along the path.
 
-3. detect the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoint.
+3. detect the injection of packets into a SPUD flow (defined by 5-tuple) or
+tube by nodes other than the remote endpoint.
+
+4. detect intentional and presumably malicious modification of SPUD headers by
+devices along the path
 
 The decision of how to handle integrity check failures other than case (1) may be left up to the overlying transport.
 
@@ -217,17 +241,18 @@ The decision of how to handle integrity check failures other than case (1) may b
 
 SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.
 
-## Security Semantics
-
-The use of SPUD must not change the security semantics of the overlying protocol.  If the overlying protocol encrypts its payload, for example, the use of SPUD must not allow deep packet inspection systems to have access to the plaintext.  While a box along the path may indicate a particular flow is adminstratively prohibited or why it is prohibited, SPUD MUST NOT itself be used to negotiate the means to lift the prohibition.  
-
-# Non-Functional Requirements
+# Technical Requirements
 
 The following requirements detail the constraints on how the SPUD facility must meet its functional requirements.
 
 ## Middlebox Traversal
 
-SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is known to be accepted on a large fraction of paths in the Internet, or implement some form of probing to determine in advance which transport protocols will be accepted on a certain path. This encapsulation will probably require port numbers to support NAPT-connected endpoints.
+SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore
+SPUD must be encapsulated in a transport protocol that is known to be accepted
+on a large fraction of paths in the Internet, or implement some form of
+probing to determine in advance which transport protocols will be accepted on
+a certain path. This encapsulation will require port numbers to support NAPT-
+connected endpoints. This indicates UDP encapsulation.
 
 ## Low Overhead in Network Processing
 
@@ -235,7 +260,12 @@ SPUD must be low-overhead, specifically requiring very little effort to recogniz
 
 ## Implementability in User-Space
 
-To enable fast deployment SPUD and transports above SPUD must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or "jailbreak") on the endpoints. Usually all operating systems will allow a user to open a UDP socket. Therefore SPUD must provide an UDP-based encapsulation, either exclusively or as a mandatory-to-implement feature.
+To enable fast deployment SPUD and transports above SPUD must be implementable
+without requiring kernel replacements or modules on the endpoints, and without
+having special privilege (root or "jailbreak") on the endpoints. Usually all
+operating systems will allow a user to open a UDP socket. This indicates UDP-
+based encapsulation, either exclusively or as a mandatory-to-implement
+feature.
 
 ## Incremental Deployability in an Untrusted, Unreliable Environment
 
@@ -250,7 +280,7 @@ malicious background traffic (reflection, amplification, and state exhaustion
 attacks, and other exploits of packet spoofing), due to the ease of forging
 source addresses in UDP together with the only limited deployment of network
 egress filtering {{RFC2827}}. SPUD must provide minimal protection against
-this trivial abuse. This probably implies that SPUD requires a proof of return
+such trivial abuse. This probably implies that SPUD requires a proof of return
 routability and the presence of a feedback channel between endpoints, as well
 as a method to probabilistically discriminiate legitimate SPUD traffic from
 reflected malicious traffic.  We note that excludes use of the UDP source
@@ -275,6 +305,10 @@ SPUD should not introduce additional start-up latency for overlying transports.
 ## Minimum Header Overhead
 
 To avoid reducing network performance, the information and coding used in SPUD should be designed to use the minimum necessary amount of additional space in encapsulation headers.
+
+## Invariance of Security Semantics
+
+The use of SPUD must not change the security semantics of the overlying protocol.  If the overlying protocol encrypts its payload, for example, the use of SPUD must not allow deep packet inspection systems to have access to the plaintext.  While a box along the path may indicate a particular flow is adminstratively prohibited or why it is prohibited, SPUD MUST NOT itself be used to negotiate the means to lift the prohibition.  
 
 ## Reliability and Duplication
 
@@ -309,34 +343,31 @@ whether tube identifiers should be scoped to 5-tuples (i.e., a tube is
 identified by a 6-tuple including the tube identifier) or should be separate,
 and presumed to be globally unique.
 
-If globally unique, N must be sufficiently large to reduce to negligibility
-the probability of collision among multiple tubes having the same identifier
-along the same path during some period of time. An advantage of globally
-unique tube identifiers is they allow migration of per-tube state across
-multiple five-tuples for mobility support in multipath protocols. However,
-globally unique tube identifiers would also introduce new possibilities for
-user and node tracking, with a serious negative impact on privacy.
+If globally unique, N must be sufficiently large to minimize the probability
+of collision among multiple tubes having the same identifier along the same
+path during some period of time. An advantage of globally unique tube
+identifiers is they allow migration of per-tube state across multiple five-
+tuples for mobility support in multipath protocols. However, globally unique
+tube identifiers would also introduce new possibilities for user and node
+tracking, with a serious negative impact on privacy.
 
 In the case of 5-tuple-scoped identifiers, mobility must be supported
-separately by each overlying transport. N must still be sufficiently large,
-and the bits in the identifier sufficiently random, that possession of a valid
-tube ID implies that a node can observe packets belonging to the tube. This
-reduces the chances of success of blind packet injection attacks of packets
-with guessed valid tube IDs.
+separately from the tube identification mechanism. This could be specific to
+each overlying transport (i.e., hidden from the path), or SPUD could provide a
+general endpoint-to-path tube grouping signal to allow an endpoint to
+explicitly expose the fact that one tube is related to another to the path.
+Even in this case, N must still be sufficiently large, and the bits in the
+identifier sufficiently random, that possession of a valid tube ID implies
+that a node can observe packets belonging to the tube. This reduces the
+chances of success of blind packet injection attacks of packets with guessed
+valid tube IDs.
 
-Further using multiple tube identifiers within one 5-tuple also raises some
-protocol design questions: Can one packet belong to multiple tubes? Do all packets
-in a five-tuple flow have to belong to one tube? Can/Must the backward flow have the
-same tube ID or a different one? Especially at connection start-up, depending on
-the semantics of the overlying transport protocol, there likely might be only one
-packet to start multiple streams/tubes. Can this start message signal multiple
-tube IDs at once or do we need an own start message for each tube? Or is it in
-this case not possible to have multiple tubes within one five-tuple? These
-questions have to be further investigated based on the semantic of existing
-transport protocols.  The discussion in {{I-D.ietf-dart-dscp-rtp}} concerning
-use of different QoS treatments within a single 5-tuple is related, e.g., 
-WebRTC multiplexing of multiple application layer flows onto a single transport
-layer (5-tuple) flow.
+When scoped to 5-tuples, the forward and backward directions of a
+bidirectional flow probably have different tube IDs, since these will
+necessarily take different paths and may interact with a different set of
+middleboxes due to asymmetric routing. SPUD will therefore require some
+facility to note that one tube is the "reverse" direction of another, a
+general case of the tube grouping signal above.
 
 ## Property binding
 
@@ -345,7 +376,10 @@ by endpoints. SPUD may support both per-tube properties as well as per-packet
 properties. Properties signaled per packet reduce state requirements at
 middleboxes, but also increase per-packet overhead. It is likely that both
 types of property binding are necessary, but the selection of which properties
-to bind how must be undertaken carefully.
+to bind how must be undertaken carefully. It is also possible that SPUD will
+provide a very limited set of per-packet signals (such as ECN) using flags in
+the SPUD header, and require all more complicated properties to be bound per-
+tube.
 
 ## Tradeoffs in integrity protection
 
@@ -353,8 +387,8 @@ In order to protect the integrity of information carried by SPUD against
 trivial forging by malicious devices along the path, it is necessary to be
 able to authenticate the originator of that information. We presume that the
 authentication of endpoints is a generally desirable property, and to be
-handled by the overlying transport; in this case, SPUD can borrow that
-authentication to protect the integrity of endpoint-originated information.
+handled by the overlying transport; in this case, SPUD may be able borrow that
+authentication to protect the integrity of endpoint-originated information. 
 
 However, in the Internet, it is not in the general case possible for the
 endpoint to authenticate every middlebox that might see packets it sends and
@@ -378,10 +412,11 @@ discussion on the tradeoffs here is given in {{stackevo-explicit-
 coop}}.
 
 The tradeoffs here must be carefully weighed, and the final approach may use a
-mix of all these communication patterns where SPUD provides different signaling
-patterns for different use case. E.g., a middlebox might need to generate out-of-band signals
-for error messages or can provide requested information in-band and feedback over the receiver
-if a minimum or maximum value from all SPUD-aware middleboxes on path should be discovered.
+mix of all these communication patterns where SPUD provides different
+signaling patterns for different use case. E.g., a middlebox might need to
+generate out-of-band signals for error messages or can provide requested
+information in-band and feedback over the receiver if a minimum or maximum
+value from all SPUD-aware middleboxes on path should be discovered.
 
 ## Continuum of trust among endpoints and middleboxes
 
@@ -416,7 +451,16 @@ details of the overlying transport to middleboxes.
 
 ## Hard state vs. soft state
 
-The initial thinking on signaling envisions "hard state" in middleboxes that is established when the middlbox observes the start of a SPUD tube and is torn down when the middlebox observes the end (stop) of a SPUD tube.  Such state can be abandoned as a result of network topology changes (e.g., routing update in response to link or node failure).  An alternative is a "soft state" approach that requires periodic refresh of state in middleboxes, but cleanly times out and discards abandoned state.  SPUD has the opportunity to use different timeouts than the defaults that are required for current NAT and firewall pinhole maintenance. Of course, applications will still have to detect non-SPUD middleboxes that use shorter timers.
+The initial thinking on signaling envisions "hard state" in middleboxes that
+is established when the middlebox observes the start of a SPUD tube and is torn
+down when the middlebox observes the end (stop) of a SPUD tube.  Such state
+can be abandoned as a result of network topology changes (e.g., routing update
+in response to link or node failure).  An alternative is a "soft state"
+approach that requires periodic refresh of state in middleboxes, but cleanly
+times out and discards abandoned state.  SPUD has the opportunity to use
+different timeouts than the defaults that are required for current NAT and
+firewall pinhole maintenance. Of course, applications will still have to
+detect non-SPUD middleboxes that use shorter timers.
 
 # Security Considerations
 
