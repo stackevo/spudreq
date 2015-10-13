@@ -1,0 +1,310 @@
+1) Tradeoffs in tube identifiers
+----
+
+b) Does SPUD need to send a start message for each tube (independent of the semantics or the overlying protocol)?
+—> Yes, e.g. if you have multiple MPTCP subflows each has its own tube ID. However, maybe this is should only be aSHOULD.  It's a useful message when you expect it to be used to start initiating state in middleboxes, but there may​ be conditions where the treatment requested for the flow means that this is not required.
+
+c) Can one packet have more than one tube ID?
+—> No
+
+
+2) Property binding
+---
+
+a) Should it be possible to bind properties (only) to a tube or (also) to single packets?
+—> Only to a tube.  If you need to have a packet that should have different treatment, it needs a new tube-id.​ Therefore start new tube should be cheap.
+
+b) Can properties binded to a tube be changed later on during the connection?
+-> Probably not. Also start a new tube in this case as new tube should be cheap.
+
+
+3) Tradeoffs in integrity protection
+---
+a) Should SPUD provide support to use the authentication mechanism of the overlying transport for SPUD information provided by an endpoint to check the authenticity and integrity when the information arrive at the other endpoint?
+—> Yes, if supported by the overlying protocol
+
+b) How can packet-mangling (middleboxes changing accidental or intentionally information provided by others, both middblebox and endpoints) by on-path ndes be detected?
+-> Lying can potentially be detected if information can be verify over a different mechanism. However it might not be possible to detect who provided these wrong information. Off-path devices would need to know the tube id to provide wrong information which may be unlikely.
+​ 
+c) If a trust relationship already exists that would allow to authenticate information provided by a middlebox, does SPUD need to provided further support for this case? 
+-> Yes? (Similar as question a)
+
+d) Is there a value in SPUD having an (encrypted) end-2-end channel?
+-> Not fully clear yet, maybe not; Encrypted end-2-end infos can either be handled by the overlying (encrypted) protocol, or an encryption boundery  within SPUD to provided end-2-end information we can be commonly used by multiple protocols. However (encrypted) end-2-end information might be an own overlying protocol (maybe even another shim layer) and not SPUD itself.
+
+
+4) Return routability and feedback
+—-
+
+a) 2WHS vs. 3WHS?
+
+
+b) Does the semantics of the SPUD protocol need to provide an explicit start signal as well as start/ack signal?
+-> Yes, start is needed to distinguish start and middle of a tube; ack is needed to finally set up state. However, not clear yet if all SPUD tubes MUST send a start signal or only SHOULD. If a start was received, however, a ACK must be sent…?
+
+c) Should it be possible to send multiple START signal on the same tube (e.g to re-initiate state)?
+-> Not clear if this is really needed
+
+c) Is a stop flag needed/useful?
+—> Yes (faster state tear-down), but the overlying protocol must be resilient to it not being sent, not being received.​
+
+
+5) In-band, out-of-band, piggybacked, and interleaved signaling
+—-
+
+a) Do all packets of a flow (where one packet already has a spud header) need to have a SPUD header or could there be single packets in an spud-enabled flow that don’t have one?
+-> Not clear; maybe not and packets on the five-tuple that don't have a tube identifier aren't assigned any tube.​
+
+b) Do all SPUD packets need to have overlying protocol data?
+—> No, e.g. start packet
+
+c) Do all SPUD information have to fit into one packet?
+—> probably yes (and other should be out-of-band using an overlying transport) but not clear yet
+
+d) Can a middlebox generate SPUD packets?
+-> not clear yet, alternative is that the endpoint provides a place-holder that can be filled by middlebox (and reflected by the receiving endpoint) which implies all middlebox information need to be requested by the sending endpoint; probably doesn’t work for e.g. error messages and therefore the system must allow them to generate them, but we also have to recognize that they may be consumed by the path before reaching their intended destination.​ Further it makes it difficult to do async signaling of changes.
+
+We at least need the ability for path elements to send pdec's when they've got the capability.
+
+e) Can a middlebox request application declaration information from an endpoint and/or provide unrequested path declaration information?
+-> Not clear yet, to avoid amplification attacks maybe apply the packet conservation principle here, e.g. a middlebox can generate a packet/an error message if it drops a packet..?
+
+f) Should middlebox information be reflected over the receiver or can they also be send directly to the sender (and might take a different route)?
+-> Maybe there should be a possibility to sent directly to the sender; for unidirectional flows the receiver may not have a bearer flow to carry the message back and thus would generate spud-only packets which maybe quite a bit overhead. However reflection over the receiver should be preferred.
+
+g) Must SPUD information be provided reliably or are those information always unreliable?
+-> hopefully unreliable is enough as we want an incrementally deployable solution
+
+====================================
+
+1) Tradeoffs in tube identifiers
+----
+
+a) Is the tube scoped per flow or can two different flows have the same tube ID (privacy vs. mobility)? 
+—> MK: scoped to flow
+-> TH: scoped to flow
+-> BT: scoped to flow
+-> KC: ... scoped to flow?
+-> JH: Agree.  A tube is a 6-tuple (5-tuple plus tube ID).  In my current thinking, there may be 7-tuples (including element identifier) for per-path-element communication as well.
+-> TH: Note that this means the tube-id itself cannot be used to do multipath or mobility.  I'm okay with that, personally, but others may experience some surprise.
+
+b) Is the tube scoped to the 5-tuple, 4-tuple, or even 3-tuple? 
+—> MK: bi-flow 5-tuple?
+-> TH: 5-tuple, with unidirectional the default.  A return flow may use the same tube-id, if it wants to signal that it is part of the same exchange, but itis not required to do so.​
+-> BT: uniflow 5 tuple. we can also have a "in-response-to" field allowing on 
+-> KC: consensus biflow 5-tuple, worried about ambiguity regarding which direction a P2A signaling message applies to, especially if sent directly toward packet source.
+-> JH: Say more about that, please?  In my current thinking, a path element can spoof the from address in either direction, send to the other endpoint, as long as they set the pdecl bit.
+-> TH: ​I still think allowing the tube-id to be unidirectional in the base case makes more sense, with the shared tube-id as an optimization.  I think this is one reason why​--it makes reasoning about p2a signals much easier.
+-> JH: Maybe.  The important policy choice I want to be able to make at a firewall is that corresponding return traffic should be allowed if a start packet originated from inside.  I'm not sure how to do that if the return flow doesn't have the same 6-tuple.
+-> KC: Assume asymmetric paths, and the same tube ID is being used for both directions of the path.  If a middlebox can send a PDEC in either forward or backward direction, the receiving endpoint can't tell which direction it applies to (Is this a response to something I sent, or something my peer sent?) - and it only applies to one.  Probably this just means a PDEC needs to say which address it spoofs, or otherwise indicate what caused it to be sent.
+
+
+(Consensus: unidirectional 5 tuple.)
+(Counterpoint Toerless: how to handle multipath binding, and does multipath/mobility information about a flow really need to be exposed to the path?)
+(Countercounterpoint: could we not simply have it be optional to expose this? Default: everyone gets a tube ID, tube IDs are scoped as above, start messages can link tubes)
+
+
+
+
+c) Does SPUD need to send a start message for each tube (independent of the semantics or the overlying protocol)? 
+—> MK: Probably, yes
+-> TH: ​I think this is a SHOULD.  It's a useful message when you expect it to be used to start initiating state in middleboxes, but there may​ be conditions where the treatment requested for the flow means that this is not required.
+-> JH: Absolutely.  If I was doing MPTCP/SPUD, there would be a separate tube for each MPTCP subflow.  I don't know yet if I would do a separate tube for each SCTP stream; with multi-homing, that might be a LOT of tubes.
+-> TH: ​Why isn't this may always send a start message?  If, for example, I want to send a spudified DNS packet, where I am not expecting a long flow but want to tell you something about a treatment, what's wrong with skipping start?
+-> KC: How about setting both START and STOP?    Kind of like T/TCP [RFC 1644].
+-> MK: As above, you can alway send an SPUD ACK even if the overlaying protocol doesn’t have this signal. This would make all SPUD flow bidirectional which I think is a good thins. However the question was more, do we need a START signal at all (because first packet in a flow is presumably the start)…? I think we really want to have an ACK though.
+
+(Consensus: Notionally yes. )
+​ 
+
+c) Can one packet have more than one tube ID? 
+—> MK: No
+-> TH: No
+-> BT: No
+
+(Consensus: no.)
+
+2) Property binding
+---
+
+a) Should it be possible to bind properties (only) to a tube or (also) to single packets? 
+—> MK: Probably both
+-> TH: ​Using SPUD, I think to a tube.  If you need to have a packet have different treatment, it needs a new tube-id.​
+-> BT: If we have a small set of per-packet semantics we thing are generally useful, we should stick flags for them in the base SPUD spec.
+-> JH: The only per-packet marking I can think of at the moment is "drop instead of queuing, please" for overlying transports that want to do both on the same tube.  However, if tubes are cheap, the overlying transport could just start two tubes with different markings. Can you *change* the tube properties later?  If tubes are cheap, then no.  Just start another tube with different properties.
+-> TH: ​Let's make tubes cheap.  I think the two tubes (either at start or as things progress) is easier.​
+-> KC: FWIW, I like the "tubes are cheap" approach.
+
+3) Tradeoffs in integrity protection
+---
+a) Can the authentication mechanism of the overlying transport be used for SPUD information? 
+—> MK: Yes
+-> TH: Honestly, I doubt it.  If we're thinking the overlying transports are generally encrypted, using the authentication mechanism will not be possible because it will be in the encrypted payload of SPUD.​
+-> KC: Yes, if supported by the overlying transport.
+-> JH:  I really want to hide the OT's details from the path (or we'll ossify the OT layer), which means that if the application wants to make something available to the path (also), the information needs to be promoted up into the SPUD layer.  The OT design could do this intentionally, or an application could decide to copy bits so that they are sent in multiple layers at once.
+-> TH: ​I think the SPUD layer can't tell the difference between bits copied into it because they are shared with the overlying transport and bits created directly for it by the OT.  I think that means SPUD shouldn't optimize the shared state in any way.​ 
+To list ->  Yes, if supported by the overlying transport.
+
+(Counterpoint, Tom Herbert: Yes, but this seems independent of the overlying
+protocol. We should be able to secure the SPUD bits as needed regardless of
+overlay or underlay.)
+
+
+b) Information provided by middleboxes will usually not be authenticated. How can packet-mangling be detected?
+-> ​TH: I think there are two issues here:  middleboxes providing information about their treatment that does not match the reality of what they do or don't do and off-path devices claiming that they are applying treatment when they can't do anything.  I think we can handle the second with a secret that the off path attacker can't guess (note that it likely isn't the tube-id itself, because of the bi-directional point made above--by allowing the return path to re-use the tube-id, you're giving it to a set of boxes that are on-path for one direction but off path for the other).  The lying middlebox is very difficult to detect in the general case, and I think what detection of mangling occurs will likely rely on the overlying layers' knowledge of the packet transforms it expects.  To detect the lying, in other words, you need an API surface to show the overlying layer what is expected. 
+-> MK: There is a third thing which is a middlebox provides some information (honestly) but another middlebox on the path changes this information. If we could find a way to detect this, that would be great but I can’t imagine a solution here because there might be valid cases where one middlebox overwrites the information of another middlebox (e.g. if the maximum supported rate would be requested).
+-> KC: Need to be clear what is meant by "authenticate" here (and in 3c).  I think we can distinguish between (i) authentication: determine whether the information came from a known source (implies integrity) and (ii) verification: determine that the information is correct/reliable (see Ted's examples of on-path and off-path liars). You can only do (i) if you have knowledge of something that's supposed to be on the path. It may be that (ii) is what you really want, in which case all you can do is test. If the intent was "detect mangling of middlebox-provided information by other middleboxes on the path", the answer depends on the answer to the next question, so it (3c) should probably come first.  
+-> JH: Some kinds of packet-mangling may be detectable by an OT that has does things similar to TLS. For authentication you need knowledge of something along the path. A couple of examples for clarity where a global RPKI is not required: (a) Corporate firewall.  As a part of provisioning an end-user box, a way to tie the public key of that box to IT's intent is made available to applications. (b) Service Provider (e.g. wireless) Gi-LAN interfaces.  The public key binding could happen at provisioning time when you're on your home network.  Roaming is hard-to-impossible.
+-> TH: ​I hate​ both of your examples.  For nomadic/mobile devices, they presume applications behave differently depending on what network they are on or it presumes they do a bunch of checking that generally doesn't work (worst case resulting in user decisions about whether to trust these random assertions).  I grant you that people want these networks to be special snowflakes, but I would like to start from the "verify tells you whether to trust" point of view.  We probably can't stop there, but let's at least start from that.
+
+Tom Herbert: Authenticating the header should be an option in cases where we
+want to prevent any packet-mangling. There are fields in the headers which
+should be declared immutable in the path-- which likely includes the session
+ID and cmd. We should be able to get integrity and end to end authentication
+of those. If mutable fields are also present, then some options are: (i)
+Define a mechanism to indicate those fields are excluded from authentication
+and integrity check; (ii) Place mutable fields outside of the headers. For
+instance, middleboxes can respond directly to the source instead of modifying
+packets inflight and relying on reflection; (iii) Middlebox encapsulates in
+another header so it can set any fields as desired, but receiver will need to
+untangle that
+
+
+
+
+
+c) Is there a need to authenticate information provided by middleboxes?
+-> KC:  Methods I'm aware of for doing this seem pretty heavyweight [1], but it may be possible to trade some security properties for efficiency. [1] T. Kim et al, "Lightweight [sic!] Source Authentication and Path Validation", Proc. SIGCOMM 2014.
+
+d) Is there a value in SPUD having an (encrypted) end-2-end channel?
+-> MK: Not clear yet, can either be handled by the overlying (encrypted) protocol, or an encryption boundery  within SPUD to provided end-2-end information we can be commonly used by multiple protocols
+-> ​TH: I think if you create an encrypted end-2-end channel you have created an overlying protocol.  It may be an overlying protocol that sits along side the applications overlying protocol.  Design for that may be a useful thing to do and build, but I think it isn't spud-itself.​
+-> JH: Yes, except for a potential minimal OT for A2P communication.
+
+
+
+
+4) Return routability and feedback
+—-
+
+a) 2WHS vs. 3WHS? 
+—> MK: spud protocol has to expose 2WHS (and might support 3WHS)
+-> ​TH: I am not sure what you mean by expose the handshake here.  Do you anticipate that SPUD itself will provide such a 2-way or 3-way handshake?  I tend to think that is an overlying protocol function.  If it is required to be at this layer, SPUD can't be used as a substrate for media streams riding UDP, which would be sad.
+-> KC: This brings up the "datagram service considered harmful" argument.  I don't see how to get around needing a 2HS (at least to confirm signaling), but I hope 3HS isn't required.
+-> JH: I agree with Ted here that any needed 3HS is an OT issue until we prove that it isn't.  The simpler we make this layer, the better.
+—> to list: SPUD should/must (?) provide a 2WHS, that means an ACK in response to the initial packet should be generated by SPUD even if the overlying protocol does not support this semantic. Note this mean the ACK may only have a SPUD header but no overlying protocol data.  This would make all SPUD flows/tubes bidirectional. Further SPUD should also provided the semantics for an 3WHS but may only send a third packet if the overlying protocol implements it or there is another reason for the application to explicitly request a SPUD-only 3WHS.
+
+
+Roland Bless: From a security perspective, a 3WHS with a DoS protection cookie would be the most reasonable option.
+
+
+b) Is an explicit start and start/ack needed? 
+-> Yes, start is needed to distinguish start and middle of a tube; ack is needed to finally set up state
+-> ​TH: As, above, I think these are both SHOULD.  If you don't require START at MUST, you don't require ACK at MUST.  If start is present, though, I think ACK should be sent.  Since SPUD must traverse paths with middleboxes that don't do SPUD, though, there is no way to enforce this desire.
+-> JH: Agree.  I think without the start, you don't get the buy-in needed from path-element developers. I'd go further and say that you can send multiple starts on the same tube; this is certainly needed for initial connections where the start gets lost somewhere on path.  Ideally these are idempotent.
+-> TH: If a path element sees packet 2, 3,4​, where 4 is repeated start because there was no ack, what does he think about 2 & 3?  We really can't delay flows with repeated starts until the ack comes, or we won't be performing well enough to get buy in.
+-> JH: Yeah, this is a place I don't understand well enough.  What does a path element do with multiple TCP SYNs for the same 5-tuple today?
+
+c) Is a stop flag needed/useful? 
+—> MK: Yes (faster state tear-down)
+-> ​TH: Useful, but the overlying protocol must be resilient to it not being sent, not being received.​
+-> BT: (as must middleboxes)
+-> JH: Fully agree with Ted.  The OT needs to deal with these getting lost, and path elements still need (hopefully longer and explicitly communicated) timers to do cleanup eventually.  If nothing else, my battery may die before the stop gets sent.
+
+Jana: A quick thought on explicit close, FWIW. Sending an explicit close
+packet often involves a client or a server sending a packet, usually after
+some amount of quiescence. When on a cellular device, this requires the device
+to pull up the radio and spend energy on sending/receiving a packet that
+basically contains little to no information. This design is generally being
+eschewed in favor of a connection timeout at the ends, especially when the
+endpoints can negotiate on a timeout period. One way for a middlebox to learn
+about connection close would be to have an explicit negotiation in SPUD that
+is visible to the network... but I don't think that relying on connection
+close packets for signaling a connection's termination is going to be
+adequate.
+
+Ted: So, whether the trade-off with an explicit close is worth may depend on
+the traffic pattern of the application and the state being held in the
+network.  In some cases, the close message would go with the last packet, and
+so be "free" from a radio perspective.   I'd  guess that it would generally be
+worth it in any system containing a SPUD-compliant NAT or STUN server, but
+there are cases (DNS over SPUD) where even then it might not be a win for the
+client. But the client itself is the best judge of this, which is why I favor
+including the functionality, but making it optional.  All the systems have to
+be redundant to that packet being lost anyway.
+
+Joe Touch: You might want to look at the Delta-T protocol if you're willing to
+let time manage state this way.
+
+d) Multiple starts / idempotent start:
+
+Tom Herbert: I think one goal of SPUD should be to eliminate the motivation for
+sending keep-alives. Hosts should not be rewarded for sending
+otherwise useless packets into the network, and these are known to be
+bad for battery consumption on mobile devices. To accomplish this, it
+seems like the states for eviction from a middlebox state could be
+chosen at random. An evicted state can be reconstructed with new
+packets seen in both directions that indicate the tube is still open
+at both endpoints.
+
+5) In-band, out-of-band, piggybacked, and interleaved signaling
+—-
+
+a) Do all packets of a flow (where one packet already has a spud header) need to have a SPUD header or could there be single packets in an spud-enabled flow that don’t have one?
+-> MK: Not clear, but probably all packets need an identifier…?
+-> ​TH: I think all packets sharing the tube need the identifier; packets on the five-tuple that don't have a tube identifier aren't assigned any tube.​
+-> JH: 
+The requirements from the network box guys were (i) Get off the fast path into SPUD processing as quickly as possible (this was the reason for the magic number) and (ii) Make it quick to match a later packet with the original start intention.  The easiest way to do this is a tube ID at a consistent offset, but if we have some other way to do this, we might be able to talk them into it by showing that the code required was of similar size, complexity, etc and that there was some other benefit.  For example, an HMAC of the tube ID with rest of the packet instead of a tube ID would technically work, but then the path element would have to perform the HMAC with each currently-valid tube ID to see if it had a match, which would be difficult to do with short enough latency at scale to be useful.
+
+
+b) Do all SPUD packets need to have payload? 
+—> MK, TH: No, e.g. start packet
+-> JH: Also keep-alives might be done at the SPUD layer rather than the OT layer, if you aren't leaking interesting information. (makes me think of http://www.theguardian.com/technology/2015/aug/03/privacy-smartphones-battery-life as a reminder)
+
+
+c) Do all SPUD information have to fit into one packet? 
+—> MK: Hopefully, yes (other should be out-of-band using a proper transport)
+-> TH: Yes
+-> BT: Yes
+-> JH: for P2A and A2P we may need to signal capability in a one-MTU packet, then switch to a 7-tuple minimal OT to exchange more information for larger bits of info.
+
+d) Can a middlebox generate SPUD packets? 
+-> MK: not clear yet, alternative is that the endpoint provides a place-holder that can be filled by middlebox which implies all middlebox information need to be requested; probably doesn’t work for error messages
+-> ​TH: I think the system must allow them to generate them, but we also have to recognize that they may be consumed by the path before reaching their intended destination.​
+-> KC: At the meeting I raised the question of a "conservation of packets" rule: only endpoints can emit more spud packets than they receive.  This seems necessary to preclude amplification attacks. (Relates to 5f.)
+One consequence is that a middlebox that signals directly back toward the source would have to drop the incoming packet that causes the signal.
+-> JH: There's some thought that you could send a placeholder packet with both adec and pdec bits set, which the receiving endpoint would reflect with an as-yet-undecided adec/pdec combination.  One reason I dislike that approach is that it makes it difficult to do async signaling of changes. We at least need the ability for path elements to send pdec's when they've got the capability. Another approach here would be to require the app to send a response to pdec's.  This would probably require us to push a set of operations like XMPP's IQ semantics ([set/get/response/error] with a transaction id) up into SPUD, probably as a marking in the CBOR in the current prototype.  That wouldn't be the worst thing.
+
+e) Can a middlebox request information and/or provide unrequested information? 
+-> TH: Imagine a message that says "Flow state is one way at this location".  That tells the origin that the middlebox isn't on path for return flows of this tube-id.  That could be unsolicited (or vaguely solicited by some spud marker that noted it was expected to be a bidirectional flow.)​
+-> JH: You can request anything you like, and provide any information you like.  You have to talk application vendors into caring about your value-add enough to implement it before it matters, because there are no MUST UNDERSTAND semantics, intentionally. In practice: feel free to ask for a credit card number, but good luck getting Moz to implement it.  You might ask for an Apple Pay token, and it might even work if you're using a late-model Apple phone opted-in correctly, but won't break non-Apple gear.
+-> TH: I think we have to sell this on the ability for the app and the path to talk to each other about the apps network requirements and the paths network characteristics; if we get into the business relationship at this layer, DKG and Wendy Seltzer would be right about the need to stop before we start.
+
+
+f) Should middlebox information be reflected over the receiver or can they also be send directly to the sender (and might take a different route)?
+-> ​TH: I think it can be sent to the sender (for unidirectional flows, that's really the only sensible choice, as the receiver may not have a bearer flow to carry the message back.)  As you note, there's a lot of potential pitfalls in the routing availability here, not least of which is the 9-tunnel problem David is so fond of.​
+-> KC: see 5d
+-> JH: The eliciting packet should only be quenched if it is 7-tupled to that given path element. Otherwise it's a query for anything on the path and needs to be forwarded.
+
+Tom Herbert: Middleboxes often have a locality associated with them, e.g. home
+router, enterprise firewall. In such cases, it seems like returning
+information directly is a better use of resources and limits the
+exposure of the data. For example, if your firewall wants to provide
+the client with it's connection timeout, it can send that back
+directly rather than forwarding this to some server halfway around the
+world and expecting the them to properly reflect the information when
+they should not care about this. To the server this is just extra work
+and extra memory that needs to be allocated for each flow (possibly
+millions of them).
+
+g) Must SPUD information be provided reliably or are those information always unreliable?
+-> MK: hopefully unreliable is enough, but not clear yet
+-> TH: Unreliable had better be enough, because reliability isn't in the cards for an incrementally deployable solution.
+-> BT: Unreliable for in-band or sidecar signaling. SPUD can be used to set up out-of-band associations which themselves run over reliable transports (probably also over SPUD)
+
+6) Explicit multicast/multihome/anycast support (Toerless)
+
+I can't remember / find anything like this right now. WOuld be
+lovely for SPUD to consier including something like this. Heck,
+could even do this with multicast and let initiator send ACK
+back to fastest responder ;-)
