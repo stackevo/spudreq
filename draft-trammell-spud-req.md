@@ -5,7 +5,7 @@ docname: draft-trammell-spud-req-01
 date: 2015-10-19
 category: info
 ipr: trust200902
-
+pi: [toc]
 
 author:
   -
@@ -29,21 +29,18 @@ author:
 informative:
   RFC0792:
   RFC2827:
-  RFC4821:
   RFC6347:
   RFC7510:
   I-D.hildebrand-spud-prototype:
   I-D.huitema-tls-dtls-as-subtransport:
   stackevo-explicit-coop:
     title: Architectural Considerations for Transport Evolution with Explicit Path Cooperation
-    docname: draft-trammell-stackevo-explicit-coop-00
     date: 2015-9-23    
     author:
       -
         ins: B. Trammell
         name: Brian Trammell
   I-D.iab-semi-report:
-  I-D.ietf-dart-dscp-rtp:
 
 --- abstract
 

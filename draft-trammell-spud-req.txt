@@ -62,6 +62,60 @@ Internet-Draft              SPUD requirements               October 2015
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
+Table of Contents
+
+   1.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  History . . . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   5
+   5.  Functional Requirements . . . . . . . . . . . . . . . . . . .   5
+     5.1.  Grouping of Packets (into "tubes")  . . . . . . . . . . .   5
+     5.2.  Endpoint to Path Signaling  . . . . . . . . . . . . . . .   6
+     5.3.  Path to Endpoint Signaling  . . . . . . . . . . . . . . .   6
+     5.4.  Tube Start and End Signaling  . . . . . . . . . . . . . .   6
+     5.5.  Extensibility . . . . . . . . . . . . . . . . . . . . . .   6
+     5.6.  Authentication  . . . . . . . . . . . . . . . . . . . . .   7
+     5.7.  Proof of topology . . . . . . . . . . . . . . . . . . . .   7
+     5.8.  Integrity . . . . . . . . . . . . . . . . . . . . . . . .   7
+     5.9.  Privacy . . . . . . . . . . . . . . . . . . . . . . . . .   7
+   6.  Technical Requirements  . . . . . . . . . . . . . . . . . . .   7
+     6.1.  Middlebox Traversal . . . . . . . . . . . . . . . . . . .   7
+     6.2.  Low Overhead in Network Processing  . . . . . . . . . . .   8
+     6.3.  Implementability in User-Space  . . . . . . . . . . . . .   8
+     6.4.  Incremental Deployability in an Untrusted, Unreliable
+           Environment . . . . . . . . . . . . . . . . . . . . . . .   8
+     6.5.  Protection against trivial abuse  . . . . . . . . . . . .   8
+     6.6.  No unnecessary restrictions on the superstrate  . . . . .   9
+     6.7.  Minimal additional start-up latency . . . . . . . . . . .   9
+     6.8.  Minimal Header Overhead . . . . . . . . . . . . . . . . .   9
+     6.9.  Minimal non-productive traffic  . . . . . . . . . . . . .   9
+     6.10. Invariance of Security Semantics  . . . . . . . . . . . .   9
+     6.11. Reliability, Fragmentation, and Duplication . . . . . . .  10
+     6.12. Interoperability with non-encapsulated superstrates . . .  10
+   7.  Open questions and discussion . . . . . . . . . . . . . . . .  10
+     7.1.  Tradeoffs in tube identifiers . . . . . . . . . . . . . .  10
+     7.2.  Property binding  . . . . . . . . . . . . . . . . . . . .  11
+     7.3.  Tradeoffs in integrity protection . . . . . . . . . . . .  12
+     7.4.  In-band, out-of-band, piggybacked, and interleaved
+           signaling . . . . . . . . . . . . . . . . . . . . . . . .  12
+     7.5.  Continuum of trust among endpoints and middleboxes  . . .  13
+     7.6.  Discovery and capability exposure . . . . . . . . . . . .  13
+     7.7.  Hard state vs. soft state . . . . . . . . . . . . . . . .  13
+     7.8.  Tube vs. superstrate association lifetime . . . . . . . .  14
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
+   10. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  14
+   11. Informative References  . . . . . . . . . . . . . . . . . . .  14
+
+
+
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 2]
+
+Internet-Draft              SPUD requirements               October 2015
+
+
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  15
+
 1.  Motivation
 
    A number of efforts to create new transport protocols or experiment
@@ -106,16 +160,16 @@ Internet-Draft              SPUD requirements               October 2015
    and state maintenance.  Further transport semantics would be used by
    the protocol running atop this facility, but would only be visible to
    the endpoints, as the transport protocol headers themselves would be
+   encrypted, along with the payload, to prevent inspection or
+   modification.  This encryption might be accomplished by using DTLS
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 2]
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 3]
 
 Internet-Draft              SPUD requirements               October 2015
 
 
-   encrypted, along with the payload, to prevent inspection or
-   modification.  This encryption might be accomplished by using DTLS
    [RFC6347] as a subtransport [I-D.huitema-tls-dtls-as-subtransport] or
    by other suitable methods.  This facility could also provide minimal
    application-to-path and path-to-application signaling, though there
@@ -162,16 +216,15 @@ Internet-Draft              SPUD requirements               October 2015
 
    o
 
+      Path:  The sequence of Internet Protocol nodes and links that a
+         given packet traverses from endpoint to endpoint.
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 3]
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 4]
 
 Internet-Draft              SPUD requirements               October 2015
 
-
-      Path:  The sequence of Internet Protocol nodes and links that a
-         given packet traverses from endpoint to endpoint.
 
    o
 
@@ -218,16 +271,17 @@ Internet-Draft              SPUD requirements               October 2015
    "tube", for lack of a better term) and associate information to these
    groups of packets.  Each packet in a SPUD "flow" (determined by
    5-tuple) belongs to exactly one tube.  Notionally, a tube consists of
+   a set of packets with a set of common properties, that should
+   therefore receive equivalent treatment from the network; these tubes
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 4]
+
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 5]
 
 Internet-Draft              SPUD requirements               October 2015
 
 
-   a set of packets with a set of common properties, that should
-   therefore receive equivalent treatment from the network; these tubes
    may or may not be related to separate semantic entities in the
    superstrate (e.g.  SCTP streams).
 
@@ -277,7 +331,9 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 5]
+
+
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 6]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -333,7 +389,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 6]
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 7]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -389,7 +445,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 7]
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 8]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -445,7 +501,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 8]
+Trammell & Kuehlewind    Expires April 21, 2016                 [Page 9]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -501,7 +557,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 9]
+Trammell & Kuehlewind    Expires April 21, 2016                [Page 10]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -557,7 +613,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 10]
+Trammell & Kuehlewind    Expires April 21, 2016                [Page 11]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -613,7 +669,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 11]
+Trammell & Kuehlewind    Expires April 21, 2016                [Page 12]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -669,7 +725,7 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 12]
+Trammell & Kuehlewind    Expires April 21, 2016                [Page 13]
 
 Internet-Draft              SPUD requirements               October 2015
 
@@ -725,14 +781,10 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 13]
+Trammell & Kuehlewind    Expires April 21, 2016                [Page 14]
 
 Internet-Draft              SPUD requirements               October 2015
 
-
-   [RFC4821]  Mathis, M. and J. Heffner, "Packetization Layer Path MTU
-              Discovery", RFC 4821, DOI 10.17487/RFC4821, March 2007,
-              <http://www.rfc-editor.org/info/rfc4821>.
 
    [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
               Security Version 1.2", RFC 6347, DOI 10.17487/RFC6347,
@@ -762,11 +814,6 @@ Internet-Draft              SPUD requirements               October 2015
               Evolution in a Middlebox Internet (SEMI) Report", draft-
               iab-semi-report-01 (work in progress), July 2015.
 
-   [I-D.ietf-dart-dscp-rtp]
-              Black, D. and P. Jones, "Differentiated Services
-              (DiffServ) and Real-time Communication", draft-ietf-dart-
-              dscp-rtp-10 (work in progress), November 2014.
-
 Authors' Addresses
 
    Brian Trammell (editor)
@@ -778,14 +825,6 @@ Authors' Addresses
    Email: ietf@trammell.ch
 
 
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 14]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
    Mirja Kuehlewind (editor)
    ETH Zurich
    Gloriastrasse 35
@@ -793,45 +832,6 @@ Internet-Draft              SPUD requirements               October 2015
    Switzerland
 
    Email: mirja.kuehlewind@tik.ee.ethz.ch
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
