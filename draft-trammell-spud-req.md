@@ -207,12 +207,15 @@ The basic SPUD protocol must not require any authentication or a priori trust re
 
 ## Proof of topology
 
-In the absence of strong authentication, devices that are on-path are de-facto
-more trusted than those not on path: any on-path device, after all, can simply
-drop packets to break a communication between the endpoints. SPUD must
-therefore allow the endpoints to distinguish on-path devices from devices not
-on the path, by allowing a middlebox to prove it is on the path between two
-endpoints.
+Devices may make assertions of network characteristics relevant to a flow. One
+way these assertions can be assessed is by a demonstration that the device
+making it is on-path to the flow and so could adjust the characteristics to
+match the assertion.  SPUD must therefore allow endpoints to distinguish on-
+path devices from devices not on the path. Network elements may also need to
+confirm that application-to-path assertions are made by the source indicated
+in the flow.  In both cases, return routability (as in {{protection-against-
+trivial-abuse}}) may offer one incrementally deployable method of testing the
+topology to make this confirmation.
 
 ## Integrity
 
@@ -319,11 +322,11 @@ reliance on non-productive traffic.
 
 ## Invariance of Security Semantics
 
-The use of SPUD must not change the security semantics of the overlying
-protocol.  If the overlying protocol encrypts its payload, for example, the
-use of SPUD must not allow deep packet inspection systems to have access to
-the plaintext.  While a box along the path may indicate a particular flow is
-adminstratively prohibited or why it is prohibited, SPUD itself must not be
+The use of SPUD must not change the security semantics of the superstrate.  If
+the superstrate includes payload encryption for confidentiality, for example,
+the use of SPUD must not allow deep packet inspection systems to have access
+to the plaintext.  While a box along the path may indicate a particular flow
+is adminstratively prohibited or why it is prohibited, SPUD itself must not be
 used to negotiate the means to lift the prohibition.
 
 ## Reliability, Fragmentation, and Duplication
@@ -341,14 +344,14 @@ method may be an existing transport or superstrate/SPUD combination, or a
 ## Interoperability with non-encapsulated superstrates
 
 It is presumed that "superstrate X with SPUD" is a distinct entity on the wire
-from "superstrate X", and that interoperability between them. The APIs the
-superstrate presents to the application should be equivalent, the two wire
-protocols should be freely transcodeable between each other, with the caveat
-that the variant without SPUD would not necessarily support features enabling
-communication with the path. There is no requirement that the headers the
-superstrate uses be the same in the SPUD and non-SPUD variants. Headers that
-the superstrate chooses always to expose to the path can therefore be encoded
-in the SPUD layer but not appear in an upper-layer header.
+from "superstrate X". The APIs the superstrate presents to the application
+should be equivalent, and the two wire protocols should be freely
+transcodeable between each other, with the caveat that the variant without
+SPUD would not necessarily support features enabling communication with the
+path. However, there is no requirement that the headers the superstrate uses
+be the same in the SPUD and non-SPUD variants. Headers that the superstrate
+chooses always to expose to the path can therefore be encoded in the SPUD
+layer but not appear in an upper-layer header.
 
 # Open questions and discussion
 
@@ -520,3 +523,12 @@ This document has no actions for IANA.
 # Contributors
 
 In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
+
+# Acknowledgments
+
+Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor,
+Tom Herbert, and Christian Huitema for feedback and comments on these
+requirements, as well as to the participants at the SPUD BoF at IETF 92
+meeting in Dallas inand the IAB SEMI workshop in Zurich for the discussions
+leading to this work.
+
