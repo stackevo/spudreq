@@ -290,10 +290,10 @@ due to the ease of forging source addresses in UDP together with the only
 limited deployment of network egress filtering {{RFC2827}}. Trivial abuse
 includes flooding and state exhaustion attacks, as well as reflection and
 amplification attacks.  SPUD must provide minimal protection against this
-trivial abuse. This probably implies that SPUD requires:
+trivial abuse. This probably implies that SPUD should provide:
 
 - a proof of return routability,
-- the presence of a feedback channel between endpoints,
+- a feedback channel between endpoints,
 - a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic, and
 - mechanisms to protect against state exhaustion and other denial-of-service attacks.
 

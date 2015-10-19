@@ -657,12 +657,12 @@ ul.toc a:first-child {
 <p id="rfc.section.6.4.p.1">SPUD must operate in the present Internet. In order to maximize deployment, it should also be useful between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adoption by both endpoints and middleboxes, and must maximize privacy (by minimizing information exposed). Further, SPUD must be robust to packet loss, duplication and reordering by the underlying network service.  SPUD must work in multipath, multicast, and endpoint multi- homing environments.</p>
 <p id="rfc.section.6.4.p.2">Incremental deployability likely requires limitations of the vocabulary used in signaling, to ensure that each actor in a nontrusted environment has incentives to participate in the signaling protocol honestly; see {{stackevo- explicit-coop}} for more.</p>
 <h1 id="rfc.section.6.5"><a href="#rfc.section.6.5">6.5.</a> <a href="#protection-against-trivial-abuse" id="protection-against-trivial-abuse">Protection against trivial abuse</a></h1>
-<p id="rfc.section.6.5.p.1">Malicious background traffic  is a serious problem for UDP- based protocols due to the ease of forging source addresses in UDP together with the only limited deployment of network egress filtering <a href="#RFC2827">[RFC2827]</a>. Trivial abuse includes flooding and state exhaustion attacks, as well as reflection and amplification attacks.  SPUD must provide minimal protection against this trivial abuse. This probably implies that SPUD requires:</p>
+<p id="rfc.section.6.5.p.1">Malicious background traffic  is a serious problem for UDP- based protocols due to the ease of forging source addresses in UDP together with the only limited deployment of network egress filtering <a href="#RFC2827">[RFC2827]</a>. Trivial abuse includes flooding and state exhaustion attacks, as well as reflection and amplification attacks.  SPUD must provide minimal protection against this trivial abuse. This probably implies that SPUD should provide:</p>
 <p/>
 
 <ul>
   <li>a proof of return routability,</li>
-  <li>the presence of a feedback channel between endpoints,</li>
+  <li>a feedback channel between endpoints,</li>
   <li>a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic, and</li>
   <li>mechanisms to protect against state exhaustion and other denial-of-service attacks.</li>
 </ul>

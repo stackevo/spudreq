@@ -453,11 +453,11 @@ Internet-Draft              SPUD requirements               October 2015
    [RFC2827].  Trivial abuse includes flooding and state exhaustion
    attacks, as well as reflection and amplification attacks.  SPUD must
    provide minimal protection against this trivial abuse.  This probably
-   implies that SPUD requires:
+   implies that SPUD should provide:
 
    o  a proof of return routability,
 
-   o  the presence of a feedback channel between endpoints,
+   o  a feedback channel between endpoints,
 
    o  a method to probabilistically discriminiate legitimate SPUD
       traffic from reflected malicious traffic, and
