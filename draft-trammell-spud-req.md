@@ -1,8 +1,8 @@
 ---
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
-docname: draft-trammell-spud-req-01
-date: 2015-10-19
+docname: draft-trammell-spud-req-02
+date: 2015-12-19
 category: info
 ipr: trust200902
 pi: [toc]
@@ -53,21 +53,21 @@ The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meet
 # Motivation
 
 A number of efforts to create new transport protocols or experiment with new
-network behaviors have been built on top of UDP, as it traverses firewalls and
-other middleboxes more readily than new protocols do.  Each such effort must,
-however, either manage its flows within common middlebox assumptions for UDP
-or train the middleboxes on the new protocol (thus losing the benefit of
-using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort
-to re-use a set of shared methods for notifying middleboxes of the flows'
-semantics, thus avoiding both the limitations of current flow semantics and
-the need to re-invent the mechanism for notifying the middlebox of the new
-semantics.
+network behaviors in the Internet have been built on top of UDP, as it
+traverses firewalls and other middleboxes more readily than new protocols do.
+Each such effort must, however, either manage its flows within common
+middlebox assumptions for UDP or train the middleboxes on the new protocol
+(thus losing the benefit of using UDP). A common Substrate Protocol for User
+Datagrams (SPUD) would allow each effort to re-use a set of shared methods for
+notifying middleboxes of the flows' semantics, thus avoiding both the
+limitations of current flow semantics and the need to re-invent the mechanism
+for notifying the middlebox of the new semantics.
 
 As a concrete example, it is common for some middleboxes to tear down required
-state (such as NAT bindings) very rapidly for UDP flows. By notifying the
-path that a particular transport using UDP maintains session state and explicitly
-signals session start and stop using the substrate, the using protocol may reduce or avoid
-the need for heartbeat traffic.
+state (such as NAT bindings) very rapidly for UDP flows. By notifying the path
+that a particular transport using UDP maintains session state and explicitly
+signals session start and stop using the substrate, the using protocol may
+reduce or avoid the need for heartbeat traffic.
 
 This document defines a specific set of requirements for a SPUD facility,
 based on analysis on a target set of applications to be developed on SPUD
@@ -120,8 +120,7 @@ This document uses the following terms:
 
 - Superstrate: : The transport protocol or protocol stack "above" SPUD, that uses SPUD for explicit path cooperation and path traversal. The superstrate usually consists of a security layer (e.g. TLS, DTLS) and a transport protocol, or a transport protocol with integrated security features, to protect headers and payload above SPUD.
 
-- Endpoint: : One end of a communication session, located on a single node that is a source or destination of packets in that session.
- In this document, this term may refer to either the SPUD implementation at the endpoint, the superstrate implementation running over SPUD, or the applications running over that superstrate.
+- Endpoint: : One end of a communication session, located on a single node that is a source or destination of packets in that session. In this document, this term may refer to either the SPUD implementation at the endpoint, the superstrate implementation running over SPUD, or the applications running over that superstrate.
 
 - Path: : The sequence of Internet Protocol nodes and links that a given packet traverses from endpoint to endpoint. 
 
@@ -129,16 +128,16 @@ This document uses the following terms:
 
 # Use Cases
 
-The primary use case for endpoint to path signaling, making use of packet
-grouping, is the binding of limited related semantics (start, ack, and stop)
-to a flow or a group of packets within a flow which are semantically related
-in terms of the application or superstrate. By explicitly signaling start and
-stop semantics, a flow allows middleboxes to use those signals for setting up
-and tearing down their relevant state (NAT bindings, firewall pinholes),
-rather than requiring the middlebox to infer this state from continued
-traffic. At best, this would allow the application to refrain from sending
-heartbeat traffic, which might result in reduced radio utilization and thus
-greater battery life on mobile platforms.
+The primary use case for endpoint to path signaling in the Internet, making
+use of packet grouping, is the binding of limited related semantics (start,
+ack, and stop) to a flow or a group of packets within a flow which are
+semantically related in terms of the application or superstrate. By explicitly
+signaling start and stop semantics, a flow allows middleboxes to use those
+signals for setting up and tearing down their relevant state (NAT bindings,
+firewall pinholes), rather than requiring the middlebox to infer this state
+from continued traffic. At best, this would allow the application to refrain
+from sending heartbeat traffic, which might result in reduced radio
+utilization and thus greater battery life on mobile platforms.
 
 SPUD may also provide some facility for SPUD-aware nodes on the path to signal
 some property of the path relative to a tube to the endpoints and other SPUD-
@@ -169,9 +168,44 @@ may not be related to separate semantic entities in the superstrate (e.g. SCTP
 streams).
 
 The simplest mechanisms for association involve the addition of an identifier
-to each packet in a tube. Current thoughts on the tradeoffs on requirements
-and constraints on this identifier space are given in {{tradeoffs-in-tube-
-identifiers}}.
+to each packet in a tube. Other mechanisms that don't directly encode the
+identifier in a packet header, but instead provide it in a way that it is
+simple to derive from other information available in the packet at the
+endpoints and along the path, are also possible. In any cases, for the
+purposes of this requirement we treat this identifier as a simple vector of N
+bits. The properties of the tube identifier are subject to tradeoffs on the
+requirements for privacy, security, ease of implementation, and header
+overhead efficiency.
+
+In determining the optimal size and scope for this tube identifier, we first
+assume that the 5-tuple of source and destination IP address, UDP port, and IP
+protocol identifier (17 for UDP) is used in the Internet as an existing flow
+identifier, due to the widespread deployment of network address and port
+translation. We conclude that SPUD tube IDs should be scoped to this 5-tuple.
+
+While a globally-unique identifier would allow easier state comparison and
+migration for mobility use cases, it would have two serious disadvantages.
+First, N would need to be sufficiently large to minimize the probability of
+collision among multiple tubes having the same identifier along the same path
+during some period of time. A 128-bit UUID {{RFC4122}} or an identifier of
+equivalent size generated using an equivalent algorithm would probably be
+sufficient, at the cost of 128 bits of header space in every packet. Second,
+globally unique tube identifiers would also introduce new possibilities for
+user and node tracking, with a serious negative impact on privacy. We note
+that global identifiers for mobility, when necessary to expose to the path,
+can be supported separately from the tube identification mechanism, by using a
+generic tube-grouping application-to-path signaling bound to the tube.
+
+Even when tube IDs are scoped to 5-tuples, N must still be sufficiently large,
+and the bits in the identifier sufficiently random, that possession of a valid
+tube ID implies that a node can observe packets belonging to the tube. This
+reduces the chances of success of blind packet injection attacks of packets
+with guessed valid tube IDs. When scoped to 5-tuples, the forward and backward
+directions of a bidirectional flow  have different tube IDs, since these will
+necessarily take different paths and may interact with a different set of
+middleboxes due to asymmetric routing. SPUD will therefore require some
+facility to note that one tube is the "reverse" direction of another, a
+general case of the tube grouping signal above.
 
 ## Endpoint to Path Signaling
 
@@ -195,11 +229,20 @@ for more discussion.
 
 ## Tube Start and End Signaling
 
-SPUD must provide a facility for endpoints to signal that a tube has started, that the start of the tube has been acknowledged and accepted by the remote endpoint(s), and that a tube has ended and its state can be forgotten by the path. Given unreliable signaling (see {{reliability-fragmentation-and-duplication}}) both endpoints and devices on the path must be resilient to the loss of any of these signals. Specifically, timeouts are still necessary to clean up stale state. See {{hard-state-vs-soft-state}} and {{tube-vs-superstrate-association-lifetime}} for more discussion on tube start and end signaling.
+SPUD must provide a facility for endpoints to signal that a tube has started,
+that the start of the tube has been acknowledged and accepted by the remote
+endpoint(s), and that a tube has ended and its state can be forgotten by the
+path. Given unreliable signaling (see {{reliability-fragmentation-and-
+duplication}}) both endpoints and devices on the path must be resilient to the
+loss of any of these signals. Specifically, timeouts are still necessary to
+clean up stale state. See {{hard-state-vs-soft-state}} and {{tube-vs-
+superstrate-association-lifetime}} for more discussion on tube start and end
+signaling.
 
 ## Extensibility
 
-SPUD must enable multiple new transport semantics and application/path declarations without requiring updates to SPUD implementations in middleboxes.
+SPUD must enable multiple new transport semantics and application/path
+declarations without requiring updates to SPUD implementations in middleboxes.
 
 ## Authentication
 
@@ -235,7 +278,9 @@ superstrate.
 
 ## Privacy
 
-SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.
+SPUD must allow endpoints to control the amount of information exposed to
+middleboxes, with the default being the minimum necessary for correct
+functioning.
 
 # Technical Requirements
 
@@ -250,7 +295,6 @@ probing to determine in advance which transport protocols will be accepted on
 a certain path. This encapsulation will require port numbers to support NAPT-
 connected endpoints.  UDP encapsulation is the only mechanism that meets
 these requirements.
-
 
 ## Low Overhead in Network Processing
 
@@ -285,7 +329,7 @@ explicit-coop}} for more.
 
 ## Protection against trivial abuse
 
-Malicious background traffic  is a serious problem for UDP- based protocols
+Malicious background traffic is a serious problem for UDP-based protocols
 due to the ease of forging source addresses in UDP together with the only
 limited deployment of network egress filtering {{RFC2827}}. Trivial abuse
 includes flooding and state exhaustion attacks, as well as reflection and
@@ -299,7 +343,7 @@ trivial abuse. This probably implies that SPUD should provide:
 
 We note that return routability excludes use of a UDP source port that does
 not accept traffic (i.e., for one-way communication, as is commonly done for
-unidirectional UDP tunnels, e.g., MPLS in UDP {{RFC7510}} as an entropy input.)
+unidirectional UDP tunnels, e.g., MPLS in UDP {{RFC7510}}, as an entropy input.)
 
 ## No unnecessary restrictions on the superstrate
 
@@ -368,51 +412,6 @@ protocol for common middlebox-endpoint cooperation for superstrates. There
 remain a few large open questions and points for discussion, detailed in the
 subsections below.
 
-## Tradeoffs in tube identifiers
-
-Grouping packets into tubes requires some sort of notional tube identifier;
-for purposes of this discussion we will assume this identifier to be a simple
-vector of N bits. The properties of the tube identifier are subject to
-tradeoffs on the requirements for privacy, security, ease of implementation,
-and header overhead efficiency.
-
-We first assume that the 5-tuple of source and destination IP address, UDP (or
-other transport protocol) port, and IP protocol identifier (17 for UDP) is
-used in the Internet as an existing flow identifier, due to the widespread
-deployment of network address and port translation. The question then arises
-whether tube identifiers should be scoped to 5-tuples (i.e., a tube is
-identified by a 6-tuple including the tube identifier) or should be separate,
-and presumed to be globally unique.
-
-If globally unique, N must be sufficiently large to minimize the probability
-of collision among multiple tubes having the same identifier along the same
-path during some period of time. A 128-bit UUID {{RFC4122}} or an identifier
-generated using an equivalent algorithm would be useful as such a globally-
-unique tube identifier. An advantage of globally unique tube identifiers would
-be migration of per-tube state across multiple five-tuples for mobility
-support in multipath protocols. However, globally unique tube identifiers
-would also introduce new possibilities for user and node tracking, with a
-serious negative impact on privacy. This alone probably speaks against using
-globally unique identifiers for SPUD.
-
-In the case of 5-tuple-scoped identifiers, mobility must be supported
-separately from the tube identification mechanism. This could be specific to
-each superstrate (i.e., hidden from the path), or SPUD could provide a
-general endpoint-to-path tube grouping signal to allow an endpoint to
-explicitly expose the fact that one tube is related to another to the path.
-Even in this case, N must still be sufficiently large, and the bits in the
-identifier sufficiently random, that possession of a valid tube ID implies
-that a node can observe packets belonging to the tube. This reduces the
-chances of success of blind packet injection attacks of packets with guessed
-valid tube IDs.
-
-When scoped to 5-tuples, the forward and backward directions of a
-bidirectional flow probably have different tube IDs, since these will
-necessarily take different paths and may interact with a different set of
-middleboxes due to asymmetric routing. SPUD will therefore require some
-facility to note that one tube is the "reverse" direction of another, a
-general case of the tube grouping signal above.
-
 ## Property binding
 
 Related to identifier scope is the scope of properties bound to SPUD packets
@@ -453,8 +452,50 @@ superstrate) and/or interleaved (where SPUD and the superstrate each have
 their own packets).  Signaling can also be out-of-band (on a different five
 tuple, or even over a completely different protocol). Out of band signaling
 for path-to-endpoint information can use direct return, allowing a device on
-the path to communicate directly with an endpoint (i.e., as with ICMP). More
-discussion on the tradeoffs here is given in {{stackevo-explicit-coop}}.
+the path to communicate directly with an endpoint (i.e., as with ICMP).
+
+[EDITOR'S NOTE: pulled this back from stackevo-explicit-encap]
+
+Signaling channels may be in-band (that is, using the same 5 tuple as the
+encapsulated traffic) or out-of-band (using another channel and different
+flows). Here there are also many tradeoffs to consider. In-band signaling has
+the advantage that it does not require foreknowledge of the identity and
+addresses of devices along the path by endpoints and vice versa, but does add
+complexity to the signaling protocol.
+
+In-band signaling can be either piggybacked on the overlying transport or
+interleaved with it. Piggybacked signaling uses some number of bits in each
+packet generated by the overlying transport to achieve signaling. It requires
+either reducing the MTU available to the encapsulated transport  and/or
+opportunistically using bits between the network-layer MTU and the bits
+actually used by the transport.
+
+This is even more complicated in the case of middleboxes that wish to add
+information to piggybacked-signaling packets, and may require the endpoints to
+introduce "scratch space" in the packets for potential middlebox signaling
+use, further increasing complexity and overhead.
+
+In contrast, interleaved signaling uses signaling packets on the same 5-tuple.
+This reduces complexity and sidesteps MTU problems, but is only applicable
+when the signaling can be considered valid for the entire flow or bound to
+some subset of packets in the flow via an identifier.
+
+Out-of-band signaling uses direct connections between endpoints and
+middleboxes, separate from the encapsulated transport -- connections that are
+perhaps negotiated by in-band signaling. A key disadvantage here is that
+out-of-band signaling packets may not take the same path as the packets in the
+encapsulated transport; therefore connectivity cannot be guaranteed.
+
+Signaling of path-to-endpoint information, in the case that a middlebox wants
+to signal something to the sender of the packet, raises the added problem of
+either (1) requiring the middlebox to send the information to the receiver for
+later reflection back to the sender, which has the disadvantage of complexity,
+or (2) requiring out-of-band direct signaling back to the sender, which in
+turn either requires the middlebox to spoof the source address and port of the
+receiver to ensure equivalent NAT treatment, or some other NAT-traversal
+approach.
+
+[EDITOR'S NOTE: address comments about spoofed source addresses]
 
 The tradeoffs here must be carefully weighed, and the final approach may use a
 mix of all these communication patterns where SPUD provides different
@@ -539,6 +580,6 @@ In addition to the editors, this document is the work of David Black, Ken Calver
 Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor,
 Tom Herbert, and Christian Huitema for feedback and comments on these
 requirements, as well as to the participants at the SPUD BoF at IETF 92
-meeting in Dallas inand the IAB SEMI workshop in Zurich for the discussions
+meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions
 leading to this work.
 
