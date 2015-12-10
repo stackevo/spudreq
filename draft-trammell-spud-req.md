@@ -36,13 +36,7 @@ informative:
   RFC7663:
   I-D.hildebrand-spud-prototype:
   I-D.huitema-tls-dtls-as-subtransport:
-  stackevo-explicit-coop:
-    title: Architectural Considerations for Transport Evolution with Explicit Path Cooperation
-    date: 2015-9-23    
-    author:
-      -
-        ins: B. Trammell
-        name: Brian Trammell
+  I-D.trammell-stackevo-explicit-coop:
 
 --- abstract
 
@@ -110,7 +104,7 @@ should also be independently verifiable, so that each entity can assign its
 own trust to other entities. Basic transport over the substrate must continue
 working even if signaling is ignored or stripped, to support incremental
 deployment. These restrictions on vocabulary are discussed further in
-{{stackevo-explicit-coop}}. This discussion includes privacy and trust
+{{I-D.trammell-stackevo-explicit-coop}}. This discussion includes privacy and trust
 concerns as well as the need for strong incentives for middlebox cooperation
 based on the information that are exposed.
 
@@ -144,7 +138,8 @@ for middleboxes as a replacement for deep packet inspection for traffic
 classification purposes, rendered ineffective by superstrate encryption. In
 this application, properties would be expressed in terms of network-relevant
 parameters (intended bandwidth, latency and loss sensitivity, etc.) as opposed
-to application-relevant semantics. 
+to application-relevant semantics. See {{I-D.trammell-stackevo-explicit-coop}}
+for discussion on limitations in signaling in untrusted environments.
 
 SPUD may also provide some facility for SPUD-aware nodes on the path to signal
 some property of the path relative to a tube to the endpoints and other SPUD-
@@ -347,8 +342,8 @@ environments.
 
 Incremental deployability likely requires limitations of the vocabulary used
 in signaling, to ensure that each actor in a nontrusted environment has
-incentives to participate in the signaling protocol honestly; see {{stackevo-
-explicit-coop}} for more.
+incentives to participate in the signaling protocol honestly; see 
+{{I-D.trammell-stackevo-explicit-coop}} for more.
 
 ## Protection against trivial abuse
 
