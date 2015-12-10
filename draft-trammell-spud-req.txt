@@ -5,12 +5,12 @@
 Network Working Group                                   B. Trammell, Ed.
 Internet-Draft                                        M. Kuehlewind, Ed.
 Intended status: Informational                                ETH Zurich
-Expires: April 21, 2016                                 October 19, 2015
+Expires: June 21, 2016                                 December 19, 2015
 
 
  Requirements for the design of a Substrate Protocol for User Datagrams
                                  (SPUD)
-                       draft-trammell-spud-req-01
+                       draft-trammell-spud-req-02
 
 Abstract
 
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 21, 2016.
+   This Internet-Draft will expire on June 21, 2016.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 1]
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 1]
 
-Internet-Draft              SPUD requirements               October 2015
+Internet-Draft              SPUD requirements              December 2015
 
 
    include Simplified BSD License text as described in Section 4.e of
@@ -68,62 +68,62 @@ Table of Contents
    2.  History . . . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
    4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   5
-   5.  Functional Requirements . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Grouping of Packets (into "tubes")  . . . . . . . . . . .   5
-     5.2.  Endpoint to Path Signaling  . . . . . . . . . . . . . . .   6
-     5.3.  Path to Endpoint Signaling  . . . . . . . . . . . . . . .   6
-     5.4.  Tube Start and End Signaling  . . . . . . . . . . . . . .   6
-     5.5.  Extensibility . . . . . . . . . . . . . . . . . . . . . .   6
-     5.6.  Authentication  . . . . . . . . . . . . . . . . . . . . .   7
-     5.7.  Proof a device is on-path . . . . . . . . . . . . . . . .   7
-     5.8.  Integrity . . . . . . . . . . . . . . . . . . . . . . . .   7
-     5.9.  Privacy . . . . . . . . . . . . . . . . . . . . . . . . .   7
-   6.  Technical Requirements  . . . . . . . . . . . . . . . . . . .   7
-     6.1.  Middlebox Traversal . . . . . . . . . . . . . . . . . . .   8
-     6.2.  Low Overhead in Network Processing  . . . . . . . . . . .   8
-     6.3.  Implementability in User-Space  . . . . . . . . . . . . .   8
+   5.  Functional Requirements . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Grouping of Packets (into "tubes")  . . . . . . . . . . .   6
+     5.2.  Endpoint to Path Signaling  . . . . . . . . . . . . . . .   7
+     5.3.  Path to Endpoint Signaling  . . . . . . . . . . . . . . .   7
+     5.4.  Tube Start and End Signaling  . . . . . . . . . . . . . .   7
+     5.5.  SPUD Support Discovery  . . . . . . . . . . . . . . . . .   8
+     5.6.  Extensibility . . . . . . . . . . . . . . . . . . . . . .   8
+     5.7.  Authentication  . . . . . . . . . . . . . . . . . . . . .   8
+     5.8.  Proof a device is on-path . . . . . . . . . . . . . . . .   8
+     5.9.  Integrity . . . . . . . . . . . . . . . . . . . . . . . .   8
+     5.10. Privacy . . . . . . . . . . . . . . . . . . . . . . . . .   9
+   6.  Technical Requirements  . . . . . . . . . . . . . . . . . . .   9
+     6.1.  Middlebox Traversal . . . . . . . . . . . . . . . . . . .   9
+     6.2.  Low Overhead in Network Processing  . . . . . . . . . . .   9
+     6.3.  Implementability in User-Space  . . . . . . . . . . . . .   9
      6.4.  Incremental Deployability in an Untrusted, Unreliable
-           Environment . . . . . . . . . . . . . . . . . . . . . . .   8
-     6.5.  Protection against trivial abuse  . . . . . . . . . . . .   8
-     6.6.  No unnecessary restrictions on the superstrate  . . . . .   9
-     6.7.  Minimal additional start-up latency . . . . . . . . . . .   9
-     6.8.  Minimal Header Overhead . . . . . . . . . . . . . . . . .   9
-     6.9.  Minimal non-productive traffic  . . . . . . . . . . . . .   9
-     6.10. Preservation of Security Properties . . . . . . . . . . .  10
-     6.11. Reliability, Fragmentation, and Duplication . . . . . . .  10
-     6.12. Interoperability with non-encapsulated superstrates . . .  10
-   7.  Open questions and discussion . . . . . . . . . . . . . . . .  10
-     7.1.  Tradeoffs in tube identifiers . . . . . . . . . . . . . .  11
-     7.2.  Property binding  . . . . . . . . . . . . . . . . . . . .  12
-     7.3.  Tradeoffs in integrity protection . . . . . . . . . . . .  12
-     7.4.  In-band, out-of-band, piggybacked, and interleaved
-           signaling . . . . . . . . . . . . . . . . . . . . . . . .  12
-     7.5.  Continuum of trust among endpoints and middleboxes  . . .  13
-     7.6.  Discovery and capability exposure . . . . . . . . . . . .  13
-     7.7.  Hard state vs. soft state . . . . . . . . . . . . . . . .  14
-     7.8.  Tube vs. superstrate association lifetime . . . . . . . .  14
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  14
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  14
-   10. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  14
+           Environment . . . . . . . . . . . . . . . . . . . . . . .   9
+     6.5.  Protection against trivial abuse  . . . . . . . . . . . .  10
+     6.6.  No unnecessary restrictions on the superstrate  . . . . .  10
+     6.7.  Minimal additional start-up latency . . . . . . . . . . .  11
+     6.8.  Minimal Header Overhead . . . . . . . . . . . . . . . . .  11
+     6.9.  Minimal non-productive traffic  . . . . . . . . . . . . .  11
+     6.10. Preservation of Security Properties . . . . . . . . . . .  11
+     6.11. Reliability, Fragmentation, and Duplication . . . . . . .  11
+     6.12. Interoperability with non-encapsulated superstrates . . .  11
+   7.  Open questions and discussion . . . . . . . . . . . . . . . .  12
+     7.1.  Property binding  . . . . . . . . . . . . . . . . . . . .  12
+     7.2.  Tradeoffs in integrity protection . . . . . . . . . . . .  12
+     7.3.  In-band, out-of-band, piggybacked, interleaved, and
+           reflected signaling . . . . . . . . . . . . . . . . . . .  13
+     7.4.  Continuum of trust among endpoints and middleboxes  . . .  14
+     7.5.  Discovery and capability exposure . . . . . . . . . . . .  14
+     7.6.  Hard state vs. soft state . . . . . . . . . . . . . . . .  14
+     7.7.  Tube vs. superstrate association lifetime . . . . . . . .  15
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
+   10. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  15
    11. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  15
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 2]
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 2]
 
-Internet-Draft              SPUD requirements               October 2015
+Internet-Draft              SPUD requirements              December 2015
 
 
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  15
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  16
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  16
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
 
 1.  Motivation
 
    A number of efforts to create new transport protocols or experiment
-   with new network behaviors have been built on top of UDP, as it
-   traverses firewalls and other middleboxes more readily than new
-   protocols do.  Each such effort must, however, either manage its
-   flows within common middlebox assumptions for UDP or train the
+   with new network behaviors in the Internet have been built on top of
+   UDP, as it traverses firewalls and other middleboxes more readily
+   than new protocols do.  Each such effort must, however, either manage
+   its flows within common middlebox assumptions for UDP or train the
    middleboxes on the new protocol (thus losing the benefit of using
    UDP).  A common Substrate Protocol for User Datagrams (SPUD) would
    allow each effort to re-use a set of shared methods for notifying
@@ -149,33 +149,32 @@ Internet-Draft              SPUD requirements               October 2015
 2.  History
 
    An outcome of the IAB workshop on Stack Evolution in a Middlebox
-   Internet (SEMI) [I-D.iab-semi-report], held in Zurich in January
-   2015, was a discussion on the creation of a substrate protocol to
-   support the deployment of new transport protocols in the Internet.
-   Assuming that a way forward for transport evolution in user space
-   would involve encapsulation in UDP datagrams, the workshop noted that
-   it may be useful to have a facility built atop UDP to provide minimal
-   signaling of the semantics of a flow that would otherwise be
-   available in TCP.  At the very least, indications of first and last
-   packets in a flow may assist firewalls and NATs in policy decision
-   and state maintenance.  This facility could also provide minimal
-   application-to- path and path-to-application signaling, though there
-   was less agreement about what should or could be signaled here.
-   Further transport semantics would be used by the protocol running
+   Internet (SEMI) [RFC7663], held in Zurich in January 2015, was a
+   discussion on the creation of a substrate protocol to support the
+   deployment of new transport protocols in the Internet.  Assuming that
+   a way forward for transport evolution in user space would involve
+   encapsulation in UDP datagrams, the workshop noted that it may be
+   useful to have a facility built atop UDP to provide minimal signaling
+   of the semantics of a flow that would otherwise be available in TCP.
+   At the very least, indications of first and last packets in a flow
+   may assist firewalls and NATs in policy decision and state
+   maintenance.  This facility could also provide minimal application-
+   to- path and path-to-application signaling, though there was less
+   agreement about what should or could be signaled here.  Further
+   transport semantics would be used by the protocol running atop this
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 3]
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 3]
 
-Internet-Draft              SPUD requirements               October 2015
+Internet-Draft              SPUD requirements              December 2015
 
 
-   atop this facility, but would only be visible to the endpoints, as
-   the transport protocol headers themselves would be encrypted, along
-   with the payload, to prevent inspection or modification.  This
-   encryption might be accomplished by using DTLS [RFC6347] as a
-   subtransport [I-D.huitema-tls-dtls-as-subtransport] or by other
-   suitable methods.
+   facility, but would only be visible to the endpoints, as the
+   transport protocol headers themselves would be encrypted, along with
+   the payload, to prevent inspection or modification.  This encryption
+   might be accomplished by using DTLS [RFC6347] as a subtransport
+   [I-D.huitema-tls-dtls-as-subtransport] or by other suitable methods.
 
    The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF
    92 in Dallas in March 2015 to develop this concept further.  It is
@@ -217,17 +216,16 @@ Internet-Draft              SPUD requirements               October 2015
    o  Path: : The sequence of Internet Protocol nodes and links that a
       given packet traverses from endpoint to endpoint.
 
-
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 4]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
    o  Middlebox: : As defined in [RFC3234], a middlebox is any
       intermediary device performing functions other than the normal,
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 4]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
       standard functions of an IP router on the datagram path between a
       source host and destination host; e.g. making decisions about
       forwarding behavior based on other than addressing information,
@@ -235,17 +233,25 @@ Internet-Draft              SPUD requirements               October 2015
 
 4.  Use Cases
 
-   The primary use case for endpoint to path signaling, making use of
-   packet grouping, is the binding of limited related semantics (start,
-   ack, and stop) to a flow or a group of packets within a flow which
-   are semantically related in terms of the application or superstrate.
-   By explicitly signaling start and stop semantics, a flow allows
-   middleboxes to use those signals for setting up and tearing down
-   their relevant state (NAT bindings, firewall pinholes), rather than
-   requiring the middlebox to infer this state from continued traffic.
-   At best, this would allow the application to refrain from sending
-   heartbeat traffic, which might result in reduced radio utilization
-   and thus greater battery life on mobile platforms.
+   The primary use case for endpoint to path signaling in the Internet,
+   making use of packet grouping, is the binding of limited related
+   semantics (start, ack, and stop) to a flow or a group of packets
+   within a flow which are semantically related in terms of the
+   application or superstrate.  By explicitly signaling start and stop
+   semantics, a flow allows middleboxes to use those signals for setting
+   up and tearing down their relevant state (NAT bindings, firewall
+   pinholes), rather than requiring the middlebox to infer this state
+   from continued traffic.  At best, this would allow the application to
+   refrain from sending heartbeat traffic, which might result in reduced
+   radio utilization and thus greater battery life on mobile platforms.
+
+   SPUD could also be used to provide information relevant for network
+   treatment for middleboxes as a replacement for deep packet inspection
+   for traffic classification purposes, rendered ineffective by
+   superstrate encryption.  In this application, properties would be
+   expressed in terms of network-relevant parameters (intended
+   bandwidth, latency and loss sensitivity, etc.) as opposed to
+   application-relevant semantics.
 
    SPUD may also provide some facility for SPUD-aware nodes on the path
    to signal some property of the path relative to a tube to the
@@ -258,6 +264,23 @@ Internet-Draft              SPUD requirements               October 2015
    visible; these would traverse NATs in the same way as the traffic
    related to it, and be deliverable to the application with appropriate
    tube information.
+
+   Link-layer characteristics of use to the transport layer (e.g.,
+   whether a high-transient-delay, highly-buffered link such as LTE is
+   present on the path) could also be signaled using this path-to-
+   endpoint facility.
+
+
+
+
+
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 5]
+
+Internet-Draft              SPUD requirements              December 2015
+
 
 5.  Functional Requirements
 
@@ -274,22 +297,65 @@ Internet-Draft              SPUD requirements               October 2015
    groups of packets.  Each packet in a SPUD "flow" (determined by
    5-tuple) belongs to exactly one tube.  Notionally, a tube consists of
    a set of packets with a set of common properties, that should
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 5]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
    therefore receive equivalent treatment from the network; these tubes
    may or may not be related to separate semantic entities in the
    superstrate (e.g.  SCTP streams).
 
    The simplest mechanisms for association involve the addition of an
-   identifier to each packet in a tube.  Current thoughts on the
-   tradeoffs on requirements and constraints on this identifier space
-   are given in {{tradeoffs-in-tube- identifiers}}.
+   identifier to each packet in a tube.  Other mechanisms that don't
+   directly encode the identifier in a packet header, but instead
+   provide it in a way that it is simple to derive from other
+   information available in the packet at the endpoints and along the
+   path, are also possible.  In any cases, for the purposes of this
+   requirement we treat this identifier as a simple vector of N bits.
+   The properties of the tube identifier are subject to tradeoffs on the
+   requirements for privacy, security, ease of implementation, and
+   header overhead efficiency.
+
+   In determining the optimal size and scope for this tube identifier,
+   we first assume that the 5-tuple of source and destination IP
+   address, UDP port, and IP protocol identifier (17 for UDP) is used in
+   the Internet as an existing flow identifier, due to the widespread
+   deployment of network address and port translation.  We conclude that
+   SPUD tube IDs should be scoped to this 5-tuple.
+
+   While a globally-unique identifier would allow easier state
+   comparison and migration for mobility use cases, it would have two
+   serious disadvantages.  First, N would need to be sufficiently large
+   to minimize the probability of collision among multiple tubes having
+   the same identifier along the same path during some period of time.
+   A 128-bit UUID [RFC4122] or an identifier of equivalent size
+   generated using an equivalent algorithm would probably be sufficient,
+   at the cost of 128 bits of header space in every packet.  Second,
+   globally unique tube identifiers would also introduce new
+   possibilities for user and node tracking, with a serious negative
+   impact on privacy.  We note that global identifiers for mobility,
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 6]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
+   when necessary to expose to the path, can be supported separately
+   from the tube identification mechanism, by using a generic tube-
+   grouping application-to-path signaling bound to the tube.
+
+   Even when tube IDs are scoped to 5-tuples, N must still be
+   sufficiently large, and the bits in the identifier sufficiently
+   random, that possession of a valid tube ID implies that a node can
+   observe packets belonging to the tube (see Section 5.8).  This
+   reduces the chances of success of blind packet injection attacks of
+   packets with guessed valid tube IDs.
+
+   When scoped to 5-tuples, the forward and backward directions of a
+   bidirectional connection will have different tube IDs, since these
+   will necessarily take different paths and may interact with a
+   different set of middleboxes due to asymmetric routing.  SPUD will
+   therefore require some facility to note that one tube is the
+   "reverse" direction of another, a general case of the tube grouping
+   signal above.
 
 5.2.  Endpoint to Path Signaling
 
@@ -299,8 +365,8 @@ Internet-Draft              SPUD requirements               October 2015
    existing trust relationships to all SPUD-aware middleboxes on a
    certain path in the context of the Internet, SPUD must provide in-
    band signaling.  SPUD may in addition also offer mechanisms for out-
-   of-band signaling when appropriate.  See {{in-band-out-of- band-
-   piggybacked-and-interleaved-signaling}} for more discussion.
+   of-band signaling when appropriate.  See Section 7.3 for more
+   discussion.
 
 5.3.  Path to Endpoint Signaling
 
@@ -310,7 +376,7 @@ Internet-Draft              SPUD requirements               October 2015
    do not originate the packets in a tube, it is still associated with a
    tube, in terms of "the properties of the path(s) this tube will
    traverse".  Path to endpoint signaling need not be in-band; see
-   Section 7.4 for more discussion.
+   Section 7.3 for more discussion.
 
 5.4.  Tube Start and End Signaling
 
@@ -318,27 +384,37 @@ Internet-Draft              SPUD requirements               October 2015
    started, that the start of the tube has been acknowledged and
    accepted by the remote endpoint(s), and that a tube has ended and its
    state can be forgotten by the path.  Given unreliable signaling (see
-   Section 6.11) both endpoints and devices on the path must be
-   resilient to the loss of any of these signals.  Specifically,
-   timeouts are still necessary to clean up stale state.  See
-   Section 7.7 and Section 7.8 for more discussion on tube start and end
-   signaling.
+   {{reliability-fragmentation-and- duplication}}) both endpoints and
+   devices on the path must be resilient to the loss of any of these
 
-5.5.  Extensibility
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 7]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
+   signals.  Specifically, timeouts are still necessary to clean up
+   stale state.  See Section 7.6 and {{tube-vs- superstrate-association-
+   lifetime}} for more discussion on tube start and end signaling.
+
+5.5.  SPUD Support Discovery
+
+   A SPUD endpoint must be able to easily determine whether a remote
+   endpoint with which it wants to communicate using SPUD as a substrate
+   can support SPUD, and whether path to the remote endpoint as well as
+   the return path from the remote endpoint will pass SPUD packets.  If
+   SPUD is not usable on a path to an endpoint, a SPUD sender needs to
+   be able to fall back to some other approach to achieve the goals of
+   the superstrate.
+
+5.6.  Extensibility
 
    SPUD must enable multiple new transport semantics and application/
    path declarations without requiring updates to SPUD implementations
    in middleboxes.
 
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 6]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
-5.6.  Authentication
+5.7.  Authentication
 
    The basic SPUD protocol must not require any authentication or a
    priori trust relationship between endpoints and middleboxes to
@@ -348,7 +424,7 @@ Internet-Draft              SPUD requirements               October 2015
    band or out-of-band, and use this information where possible and
    appropriate.
 
-5.7.  Proof a device is on-path
+5.8.  Proof a device is on-path
 
    Devices may make assertions of network characteristics relevant to a
    flow.  One way these assertions can be assessed is by a demonstration
@@ -361,18 +437,26 @@ Internet-Draft              SPUD requirements               October 2015
    against- trivial-abuse}}) may offer one incrementally deployable
    method of testing the topology to make this confirmation.
 
-5.8.  Integrity
+5.9.  Integrity
 
-   SPUD must provide integrity protection of SPUD-encapsulated packets,
-   though the details of this integrity protection are still open; see
-   {{tradeoffs-in- integrity-protection}}. Endpoints should be able to
-   detect changes to headers SPUD uses for its own signaling (whether
+   SPUD must provide integrity protection of exposed information in
+   SPUD- encapsulated packets, though the details of this integrity
+   protection are still open; see Section 7.2.  Endpoints should be able
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 8]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
+   to detect changes to headers SPUD uses for its own signaling (whether
    due to error, accidental modification, or malicious modification), as
    well as the injection of packets into a SPUD flow (defined by
    5-tuple) or tube by nodes other than the remote endpoint.  Integrity
    protection of the superstrate is left up to the superstrate.
 
-5.9.  Privacy
+5.10.  Privacy
 
    SPUD must allow endpoints to control the amount of information
    exposed to middleboxes, with the default being the minimum necessary
@@ -382,17 +466,6 @@ Internet-Draft              SPUD requirements               October 2015
 
    The following requirements detail the constraints on how the SPUD
    facility must meet its functional requirements.
-
-
-
-
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 7]
-
-Internet-Draft              SPUD requirements               October 2015
-
 
 6.1.  Middlebox Traversal
 
@@ -425,6 +498,14 @@ Internet-Draft              SPUD requirements               October 2015
    SPUD must operate in the present Internet.  In order to maximize
    deployment, it should also be useful between endpoints even before
    the deployment of middleboxes that understand it.  The information
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                 [Page 9]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
    exposed over SPUD must provide incentives for adoption by both
    endpoints and middleboxes, and must maximize privacy (by minimizing
    information exposed).  Further, SPUD must be robust to packet loss,
@@ -439,17 +520,9 @@ Internet-Draft              SPUD requirements               October 2015
 
 6.5.  Protection against trivial abuse
 
-   Malicious background traffic is a serious problem for UDP- based
+   Malicious background traffic is a serious problem for UDP-based
    protocols due to the ease of forging source addresses in UDP together
    with the only limited deployment of network egress filtering
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 8]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
    [RFC2827].  Trivial abuse includes flooding and state exhaustion
    attacks, as well as reflection and amplification attacks.  SPUD must
    provide minimal protection against this trivial abuse.  This probably
@@ -468,7 +541,7 @@ Internet-Draft              SPUD requirements               October 2015
    We note that return routability excludes use of a UDP source port
    that does not accept traffic (i.e., for one-way communication, as is
    commonly done for unidirectional UDP tunnels, e.g., MPLS in UDP
-   [RFC7510] as an entropy input.)
+   [RFC7510], as an entropy input.)
 
 6.6.  No unnecessary restrictions on the superstrate
 
@@ -480,6 +553,14 @@ Internet-Draft              SPUD requirements               October 2015
    endpoints are commonly willing to expose.  This information should be
    included in SPUD, and might itself impose additional restrictions to
    the superstrate.
+
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 10]
+
+Internet-Draft              SPUD requirements              December 2015
+
 
 6.7.  Minimal additional start-up latency
 
@@ -497,14 +578,6 @@ Internet-Draft              SPUD requirements               October 2015
    SPUD should minimize additional non-productive traffic (e.g.
    keepalives), and should provide mechanisms to allow its superstrates
    to minimize their reliance on non-productive traffic.
-
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                 [Page 9]
-
-Internet-Draft              SPUD requirements               October 2015
-
 
 6.10.  Preservation of Security Properties
 
@@ -537,6 +610,14 @@ Internet-Draft              SPUD requirements               October 2015
    the application should be equivalent, and the two wire protocols
    should be freely transcodeable between each other, with the caveat
    that the variant without SPUD would not necessarily support features
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 11]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
    enabling communication with the path.  However, there is no
    requirement that the headers the superstrate uses be the same in the
    SPUD and non-SPUD variants.  Headers that the superstrate chooses
@@ -552,76 +633,7 @@ Internet-Draft              SPUD requirements               October 2015
    questions and points for discussion, detailed in the subsections
    below.
 
-
-
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 10]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
-7.1.  Tradeoffs in tube identifiers
-
-   Grouping packets into tubes requires some sort of notional tube
-   identifier; for purposes of this discussion we will assume this
-   identifier to be a simple vector of N bits.  The properties of the
-   tube identifier are subject to tradeoffs on the requirements for
-   privacy, security, ease of implementation, and header overhead
-   efficiency.
-
-   We first assume that the 5-tuple of source and destination IP
-   address, UDP (or other transport protocol) port, and IP protocol
-   identifier (17 for UDP) is used in the Internet as an existing flow
-   identifier, due to the widespread deployment of network address and
-   port translation.  The question then arises whether tube identifiers
-   should be scoped to 5-tuples (i.e., a tube is identified by a 6-tuple
-   including the tube identifier) or should be separate, and presumed to
-   be globally unique.
-
-   If globally unique, N must be sufficiently large to minimize the
-   probability of collision among multiple tubes having the same
-   identifier along the same path during some period of time.  A 128-bit
-   UUID [RFC4122] or an identifier generated using an equivalent
-   algorithm would be useful as such a globally- unique tube identifier.
-   An advantage of globally unique tube identifiers would be migration
-   of per-tube state across multiple five-tuples for mobility support in
-   multipath protocols.  However, globally unique tube identifiers would
-   also introduce new possibilities for user and node tracking, with a
-   serious negative impact on privacy.  This alone probably speaks
-   against using globally unique identifiers for SPUD.
-
-   In the case of 5-tuple-scoped identifiers, mobility must be supported
-   separately from the tube identification mechanism.  This could be
-   specific to each superstrate (i.e., hidden from the path), or SPUD
-   could provide a general endpoint-to-path tube grouping signal to
-   allow an endpoint to explicitly expose the fact that one tube is
-   related to another to the path.  Even in this case, N must still be
-   sufficiently large, and the bits in the identifier sufficiently
-   random, that possession of a valid tube ID implies that a node can
-   observe packets belonging to the tube.  This reduces the chances of
-   success of blind packet injection attacks of packets with guessed
-   valid tube IDs.
-
-   When scoped to 5-tuples, the forward and backward directions of a
-   bidirectional flow probably have different tube IDs, since these will
-   necessarily take different paths and may interact with a different
-   set of middleboxes due to asymmetric routing.  SPUD will therefore
-   require some facility to note that one tube is the "reverse"
-
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 11]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
-   direction of another, a general case of the tube grouping signal
-   above.
-
-7.2.  Property binding
+7.1.  Property binding
 
    Related to identifier scope is the scope of properties bound to SPUD
    packets by endpoints.  SPUD may support both per-tube properties as
@@ -634,7 +646,7 @@ Internet-Draft              SPUD requirements               October 2015
    the SPUD header, and require all more complicated properties to be
    bound per- tube.
 
-7.3.  Tradeoffs in integrity protection
+7.2.  Tradeoffs in integrity protection
 
    In order to protect the integrity of information carried by SPUD
    against forging by malicious devices along the path, it would be
@@ -654,7 +666,16 @@ Internet-Draft              SPUD requirements               October 2015
    band (treating the middlebox as a participant in a 3+ party
    communication).
 
-7.4.  In-band, out-of-band, piggybacked, and interleaved signaling
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 12]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
+7.3.  In-band, out-of-band, piggybacked, interleaved, and reflected
+      signaling
 
    Discussions about SPUD to date have focused on the possibility of in-
    band signaling from endpoints to middleboxes and back - the signaling
@@ -666,27 +687,64 @@ Internet-Draft              SPUD requirements               October 2015
    packets).  Signaling can also be out-of-band (on a different five
    tuple, or even over a completely different protocol).  Out of band
    signaling for path-to-endpoint information can use direct return,
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 12]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
    allowing a device on the path to communicate directly with an
-   endpoint (i.e., as with ICMP).  More discussion on the tradeoffs here
-   is given in [stackevo-explicit-coop].
+   endpoint (i.e., as with ICMP).  There are many tradeoffs to consider
+   in this space.
+
+   In-band signaling has the advantage that it does not require
+   foreknowledge of the identity and addresses of devices along the path
+   by endpoints and vice versa, but does add complexity to the signaling
+   protocol.  Piggybacked signaling uses some number of bits in each
+   packet generated by the overlying transport.  It requires either
+   reducing the MTU available to the encapsulated transport and/or
+   opportunistically using "headroom" as it is available: bits between
+   the network-layer MTU and the bits actually used by the transport.
+   For use cases that accumulate information from devices on path in the
+   SPUD header, piggybacked signaling would also require a mechanism for
+   endpoints to create "scratch space" for potential use of the on-path
+   devices, further increasing complexity and overhead.  In contrast,
+   interleaved signaling uses signaling packets on the same 5-tuple and
+   tube ID, which don't carry any superstrate data.  This reduces
+   complexity and sidesteps MTU problems, but is only applicable for
+   per-tube signaling.
+
+   Out-of-band signaling uses direct connections between endpoints and
+   middleboxes, separate from the encapsulated transport.  Such
+   connections might be negotiated by in-band signaling.  A key
+   disadvantage here is that out-of- band signaling packets may not take
+   the same path as the packets in the encapsulated transport.
+
+   When a middlebox wants to send a signal back to the sender of a
+   packet it receives, there are three possibilities, each with
+   disadvantages.  First, the middlebox could send a packet directly
+   back to the sender.  This packet would need to carry the reversed
+   5-tuple in order to receive equivalent NAT treatment - in other
+   words, the middlebox would need to use the recipient's address as the
+   source address of the direct message.  This would not necessarily
+   traverse the same path as packets from the receiver back to the
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 13]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
+   sender would.  Second, the middlebox could send the signal forward to
+   the receiver (piggybacked or interleaved), requesting the receiver
+   reflect it back to the sender.  Such a facility would require careful
+   design to keep it from being used as a reflection attack vector (see
+   {{protection-against-trivial- abuse}}).  Third, the middlebox could
+   initiate an out-of-band communication through some other mechanism.
 
    The tradeoffs here must be carefully weighed, and the final approach
-   may use a mix of all these communication patterns where SPUD provides
-   different signaling patterns for different situations.  E.g., a
-   middlebox might need to generate out-of-band signals for error
-   messages or can provide requested information in-band and feedback
-   over the receiver if a minimum or maximum value from all SPUD-aware
-   middleboxes on path should be discovered.
+   may use a mix of more than one these communication patterns.  E.g., a
+   middlebox might need to generate direct out-of-band signals for error
+   messages, while it could provide requested information in-band and
+   via reflection for accumulating values from all SPUD-aware
+   middleboxes on a given path.
 
-7.5.  Continuum of trust among endpoints and middleboxes
+7.4.  Continuum of trust among endpoints and middleboxes
 
    There are different security considerations for different security
    contexts.  The end-to-end context is one; anything that only needs to
@@ -701,42 +759,33 @@ Internet-Draft              SPUD requirements               October 2015
    how these points along the continuum are to be implemented and how
    they relate to each other needs to be explored further.
 
-7.6.  Discovery and capability exposure
+7.5.  Discovery and capability exposure
 
-   There are three open issues in discovery and capability exposure.
-   First, an endpoint needs to discover if the other communication
-   endpoint understands SPUD.  Second, endpoints need to test whether
-   SPUD is potentially not usable along a path because of middleboxes
-   that block SPUD packets or strip the SPUD header.  If such
-   impairments exist in the path, a SPUD sender needs to fall back to
-   some other approach to achieve the goals of the superstrate.  Third,
-   endpoints might want to be able to discover SPUD-aware middleboxes
-   along the path, and to discover which parts of the vocabulary that
-   can be spoken by the endpoints are supported by those middleboxes as
-   well as the other communication endpoint, and vice versa.
+   There are two open issues in discovery and capability exposure.
+   First, endpoints might want to be able to discover SPUD-aware
+   middleboxes along the path, and to discover which parts of the
+   vocabulary that can be spoken by the endpoints are supported by those
+   middleboxes as well as the other communication endpoint, and vice
+   versa.  Second, SPUD coult assist endpoints in discovering and
+   negotiate which superstrates are available for a given interaction,
+   though it is explicitly not a goal of SPUD to expose information
+   about the details of the superstrate to middleboxes.
 
-   In addition, endpoints may need to discover and negotiate which
-   superstrates are available for a given interaction.  SPUD could
-   assist here.  However, it is explicitly not a goal of SPUD to expose
-   information about the details of the superstrate to middleboxes.
-
-
-
-
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 13]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
-7.7.  Hard state vs. soft state
+7.6.  Hard state vs. soft state
 
    The initial thinking on signaling envisions "hard state" in
    middleboxes that is established when the middlebox observes the start
    of a SPUD tube and is torn down when the middlebox observes the end
    (stop) of a SPUD tube.  Such state can be abandoned as a result of
    network topology changes (e.g., routing update in response to link or
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 14]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
    node failure).  An alternative is a "soft state" approach that
    requires periodic refresh of state in middleboxes, but cleanly times
    out and discards abandoned state.  SPUD has the opportunity to use
@@ -744,14 +793,14 @@ Internet-Draft              SPUD requirements               October 2015
    NAT and firewall pinhole maintenance.  Of course, applications will
    still have to detect non-SPUD middleboxes that use shorter timers.
 
-7.8.  Tube vs. superstrate association lifetime
+7.7.  Tube vs. superstrate association lifetime
 
    The requirements as presently defined use tube start and stop
    signaling for two things: (1) setting up and tearing down state along
    the path, and (2) signaling superstrate such as association startup,
    acceptance, and teardown, which may have security implications.
    These may require separate signaling.  Specifically, if tube start
-   acknowledgement is to be used to provide explicit guarantees to the
+   acknowledgment is to be used to provide explicit guarantees to the
    path about the acceptability of a tube to a remote endpoint, it
    cannot be a completely unreliable signal.  Second, the lifetime of a
    tube may be much shorter than the lifetime of a superstrate
@@ -762,12 +811,12 @@ Internet-Draft              SPUD requirements               October 2015
 8.  Security Considerations
 
    The security-relevant requirements for SPUD deal mainly with endpoint
-   authentication and the integrity of exposed information (Section 5.6,
-   Section 5.8, Section 5.9, and Section 7.3); protection against
-   attacks (Section 5.7, Section 6.5, and Section 7.1 and); and the
-   trust relationships among endpoints and middleboxes Section 7.5.
-   These will be further addressed in protocol definition work following
-   from these requirements.
+   authentication and the integrity of exposed information (Section 5.7,
+   Section 5.9, Section 5.10, and Section 7.2); protection against
+   attacks (Section 5.8, and Section 6.5); and the trust relationships
+   among endpoints and middleboxes Section 7.4.  These will be further
+   addressed in protocol definition work following from these
+   requirements.
 
 9.  IANA Considerations
 
@@ -779,20 +828,22 @@ Internet-Draft              SPUD requirements               October 2015
    Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric
    Rescorla.
 
-
-
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 14]
-
-Internet-Draft              SPUD requirements               October 2015
-
-
 11.  Acknowledgments
 
    Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn
    Gillmor, Tom Herbert, and Christian Huitema for feedback and comments
    on these requirements, as well as to the participants at the SPUD BoF
-   at IETF 92 meeting in Dallas inand the IAB SEMI workshop in Zurich
-   for the discussions leading to this work.
+
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 15]
+
+Internet-Draft              SPUD requirements              December 2015
+
+
+   at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for
+   the discussions leading to this work.
 
 12.  Informative References
 
@@ -810,8 +861,8 @@ Internet-Draft              SPUD requirements               October 2015
               <http://www.rfc-editor.org/info/rfc3234>.
 
    [RFC4122]  Leach, P., Mealling, M., and R. Salz, "A Universally
-              Unique IDentifier (UUID) URN Namespace", RFC 4122, DOI
-              10.17487/RFC4122, July 2005,
+              Unique IDentifier (UUID) URN Namespace", RFC 4122,
+              DOI 10.17487/RFC4122, July 2005,
               <http://www.rfc-editor.org/info/rfc4122>.
 
    [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
@@ -819,9 +870,14 @@ Internet-Draft              SPUD requirements               October 2015
               January 2012, <http://www.rfc-editor.org/info/rfc6347>.
 
    [RFC7510]  Xu, X., Sheth, N., Yong, L., Callon, R., and D. Black,
-              "Encapsulating MPLS in UDP", RFC 7510, DOI 10.17487/
-              RFC7510, April 2015,
+              "Encapsulating MPLS in UDP", RFC 7510,
+              DOI 10.17487/RFC7510, April 2015,
               <http://www.rfc-editor.org/info/rfc7510>.
+
+   [RFC7663]  Trammell, B., Ed. and M. Kuehlewind, Ed., "Report from the
+              IAB Workshop on Stack Evolution in a Middlebox Internet
+              (SEMI)", RFC 7663, DOI 10.17487/RFC7663, October 2015,
+              <http://www.rfc-editor.org/info/rfc7663>.
 
    [I-D.hildebrand-spud-prototype]
               Hildebrand, J. and B. Trammell, "Substrate Protocol for
@@ -837,19 +893,14 @@ Internet-Draft              SPUD requirements               October 2015
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 15]
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 16]
 
-Internet-Draft              SPUD requirements               October 2015
+Internet-Draft              SPUD requirements              December 2015
 
 
    [stackevo-explicit-coop]
               Trammell, B., "Architectural Considerations for Transport
               Evolution with Explicit Path Cooperation", September 2015.
-
-   [I-D.iab-semi-report]
-              Trammell, B. and M. Kuehlewind, "IAB Workshop on Stack
-              Evolution in a Middlebox Internet (SEMI) Report", draft-
-              iab-semi-report-01 (work in progress), July 2015.
 
 Authors' Addresses
 
@@ -893,4 +944,9 @@ Authors' Addresses
 
 
 
-Trammell & Kuehlewind    Expires April 21, 2016                [Page 16]
+
+
+
+
+
+Trammell & Kuehlewind     Expires June 21, 2016                [Page 17]

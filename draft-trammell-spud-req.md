@@ -33,6 +33,7 @@ informative:
   RFC4122:
   RFC6347:
   RFC7510:
+  RFC7663:
   I-D.hildebrand-spud-prototype:
   I-D.huitema-tls-dtls-as-subtransport:
   stackevo-explicit-coop:
@@ -42,7 +43,6 @@ informative:
       -
         ins: B. Trammell
         name: Brian Trammell
-  I-D.iab-semi-report:
 
 --- abstract
 
@@ -79,7 +79,7 @@ a working group for specific protocol engineering work.
 # History
 
 An outcome of the IAB workshop on Stack Evolution in a Middlebox Internet
-(SEMI) {{I-D.iab-semi-report}}, held in Zurich in January 2015, was a
+(SEMI) {{RFC7663}}, held in Zurich in January 2015, was a
 discussion on the creation of a substrate protocol to support the deployment
 of new transport protocols in the Internet. Assuming that a way forward for
 transport evolution in user space would involve encapsulation in UDP
@@ -139,6 +139,13 @@ from continued traffic. At best, this would allow the application to refrain
 from sending heartbeat traffic, which might result in reduced radio
 utilization and thus greater battery life on mobile platforms.
 
+SPUD could also be used to provide information relevant for network treatment
+for middleboxes as a replacement for deep packet inspection for traffic
+classification purposes, rendered ineffective by superstrate encryption. In
+this application, properties would be expressed in terms of network-relevant
+parameters (intended bandwidth, latency and loss sensitivity, etc.) as opposed
+to application-relevant semantics. 
+
 SPUD may also provide some facility for SPUD-aware nodes on the path to signal
 some property of the path relative to a tube to the endpoints and other SPUD-
 aware nodes on the path. The primary use case for path to application
@@ -148,6 +155,10 @@ traverse the path. This usage is, however, not a pure replacement for ICMP but
 a "5-tuple ICMP" for error messages which should be application-visible; these
 would traverse NATs in the same way as the traffic related to it, and be
 deliverable to the application with appropriate tube information.
+
+Link-layer characteristics of use to the transport layer (e.g., whether a
+high-transient-delay, highly-buffered link such as LTE is present on the path)
+could also be signaled using this path-to-endpoint facility.
 
 # Functional Requirements
 
@@ -198,10 +209,12 @@ generic tube-grouping application-to-path signaling bound to the tube.
 
 Even when tube IDs are scoped to 5-tuples, N must still be sufficiently large,
 and the bits in the identifier sufficiently random, that possession of a valid
-tube ID implies that a node can observe packets belonging to the tube. This
-reduces the chances of success of blind packet injection attacks of packets
-with guessed valid tube IDs. When scoped to 5-tuples, the forward and backward
-directions of a bidirectional flow  have different tube IDs, since these will
+tube ID implies that a node can observe packets belonging to the tube (see
+{{proof-a-device-is-on-path}}). This reduces the chances of success of blind
+packet injection attacks of packets with guessed valid tube IDs.
+
+When scoped to 5-tuples, the forward and backward directions of a
+bidirectional connection will have different tube IDs, since these will
 necessarily take different paths and may interact with a different set of
 middleboxes due to asymmetric routing. SPUD will therefore require some
 facility to note that one tube is the "reverse" direction of another, a
@@ -214,8 +227,9 @@ point(s) to all SPUD-aware nodes on the path about the packets in that tube.
 Since it is implausible that an endpoint has pre-existing trust relationships
 to all SPUD-aware middleboxes on a certain path in the context of the
 Internet, SPUD must provide in-band signaling. SPUD may in addition also offer
-mechanisms for out-of-band signaling when appropriate. See {{in-band-out-of-
-band-piggybacked-and-interleaved-signaling}} for more discussion.
+mechanisms for out-of-band signaling when appropriate. 
+See {{in-band-out-of-band-piggybacked-interleaved-and-reflected-signaling}} 
+for more discussion.
 
 ## Path to Endpoint Signaling
 
@@ -224,7 +238,7 @@ endpoint. Though this information is not scoped to a tube in the same way that
 endpoint to path signaling is, as the middleboxes do not originate the packets
 in a tube, it is still associated with a tube, in terms of "the properties of
 the path(s) this tube will traverse". Path to endpoint signaling need not be
-in-band; see {{in-band-out-of-band-piggybacked-and-interleaved-signaling}}
+in-band; see {{in-band-out-of-band-piggybacked-interleaved-and-reflected-signaling}}
 for more discussion.
 
 ## Tube Start and End Signaling
@@ -238,6 +252,15 @@ loss of any of these signals. Specifically, timeouts are still necessary to
 clean up stale state. See {{hard-state-vs-soft-state}} and {{tube-vs-
 superstrate-association-lifetime}} for more discussion on tube start and end
 signaling.
+
+## SPUD Support Discovery
+
+A SPUD endpoint must be able to easily determine whether a remote endpoint
+with which it wants to communicate using SPUD as a substrate can support SPUD,
+and whether path to the remote endpoint as well as the return path from the
+remote endpoint will pass SPUD packets. If SPUD is not usable on a path to an
+endpoint, a SPUD sender needs to be able to fall back to some other approach
+to achieve the goals of the superstrate.
 
 ## Extensibility
 
@@ -267,14 +290,14 @@ topology to make this confirmation.
 
 ## Integrity
 
-SPUD must provide integrity protection of SPUD-encapsulated packets, though
-the details of this integrity protection are still open; see {{tradeoffs-in-
-integrity-protection}}. Endpoints should be able to detect changes to headers
-SPUD uses for its own signaling (whether due to error, accidental
-modification, or malicious modification), as well as the injection of packets
-into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote
-endpoint. Integrity protection of the superstrate is left up to the
-superstrate.
+SPUD must provide integrity protection of exposed information in SPUD-
+encapsulated packets, though the details of this integrity protection are
+still open; see {{tradeoffs-in-integrity-protection}}. Endpoints should be
+able to detect changes to headers SPUD uses for its own signaling (whether due
+to error, accidental modification, or malicious modification), as well as the
+injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes
+other than the remote endpoint. Integrity protection of the superstrate is
+left up to the superstrate.
 
 ## Privacy
 
@@ -293,7 +316,7 @@ SPUD must be encapsulated in a transport protocol that is known to be accepted
 on a large fraction of paths in the Internet, or implement some form of
 probing to determine in advance which transport protocols will be accepted on
 a certain path. This encapsulation will require port numbers to support NAPT-
-connected endpoints.  UDP encapsulation is the only mechanism that meets
+connected endpoints. UDP encapsulation is the only mechanism that meets
 these requirements.
 
 ## Low Overhead in Network Processing
@@ -441,7 +464,7 @@ authentication of middleboxes and vice-versa may be better conducted out-of-
 band (treating the middlebox as an endpoint for the authentication protocol)
 than in-band (treating the middlebox as a participant in a 3+ party communication).
 
-## In-band, out-of-band, piggybacked, and interleaved signaling
+## In-band, out-of-band, piggybacked, interleaved, and reflected signaling
 
 Discussions about SPUD to date have focused on the possibility of in-band
 signaling from endpoints to middleboxes and back -- the signaling channel
@@ -452,57 +475,49 @@ superstrate) and/or interleaved (where SPUD and the superstrate each have
 their own packets).  Signaling can also be out-of-band (on a different five
 tuple, or even over a completely different protocol). Out of band signaling
 for path-to-endpoint information can use direct return, allowing a device on
-the path to communicate directly with an endpoint (i.e., as with ICMP).
+the path to communicate directly with an endpoint (i.e., as with ICMP). There
+are many tradeoffs to consider in this space.
 
-[EDITOR'S NOTE: pulled this back from stackevo-explicit-encap]
-
-Signaling channels may be in-band (that is, using the same 5 tuple as the
-encapsulated traffic) or out-of-band (using another channel and different
-flows). Here there are also many tradeoffs to consider. In-band signaling has
-the advantage that it does not require foreknowledge of the identity and
-addresses of devices along the path by endpoints and vice versa, but does add
-complexity to the signaling protocol.
-
-In-band signaling can be either piggybacked on the overlying transport or
-interleaved with it. Piggybacked signaling uses some number of bits in each
-packet generated by the overlying transport to achieve signaling. It requires
-either reducing the MTU available to the encapsulated transport  and/or
-opportunistically using bits between the network-layer MTU and the bits
-actually used by the transport.
-
-This is even more complicated in the case of middleboxes that wish to add
-information to piggybacked-signaling packets, and may require the endpoints to
-introduce "scratch space" in the packets for potential middlebox signaling
-use, further increasing complexity and overhead.
-
-In contrast, interleaved signaling uses signaling packets on the same 5-tuple.
-This reduces complexity and sidesteps MTU problems, but is only applicable
-when the signaling can be considered valid for the entire flow or bound to
-some subset of packets in the flow via an identifier.
+In-band signaling has the advantage that it does not require foreknowledge of
+the identity and addresses of devices along the path by endpoints and vice
+versa, but does add complexity to the signaling protocol. Piggybacked
+signaling uses some number of bits in each packet generated by the overlying
+transport. It requires either reducing the MTU available to the encapsulated
+transport and/or opportunistically using "headroom" as it is available: bits
+between the network-layer MTU and the bits actually used by the transport. For
+use cases that accumulate information from devices on path in the SPUD header,
+piggybacked signaling would also require a mechanism for endpoints to create
+"scratch space" for potential use of the on-path devices, further increasing
+complexity and overhead. In contrast, interleaved signaling uses signaling
+packets on the same 5-tuple and tube ID, which don't carry any superstrate
+data. This reduces complexity and sidesteps MTU problems, but is only
+applicable for per-tube signaling.
 
 Out-of-band signaling uses direct connections between endpoints and
-middleboxes, separate from the encapsulated transport -- connections that are
-perhaps negotiated by in-band signaling. A key disadvantage here is that
-out-of-band signaling packets may not take the same path as the packets in the
-encapsulated transport; therefore connectivity cannot be guaranteed.
+middleboxes, separate from the encapsulated transport. Such  connections might
+be negotiated by in-band signaling. A key disadvantage here is that out-of-
+band signaling packets may not take the same path as the packets in the
+encapsulated transport.
 
-Signaling of path-to-endpoint information, in the case that a middlebox wants
-to signal something to the sender of the packet, raises the added problem of
-either (1) requiring the middlebox to send the information to the receiver for
-later reflection back to the sender, which has the disadvantage of complexity,
-or (2) requiring out-of-band direct signaling back to the sender, which in
-turn either requires the middlebox to spoof the source address and port of the
-receiver to ensure equivalent NAT treatment, or some other NAT-traversal
-approach.
-
-[EDITOR'S NOTE: address comments about spoofed source addresses]
+When a middlebox wants to send a signal back to the sender of a packet it
+receives, there are three possibilities, each with disadvantages. First, the
+middlebox could send a packet directly back to the sender. This packet would
+need to carry the reversed 5-tuple in order to receive equivalent NAT
+treatment -- in other words, the middlebox would need to use the recipient's
+address as the source address of the direct message. This would not
+necessarily traverse the same path as packets from the receiver back to the
+sender would. Second, the middlebox could send the signal forward to the
+receiver (piggybacked or interleaved), requesting the receiver reflect it back
+to the sender. Such a facility would require careful design to keep it from
+being used as a reflection attack vector (see {{protection-against-trivial-
+abuse}}). Third, the middlebox could initiate an out-of-band communication
+through some other mechanism.
 
 The tradeoffs here must be carefully weighed, and the final approach may use a
-mix of all these communication patterns where SPUD provides different
-signaling patterns for different situations. E.g., a middlebox might need to
-generate out-of-band signals for error messages or can provide requested
-information in-band and feedback over the receiver if a minimum or maximum
-value from all SPUD-aware middleboxes on path should be discovered.
+mix of more than one these communication patterns. E.g., a middlebox might
+need to generate direct out-of-band signals for error messages, while it could
+provide requested information in-band and via reflection for accumulating
+values from all SPUD-aware middleboxes on a given path.
 
 ## Continuum of trust among endpoints and middleboxes
 
@@ -520,21 +535,14 @@ other needs to be explored further.
 
 ## Discovery and capability exposure
 
-There are three open issues in discovery and capability exposure. First, an
-endpoint needs to discover if the other communication endpoint understands
-SPUD. Second, endpoints need to test whether SPUD is potentially not usable
-along a path because of middleboxes that block SPUD packets or strip the SPUD
-header. If such impairments exist in the path, a SPUD sender needs to fall
-back to some other approach to achieve the goals of the superstrate.
-Third, endpoints might want to be able to discover SPUD-aware middleboxes
-along the path, and to discover which parts of the vocabulary that can be
-spoken by the endpoints are supported by those middleboxes as well as the
-other communication endpoint, and vice versa.
-
-In addition, endpoints may need to discover and negotiate which superstrates
-are available for a given interaction. SPUD could assist here. However, it is
-explicitly not a goal of SPUD to expose information about the details of the
-superstrate to middleboxes.
+There are two open issues in discovery and capability exposure. First,
+endpoints might want to be able to discover SPUD-aware middleboxes along the
+path, and to discover which parts of the vocabulary that can be spoken by the
+endpoints are supported by those middleboxes as well as the other
+communication endpoint, and vice versa. Second, SPUD coult assist endpoints in
+discovering and negotiate which superstrates are available for a given
+interaction, though it is explicitly not a goal of SPUD to expose information
+about the details of the superstrate to middleboxes.
 
 ## Hard state vs. soft state
 
@@ -555,7 +563,7 @@ The requirements as presently defined use tube start and stop signaling for
 two things: (1) setting up and tearing down state along the path, and (2)
 signaling superstrate such as association startup, acceptance, and teardown,
 which may have security implications. These may require separate signaling.
-Specifically, if tube start acknowledgement is to be used to provide explicit
+Specifically, if tube start acknowledgment is to be used to provide explicit
 guarantees to the path about the acceptability of a tube to a remote endpoint,
 it cannot be a completely unreliable signal. Second, the lifetime of a tube
 may be much shorter than the lifetime of a superstrate association, and the
@@ -565,7 +573,7 @@ an association creation.
 
 # Security Considerations
 
-The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information ({{authentication}}, {{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}}); protection against attacks ({{proof-a-device-is-on-path}}, {{protection-against-trivial-abuse}}, and {{tradeoffs-in-tube-identifiers}} and); and the trust relationships among endpoints and middleboxes {{continuum-of-trust-among-endpoints-and-middleboxes}}. These will be further addressed in protocol definition work following from these requirements.
+The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information ({{authentication}}, {{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}}); protection against attacks ({{proof-a-device-is-on-path}}, and {{protection-against-trivial-abuse}}); and the trust relationships among endpoints and middleboxes {{continuum-of-trust-among-endpoints-and-middleboxes}}. These will be further addressed in protocol definition work following from these requirements.
 
 # IANA Considerations
 
@@ -573,7 +581,8 @@ This document has no actions for IANA.
 
 # Contributors
 
-In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
+In addition to the editors, this document is the work of David Black, Ken
+Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
 
 # Acknowledgments
 
