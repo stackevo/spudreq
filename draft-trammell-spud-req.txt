@@ -5,7 +5,7 @@
 Network Working Group                                   B. Trammell, Ed.
 Internet-Draft                                        M. Kuehlewind, Ed.
 Intended status: Informational                                ETH Zurich
-Expires: June 21, 2016                                 December 19, 2015
+Expires: July 25, 2016                                  January 22, 2016
 
 
  Requirements for the design of a Substrate Protocol for User Datagrams
@@ -37,11 +37,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on June 21, 2016.
+   This Internet-Draft will expire on July 25, 2016.
 
 Copyright Notice
 
-   Copyright (c) 2015 IETF Trust and the persons identified as the
+   Copyright (c) 2016 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 1]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 1]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    include Simplified BSD License text as described in Section 4.e of
@@ -102,20 +102,21 @@ Table of Contents
      7.5.  Discovery and capability exposure . . . . . . . . . . . .  14
      7.6.  Hard state vs. soft state . . . . . . . . . . . . . . . .  14
      7.7.  Tube vs. superstrate association lifetime . . . . . . . .  15
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  15
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  15
-   10. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  15
-   11. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  15
+   8.  Notes from MAMI Plenary Meeting . . . . . . . . . . . . . . .  15
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
+   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
+   11. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  16
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 2]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 2]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  16
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  17
+   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
+   13. Informative References  . . . . . . . . . . . . . . . . . . .  17
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
 
 1.  Motivation
 
@@ -161,15 +162,15 @@ Internet-Draft              SPUD requirements              December 2015
    maintenance.  This facility could also provide minimal application-
    to- path and path-to-application signaling, though there was less
    agreement about what should or could be signaled here.  Further
-   transport semantics would be used by the protocol running atop this
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 3]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 3]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
+   transport semantics would be used by the protocol running atop this
    facility, but would only be visible to the endpoints, as the
    transport protocol headers themselves would be encrypted, along with
    the payload, to prevent inspection or modification.  This encryption
@@ -216,16 +217,17 @@ Internet-Draft              SPUD requirements              December 2015
    o  Path: : The sequence of Internet Protocol nodes and links that a
       given packet traverses from endpoint to endpoint.
 
+
+
+
+
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 4]
+
+Internet-Draft              SPUD requirements               January 2016
+
+
    o  Middlebox: : As defined in [RFC3234], a middlebox is any
       intermediary device performing functions other than the normal,
-
-
-
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 4]
-
-Internet-Draft              SPUD requirements              December 2015
-
-
       standard functions of an IP router on the datagram path between a
       source host and destination host; e.g. making decisions about
       forwarding behavior based on other than addressing information,
@@ -275,11 +277,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-
-
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 5]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 5]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
 5.  Functional Requirements
@@ -333,9 +333,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 6]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 6]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    when necessary to expose to the path, can be supported separately
@@ -389,9 +389,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 7]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 7]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    signals.  Specifically, timeouts are still necessary to clean up
@@ -445,9 +445,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 8]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 8]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    to detect changes to headers SPUD uses for its own signaling (whether
@@ -501,9 +501,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                 [Page 9]
+Trammell & Kuehlewind     Expires July 25, 2016                 [Page 9]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    exposed over SPUD must provide incentives for adoption by both
@@ -557,9 +557,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 10]
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 10]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
 6.7.  Minimal additional start-up latency
@@ -613,9 +613,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 11]
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 11]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    enabling communication with the path.  However, there is no
@@ -669,9 +669,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 12]
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 12]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
 7.3.  In-band, out-of-band, piggybacked, interleaved, and reflected
@@ -725,9 +725,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 13]
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 13]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    sender would.  Second, the middlebox could send the signal forward to
@@ -781,9 +781,9 @@ Internet-Draft              SPUD requirements              December 2015
 
 
 
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 14]
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 14]
 
-Internet-Draft              SPUD requirements              December 2015
+Internet-Draft              SPUD requirements               January 2016
 
 
    node failure).  An alternative is a "soft state" approach that
@@ -808,7 +808,60 @@ Internet-Draft              SPUD requirements              December 2015
    association may need to be treated differently by endpoints and path
    devices than a tube creation coincident with an association creation.
 
-8.  Security Considerations
+8.  Notes from MAMI Plenary Meeting
+
+   o  Note that 5.6 Extensibility includes support for experimentation:
+      it must be possible to use the protocol for experimental signaling
+      without registration, or with trivially easy registration, of
+      codepoints.
+
+   o  Emphasize that control always lies at the endpoint (?)
+
+   o  Split integrity protection into a non-optional checksum and MTI
+      (opportunistic) crypto integrity protection.
+
+   o  in 6.1 "note that UDP meets requirements" (weaken "the only way to
+      do this is UDP").
+
+   o  in 6.2 "note that fixed length tube ID + magic number does this."
+
+   o  in 6.3 "note that UDP works here"
+
+   o  in 6.5 explain return routability, remove Gorry's tunnel-relevant
+      comment
+
+   o  6.10 note we want confidentiality, integrity, authenticity, and
+      defense against linkability
+
+
+
+
+
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 15]
+
+Internet-Draft              SPUD requirements               January 2016
+
+
+   o  6.11 mention plpmtud - SPUD should probably support this, as the
+      "under the packetization layer"
+
+   o  7.4 per packet info must be small
+
+   o  note that we want to keep SPUD segments under MTU but that
+      everything should continue working in a fragmented world.
+
+   o  open possibility of eventual/delayed authenticity
+
+   o  security and privacy requirements go into a separate section
+
+   o  (probably not for reqt's): explore difference between hop count or
+      network segment location addressing and path-function addressing
+      for bootstrapping full OOB transport.
+
+   o  (probably not for reqt's): determine whether delayed authenticity
+      is something LURK could help with
+
+9.  Security Considerations
 
    The security-relevant requirements for SPUD deal mainly with endpoint
    authentication and the integrity of exposed information (Section 5.7,
@@ -818,34 +871,43 @@ Internet-Draft              SPUD requirements              December 2015
    addressed in protocol definition work following from these
    requirements.
 
-9.  IANA Considerations
+10.  IANA Considerations
 
    This document has no actions for IANA.
 
-10.  Contributors
+11.  Contributors
 
    In addition to the editors, this document is the work of David Black,
    Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric
    Rescorla.
 
-11.  Acknowledgments
+12.  Acknowledgments
 
    Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn
    Gillmor, Tom Herbert, and Christian Huitema for feedback and comments
    on these requirements, as well as to the participants at the SPUD BoF
-
-
-
-
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 15]
-
-Internet-Draft              SPUD requirements              December 2015
-
-
    at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for
-   the discussions leading to this work.
+   the discussions leading to this work.  Thanks as well to the
+   contributors to the H2020 MAMI project plenary discussion about this
 
-12.  Informative References
+
+
+
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 16]
+
+Internet-Draft              SPUD requirements               January 2016
+
+
+   work: Ozgu Alay, Diego Lopez, Gorry Fairhurst, Iain Learmonth, and
+   Matteo Varvelli.
+
+   This work is supported by the European Commission under Horizon 2020
+   grant agreement no. 688421 Measurement and Architecture for a
+   Middleboxed Internet (MAMI), and by the Swiss State Secretariat for
+   Education, Research, and Innovation under contract no. 15.0268.  This
+   support does not imply endorsement.
+
+13.  Informative References
 
    [RFC0792]  Postel, J., "Internet Control Message Protocol", STD 5,
               RFC 792, DOI 10.17487/RFC0792, September 1981,
@@ -884,19 +946,18 @@ Internet-Draft              SPUD requirements              December 2015
               User Datagrams (SPUD) Prototype", draft-hildebrand-spud-
               prototype-03 (work in progress), March 2015.
 
+
+
+
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 17]
+
+Internet-Draft              SPUD requirements               January 2016
+
+
    [I-D.huitema-tls-dtls-as-subtransport]
               Huitema, C., Rescorla, E., and J. Jana, "DTLS as
               Subtransport protocol", draft-huitema-tls-dtls-as-
               subtransport-00 (work in progress), March 2015.
-
-
-
-
-
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 16]
-
-Internet-Draft              SPUD requirements              December 2015
-
 
    [I-D.trammell-stackevo-explicit-coop]
               Trammell, B., "Architectural Considerations for Transport
@@ -944,9 +1005,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-Trammell & Kuehlewind     Expires June 21, 2016                [Page 17]
+Trammell & Kuehlewind     Expires July 25, 2016                [Page 18]

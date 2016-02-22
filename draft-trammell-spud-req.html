@@ -488,11 +488,12 @@ ul.toc a:first-child {
 <link href="#rfc.section.7.5" rel="Chapter" title="7.5 Discovery and capability exposure"/>
 <link href="#rfc.section.7.6" rel="Chapter" title="7.6 Hard state vs. soft state"/>
 <link href="#rfc.section.7.7" rel="Chapter" title="7.7 Tube vs. superstrate association lifetime"/>
-<link href="#rfc.section.8" rel="Chapter" title="8 Security Considerations"/>
-<link href="#rfc.section.9" rel="Chapter" title="9 IANA Considerations"/>
-<link href="#rfc.section.10" rel="Chapter" title="10 Contributors"/>
-<link href="#rfc.section.11" rel="Chapter" title="11 Acknowledgments"/>
-<link href="#rfc.references" rel="Chapter" title="12 Informative References"/>
+<link href="#rfc.section.8" rel="Chapter" title="8 Notes from MAMI Plenary Meeting"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
+<link href="#rfc.section.10" rel="Chapter" title="10 IANA Considerations"/>
+<link href="#rfc.section.11" rel="Chapter" title="11 Contributors"/>
+<link href="#rfc.section.12" rel="Chapter" title="12 Acknowledgments"/>
+<link href="#rfc.references" rel="Chapter" title="13 Informative References"/>
 <link href="#rfc.authors" rel="Chapter"/>
 
 
@@ -501,7 +502,7 @@ ul.toc a:first-child {
 
   <meta name="dct.creator" content="Trammell, B., Ed. and M. Kuehlewind, Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-trammell-spud-req-02" />
-  <meta name="dct.issued" scheme="ISO8601" content="2015-12-19" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-1-22" />
   <meta name="dct.abstract" content="The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document proposes an initial set of requirements for such a protocol, and discusses tradeoffs to be made in further refining these requirements." />
   <meta name="description" content="The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document proposes an initial set of requirements for such a protocol, and discusses tradeoffs to be made in further refining these requirements." />
 
@@ -525,8 +526,8 @@ ul.toc a:first-child {
   <td class="right">ETH Zurich</td>
 </tr>
 <tr>
-  <td class="left">Expires: June 21, 2016</td>
-  <td class="right">December 19, 2015</td>
+  <td class="left">Expires: July 25, 2016</td>
+  <td class="right">January 22, 2016</td>
 </tr>
 
     	
@@ -546,11 +547,11 @@ ul.toc a:first-child {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on June 21, 2016.</p>
+<p>This Internet-Draft will expire on July 25, 2016.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
-<p>Copyright (c) 2015 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>Copyright (c) 2016 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
 
   
@@ -594,11 +595,12 @@ ul.toc a:first-child {
 <li>7.5.   <a href="#rfc.section.7.5">Discovery and capability exposure</a></li>
 <li>7.6.   <a href="#rfc.section.7.6">Hard state vs. soft state</a></li>
 <li>7.7.   <a href="#rfc.section.7.7">Tube vs. superstrate association lifetime</a></li>
-</ul><li>8.   <a href="#rfc.section.8">Security Considerations</a></li>
-<li>9.   <a href="#rfc.section.9">IANA Considerations</a></li>
-<li>10.   <a href="#rfc.section.10">Contributors</a></li>
-<li>11.   <a href="#rfc.section.11">Acknowledgments</a></li>
-<li>12.   <a href="#rfc.references">Informative References</a></li>
+</ul><li>8.   <a href="#rfc.section.8">Notes from MAMI Plenary Meeting</a></li>
+<li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
+<li>10.   <a href="#rfc.section.10">IANA Considerations</a></li>
+<li>11.   <a href="#rfc.section.11">Contributors</a></li>
+<li>12.   <a href="#rfc.section.12">Acknowledgments</a></li>
+<li>13.   <a href="#rfc.references">Informative References</a></li>
 <li><a href="#rfc.authors">Authors' Addresses</a></li>
 
 
@@ -710,15 +712,36 @@ ul.toc a:first-child {
 <p id="rfc.section.7.6.p.1">The initial thinking on signaling envisions &#8220;hard state&#8221; in middleboxes that is established when the middlebox observes the start of a SPUD tube and is torn down when the middlebox observes the end (stop) of a SPUD tube.  Such state can be abandoned as a result of network topology changes (e.g., routing update in response to link or node failure).  An alternative is a &#8220;soft state&#8221; approach that requires periodic refresh of state in middleboxes, but cleanly times out and discards abandoned state.  SPUD has the opportunity to use different timeouts than the defaults that are required for current NAT and firewall pinhole maintenance. Of course, applications will still have to detect non-SPUD middleboxes that use shorter timers.</p>
 <h1 id="rfc.section.7.7"><a href="#rfc.section.7.7">7.7.</a> <a href="#tube-vs-superstrate-association-lifetime" id="tube-vs-superstrate-association-lifetime">Tube vs. superstrate association lifetime</a></h1>
 <p id="rfc.section.7.7.p.1">The requirements as presently defined use tube start and stop signaling for two things: (1) setting up and tearing down state along the path, and (2) signaling superstrate such as association startup, acceptance, and teardown, which may have security implications. These may require separate signaling.  Specifically, if tube start acknowledgment is to be used to provide explicit guarantees to the path about the acceptability of a tube to a remote endpoint, it cannot be a completely unreliable signal. Second, the lifetime of a tube may be much shorter than the lifetime of a superstrate association, and the creation of a new tube over an existing association may need to be treated differently by endpoints and path devices than a tube creation coincident with an association creation.</p>
-<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
-<p id="rfc.section.8.p.1">The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information (<a href="#authentication">Section 5.7</a>, <a href="#integrity">Section 5.9</a>, <a href="#privacy">Section 5.10</a>, and <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>); protection against attacks (<a href="#proof-a-device-is-on-path">Section 5.8</a>, and <a href="#protection-against-trivial-abuse">Section 6.5</a>); and the trust relationships among endpoints and middleboxes <a href="#continuum-of-trust-among-endpoints-and-middleboxes">Section 7.4</a>. These will be further addressed in protocol definition work following from these requirements.</p>
-<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
-<p id="rfc.section.9.p.1">This document has no actions for IANA.</p>
-<h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
-<p id="rfc.section.10.p.1">In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.</p>
-<h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#acknowledgments" id="acknowledgments">Acknowledgments</a></h1>
-<p id="rfc.section.11.p.1">Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor, Tom Herbert, and Christian Huitema for feedback and comments on these requirements, as well as to the participants at the SPUD BoF at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions leading to this work.</p>
-<h1 id="rfc.references"><a href="#rfc.references">12.</a> Informative References</h1>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#notes-from-mami-plenary-meeting" id="notes-from-mami-plenary-meeting">Notes from MAMI Plenary Meeting</a></h1>
+<p/>
+
+<ul>
+  <li>Note that 5.6 Extensibility includes support for experimentation: it must be possible to use the protocol for experimental signaling without registration, or with trivially easy registration, of codepoints.</li>
+  <li>Emphasize that control always lies at the endpoint (?)</li>
+  <li>Split integrity protection into a non-optional checksum and MTI (opportunistic) crypto integrity protection.</li>
+  <li>in 6.1 &#8220;note that UDP meets requirements&#8221; (weaken &#8220;the only way to do this is UDP&#8221;).</li>
+  <li>in 6.2 &#8220;note that fixed length tube ID + magic number does this.&#8221;</li>
+  <li>in 6.3 &#8220;note that UDP works here&#8221;</li>
+  <li>in 6.5 explain return routability, remove Gorry&#8217;s tunnel-relevant comment</li>
+  <li>6.10 note we want confidentiality, integrity, authenticity, and defense against linkability</li>
+  <li>6.11 mention plpmtud &#8211; SPUD should probably support this, as the &#8220;under the packetization layer&#8221;</li>
+  <li>7.4 per packet info must be small</li>
+  <li>note that we want to keep SPUD segments under MTU but that everything should continue working in a fragmented world.</li>
+  <li>open possibility of eventual/delayed authenticity</li>
+  <li>security and privacy requirements go into a separate section</li>
+  <li>(probably not for reqt&#8217;s): explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.</li>
+  <li>(probably not for reqt&#8217;s): determine whether delayed authenticity is something LURK could help with</li>
+</ul>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<p id="rfc.section.9.p.1">The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information (<a href="#authentication">Section 5.7</a>, <a href="#integrity">Section 5.9</a>, <a href="#privacy">Section 5.10</a>, and <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>); protection against attacks (<a href="#proof-a-device-is-on-path">Section 5.8</a>, and <a href="#protection-against-trivial-abuse">Section 6.5</a>); and the trust relationships among endpoints and middleboxes <a href="#continuum-of-trust-among-endpoints-and-middleboxes">Section 7.4</a>. These will be further addressed in protocol definition work following from these requirements.</p>
+<h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.10.p.1">This document has no actions for IANA.</p>
+<h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
+<p id="rfc.section.11.p.1">In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.</p>
+<h1 id="rfc.section.12"><a href="#rfc.section.12">12.</a> <a href="#acknowledgments" id="acknowledgments">Acknowledgments</a></h1>
+<p id="rfc.section.12.p.1">Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor, Tom Herbert, and Christian Huitema for feedback and comments on these requirements, as well as to the participants at the SPUD BoF at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions leading to this work. Thanks as well to the contributors to the H2020 MAMI project plenary discussion about this work: Ozgu Alay, Diego Lopez, Gorry Fairhurst, Iain Learmonth, and Matteo Varvelli.</p>
+<p id="rfc.section.12.p.2">This work is supported by the European Commission under Horizon 2020 grant agreement no. 688421 Measurement and Architecture for a Middleboxed Internet (MAMI), and by the Swiss State Secretariat for Education, Research, and Innovation under contract no. 15.0268. This support does not imply endorsement.</p>
+<h1 id="rfc.references"><a href="#rfc.references">13.</a> Informative References</h1>
 <table>
   <tbody>
     <tr>

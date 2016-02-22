@@ -2,7 +2,7 @@
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
 docname: draft-trammell-spud-req-02
-date: 2015-12-19
+date: 2016-01-22
 category: info
 ipr: trust200902
 pi: [toc]
@@ -566,6 +566,25 @@ creation of a new tube over an existing association may need to be treated
 differently by endpoints and path devices than a tube creation coincident with
 an association creation.
 
+
+# Notes from MAMI Plenary Meeting
+
+- Note that 5.6 Extensibility includes support for experimentation: it must be possible to use the protocol for experimental signaling without registration, or with trivially easy registration, of codepoints.
+- Emphasize that control always lies at the endpoint (?)
+- Split integrity protection into a non-optional checksum and MTI (opportunistic) crypto integrity protection.
+- in 6.1 "note that UDP meets requirements" (weaken "the only way to do this is UDP").
+- in 6.2 "note that fixed length tube ID + magic number does this."
+- in 6.3 "note that UDP works here"
+- in 6.5 explain return routability, remove Gorry's tunnel-relevant comment
+- 6.10 note we want confidentiality, integrity, authenticity, and defense against linkability
+- 6.11 mention plpmtud -- SPUD should probably support this, as the "under the packetization layer"
+- 7.4 per packet info must be small
+- note that we want to keep SPUD segments under MTU but that everything should continue working in a fragmented world.
+- open possibility of eventual/delayed authenticity
+- security and privacy requirements go into a separate section 
+- (probably not for reqt's): explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.
+- (probably not for reqt's): determine whether delayed authenticity is something LURK could help with
+
 # Security Considerations
 
 The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information ({{authentication}}, {{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}}); protection against attacks ({{proof-a-device-is-on-path}}, and {{protection-against-trivial-abuse}}); and the trust relationships among endpoints and middleboxes {{continuum-of-trust-among-endpoints-and-middleboxes}}. These will be further addressed in protocol definition work following from these requirements.
@@ -585,5 +604,13 @@ Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor,
 Tom Herbert, and Christian Huitema for feedback and comments on these
 requirements, as well as to the participants at the SPUD BoF at IETF 92
 meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions
-leading to this work.
+leading to this work. Thanks as well to the contributors to the H2020 MAMI project
+plenary discussion about this work: Ozgu Alay, Diego Lopez, Gorry Fairhurst,
+Iain Learmonth, and Matteo Varvelli. 
+
+This work is supported by the European Commission under Horizon 2020 grant
+agreement no. 688421 Measurement and Architecture for a Middleboxed Internet
+(MAMI), and by the Swiss State Secretariat for Education, Research, and
+Innovation under contract no. 15.0268. This support does not imply
+endorsement.
 
