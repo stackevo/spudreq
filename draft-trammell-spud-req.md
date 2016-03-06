@@ -2,7 +2,7 @@
 title: Requirements for the design of a Substrate Protocol for User Datagrams (SPUD)
 abbrev: SPUD requirements
 docname: draft-trammell-spud-req-02
-date: 2016-01-22
+date: 2016-03-11
 category: info
 ipr: trust200902
 pi: [toc]
@@ -31,10 +31,13 @@ informative:
   RFC2827:
   RFC3234:
   RFC4122:
+  RFC4821:
+  RFC5226:
   RFC6347:
   RFC7510:
   RFC7663:
   I-D.hildebrand-spud-prototype:
+  I-D.kuehlewind-spud-use-cases:
   I-D.huitema-tls-dtls-as-subtransport:
   I-D.trammell-stackevo-explicit-coop:
 
@@ -69,6 +72,24 @@ developing experience with a prototype described in
 {{I-D.hildebrand-spud-prototype}}. It is intended as the basis for determining
 the next steps to make progress in this space, including possibly chartering
 a working group for specific protocol engineering work.
+
+Within this document, requirements are presented as for a facility
+implementable as an encapsulation protocol, atop which new transports
+("superstrates") can be built. Alternately, these could be viewed as a set of
+requirements for future transport protocol development without a layer
+separation between the transport and the superstrate. 
+
+The final intention of this work is to make it possible to define and deploy
+new transport protocols that use encryption to protect their own operation as
+well as the confidentiality, authenticity, integrity, and linkability
+resistance of their payloads, replacing the current regime of middlebox
+inspection and modification of transport and application-layer headers and
+payload with one that allows inspection only of information explicitly exposed
+by the endpoints, and modification of such information only under endpoint
+control. This should simultaneously allow the continued expansion of the
+deployment of encryption in the Internet while maintaining facilities for
+appropriate in- network functionality via explicit endpoint-middlebox
+cooperation.
 
 # History
 
@@ -155,6 +176,8 @@ Link-layer characteristics of use to the transport layer (e.g., whether a
 high-transient-delay, highly-buffered link such as LTE is present on the path)
 could also be signaled using this path-to-endpoint facility.
 
+Further use cases are outlined in more detail in {{I-D.kuehlewind-spud-use-cases}}.
+
 # Functional Requirements
 
 The following requirements detail the services that SPUD must provide to
@@ -233,8 +256,8 @@ endpoint. Though this information is not scoped to a tube in the same way that
 endpoint to path signaling is, as the middleboxes do not originate the packets
 in a tube, it is still associated with a tube, in terms of "the properties of
 the path(s) this tube will traverse". Path to endpoint signaling need not be
-in-band; see {{in-band-out-of-band-piggybacked-interleaved-and-reflected-signaling}}
-for more discussion.
+in-band; see {{in-band-out-of-band-piggybacked-interleaved-and-reflected-
+signaling}} for more discussion.
 
 ## Tube Start and End Signaling
 
@@ -262,6 +285,9 @@ to achieve the goals of the superstrate.
 SPUD must enable multiple new transport semantics and application/path
 declarations without requiring updates to SPUD implementations in middleboxes.
 
+The use of SPUD for experimental signaling must be possible either without the
+registration of codepoints or namespaces with IANA, or with trivially easy (First Come, First Served {{RFC5226}} registration of such codepoints.
+
 ## Authentication
 
 The basic SPUD protocol must not require any authentication or a priori trust
@@ -270,6 +296,10 @@ should interoperate with the presentation/exchange of authentication
 information in environments where a trust relationship already exists, or can
 be easily established, either in-band or out-of-band, and use this information
 where possible and appropriate.
+
+Given the advisory nature of the signaling it supports, SPUD may also support
+eventual authentication: authentication of a signal after the reception of a
+packet after that containing the signal.
 
 ## Proof a device is on-path
 
@@ -287,12 +317,17 @@ topology to make this confirmation.
 
 SPUD must provide integrity protection of exposed information in SPUD-
 encapsulated packets, though the details of this integrity protection are
-still open; see {{tradeoffs-in-integrity-protection}}. Endpoints should be
-able to detect changes to headers SPUD uses for its own signaling (whether due
-to error, accidental modification, or malicious modification), as well as the
-injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes
-other than the remote endpoint. Integrity protection of the superstrate is
-left up to the superstrate.
+still open; see {{tradeoffs-in-integrity-protection}}.
+
+Endpoints should be able to detect changes to headers SPUD uses for its own
+signaling (whether due to error, accidental modification, or malicious
+modification), as well as the injection of packets into a SPUD flow (defined
+by 5-tuple) or tube by nodes other than the remote endpoints. Errors and
+accidental modifications can be detected using a simple checksum over the SPUD
+header, while detecting malicious modifications requires cryptographic
+integrity protection.
+
+Integrity protection of the superstrate is left up to the superstrate.
 
 ## Privacy
 
@@ -311,23 +346,27 @@ SPUD must be encapsulated in a transport protocol that is known to be accepted
 on a large fraction of paths in the Internet, or implement some form of
 probing to determine in advance which transport protocols will be accepted on
 a certain path. This encapsulation will require port numbers to support NAPT-
-connected endpoints. UDP encapsulation is the only mechanism that meets
-these requirements.
+connected endpoints. We note that UDP encapsulation would meet these
+requirements.
 
 ## Low Overhead in Network Processing
 
 SPUD must be low-overhead, specifically requiring very little effort to
 recognize that a packet is a SPUD packet and to determine the tube it is
-associated with.
+associated with. We note that a "magic number" or other pattern of bits in an
+encapsulation-layer header, with a low probability of collision with other
+protocols using the same encapsulation, would meet the recognition
+requirement. Tube identifiers appearing directly in the encapsulation-layer
+header would meet the tube association requirement.
 
 ## Implementability in User-Space
 
-To enable fast deployment SPUD and superstrates must be implementable
-without requiring kernel replacements or modules on the endpoints, and without
-having special privilege (root or "jailbreak") on the endpoints. Usually all
-operating systems will allow a user to open a UDP socket. This indicates UDP-
-based encapsulation, either exclusively or as a mandatory-to-implement
-feature.
+To enable fast deployment SPUD and superstrates must be implementable without
+requiring kernel replacements or modules on the endpoints, and without having
+special privilege (root or "jailbreak") on the endpoints. We note here that
+UDP would meet this requirement, as nearly all operating systems and
+application development platforms allow a userspace application to open UDP
+sockets.
 
 ## Incremental Deployability in an Untrusted, Unreliable Environment
 
@@ -354,14 +393,17 @@ includes flooding and state exhaustion attacks, as well as reflection and
 amplification attacks.  SPUD must provide minimal protection against this
 trivial abuse. This probably implies that SPUD should provide:
 
-- a proof of return routability,
-- a feedback channel between endpoints,
-- a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic, and
+- a proof of return routability, that the endpoint identified by a packet's source address receives packets sent to that address;
+- a feedback channel between endpoints;
+- a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic; and
 - mechanisms to protect against state exhaustion and other denial-of-service attacks.
 
-We note that return routability excludes use of a UDP source port that does
-not accept traffic (i.e., for one-way communication, as is commonly done for
-unidirectional UDP tunnels, e.g., MPLS in UDP {{RFC7510}}, as an entropy input.)
+We note that using a "magic number" as in {{low-overhead-in-network-
+processing}} has the nice additional property that, if said number does not
+appear in any widely deployed protocol using the encapsulation, no existing
+node in the Internet can be induced to reflect traffic containing it. This
+allows the "magic number" to provide probabilistic assurance that a given
+packet is not reflected, assisting in meeting this requirement.
 
 ## No unnecessary restrictions on the superstrate
 
@@ -391,21 +433,35 @@ reliance on non-productive traffic.
 
 ## Preservation of Security Properties
 
-The use of SPUD must not weaken the security properties of the superstrate.  If
-the superstrate includes payload encryption for confidentiality, for example,
-the use of SPUD must not allow deep packet inspection systems to have access
-to the plaintext.  While a box along the path may indicate a particular flow
-is adminstratively prohibited or why it is prohibited, SPUD itself must not be
-used to negotiate the means to lift the prohibition.
+The use of SPUD must not weaken the essential security properties of the
+superstrate: confidentiality, integrity, authenticity, and defense against
+linkability. If the superstrate includes payload encryption for
+confidentiality, for example, the use of SPUD must not allow deep packet
+inspection systems to have access to the plaintext. Likewise, the use of SPUD
+must not create additional opportunities for linkability not already existing
+in the superstrate.
 
-## Reliability, Fragmentation, and Duplication
+With respect to access control, SPUD itself must not be used to negotiate the means to lift administrative prohibition of certain traffic, although it could be used to provide more useful information 
+
+While a box along the path may indicate a particular flow
+is adminstratively prohibited or why it is prohibited,
+
+## Reliability, Fragmentation, MTU, and Duplication
 
 As any information provided by SPUD is anyway opportunistic, SPUD need not
 provide reliable signaling for the information associated with a tube. Signals
 must be idempotent; all middleboxes and endpoints must gracefully handle
-receiving duplicate signal information. To avoid issues with fragment
-reassembly, all in-band SPUD signaling information must fit within a single
-packet. Any facilities requiring more than an MTU's worth of data in a single
+receiving duplicate signal information. SPUD must continue working in the
+presence of IPv4 fragmentation on path, but in order to reduce the impact of
+requiring fragments reassembly at middleboxes for signals to be intelligible,
+endpoints using SPUD should attempt to fit all signals into single MTU-sized
+packets.
+
+Given the importance of good path MTU information to SPUD's own signaling,
+SPUD should implement packetization layer path MTU discovery {{RFC4821}},
+providing this where appropriate as a service to its superstrates.
+
+Any facilities requiring more than an MTU's worth of data in a single
 signal should use an out-of-band method which does provide reliability -- this
 method may be an existing transport or superstrate/SPUD combination, or a
 "minimal transport" defined by SPUD for its own use.
@@ -435,12 +491,15 @@ subsections below.
 Related to identifier scope is the scope of properties bound to SPUD packets
 by endpoints. SPUD may support both per-tube properties as well as per-packet
 properties. Properties signaled per packet reduce state requirements at
-middleboxes, but also increase per-packet overhead. It is likely that both
-types of property binding are necessary, but the selection of which properties
-to bind how must be undertaken carefully. It is also possible that SPUD will
-provide a very limited set of per-packet signals (such as ECN) using flags in
-the SPUD header, and require all more complicated properties to be bound per-
-tube.
+middleboxes, but also increase per-packet overhead. Small signal size (in bits
+of entropy) and encoding efficiency (in bits on the wire) is therefore more
+important for per-packet signaling that per-tube signaling.
+
+It is likely that both types of property binding are useful, but the selection
+of which properties to bind how must be undertaken carefully. It is also
+possible that SPUD will provide a very limited set of per-packet signals (such
+as ECN) using flags in the SPUD header, and require all more complicated
+properties to be bound per-tube.
 
 ## Tradeoffs in integrity protection
 
@@ -566,28 +625,23 @@ creation of a new tube over an existing association may need to be treated
 differently by endpoints and path devices than a tube creation coincident with
 an association creation.
 
+## Remaining open issues from MAMI Plenary Meeting
 
-# Notes from MAMI Plenary Meeting
-
-- Note that 5.6 Extensibility includes support for experimentation: it must be possible to use the protocol for experimental signaling without registration, or with trivially easy registration, of codepoints.
-- Emphasize that control always lies at the endpoint (?)
-- Split integrity protection into a non-optional checksum and MTI (opportunistic) crypto integrity protection.
-- in 6.1 "note that UDP meets requirements" (weaken "the only way to do this is UDP").
-- in 6.2 "note that fixed length tube ID + magic number does this."
-- in 6.3 "note that UDP works here"
-- in 6.5 explain return routability, remove Gorry's tunnel-relevant comment
-- 6.10 note we want confidentiality, integrity, authenticity, and defense against linkability
-- 6.11 mention plpmtud -- SPUD should probably support this, as the "under the packetization layer"
-- 7.4 per packet info must be small
-- note that we want to keep SPUD segments under MTU but that everything should continue working in a fragmented world.
-- open possibility of eventual/delayed authenticity
 - security and privacy requirements go into a separate section 
-- (probably not for reqt's): explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.
-- (probably not for reqt's): determine whether delayed authenticity is something LURK could help with
+- explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.
+- determine whether delayed authenticity is something LURK could help with.
 
 # Security Considerations
 
-The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information ({{authentication}}, {{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}}); protection against attacks ({{proof-a-device-is-on-path}}, and {{protection-against-trivial-abuse}}); and the trust relationships among endpoints and middleboxes {{continuum-of-trust-among-endpoints-and-middleboxes}}. These will be further addressed in protocol definition work following from these requirements.
+The security-relevant requirements for SPUD deal mainly with endpoint
+authentication and the integrity of exposed information ({{authentication}},
+{{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}});
+protection against attacks ({{proof-a-device-is-on-path}}, and {{protection-
+against-trivial-abuse}}); preservation of security properties of its
+superstrates ({{preservation-of-security-properties}}); and the trust
+relationships among endpoints and middleboxes ({{continuum-of-trust-among-
+endpoints-and-middleboxes}}). These will be further addressed in protocol
+definition work following from these requirements.
 
 # IANA Considerations
 
@@ -600,13 +654,12 @@ Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.
 
 # Acknowledgments
 
-Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor,
-Tom Herbert, and Christian Huitema for feedback and comments on these
+Thanks to Ozgu Alay, Roland Bless, Cameron Byrne, Toerless Eckert, Gorry
+Fairhurst, Daniel Kahn Gillmor, Tom Herbert, Christian Huitema, Iain
+Learmonth, Diego Lopez, and Matteo Varvelli for feedback and comments on these
 requirements, as well as to the participants at the SPUD BoF at IETF 92
 meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions
-leading to this work. Thanks as well to the contributors to the H2020 MAMI project
-plenary discussion about this work: Ozgu Alay, Diego Lopez, Gorry Fairhurst,
-Iain Learmonth, and Matteo Varvelli. 
+leading to this work.
 
 This work is supported by the European Commission under Horizon 2020 grant
 agreement no. 688421 Measurement and Architecture for a Middleboxed Internet

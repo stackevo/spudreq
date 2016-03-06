@@ -5,7 +5,7 @@
 Network Working Group                                   B. Trammell, Ed.
 Internet-Draft                                        M. Kuehlewind, Ed.
 Intended status: Informational                                ETH Zurich
-Expires: July 25, 2016                                  January 22, 2016
+Expires: September 12, 2016                               March 11, 2016
 
 
  Requirements for the design of a Substrate Protocol for User Datagrams
@@ -37,7 +37,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 25, 2016.
+   This Internet-Draft will expire on September 12, 2016.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 1]
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 1]
 
-Internet-Draft              SPUD requirements               January 2016
+Internet-Draft              SPUD requirements                 March 2016
 
 
    include Simplified BSD License text as described in Section 4.e of
@@ -65,58 +65,58 @@ Internet-Draft              SPUD requirements               January 2016
 Table of Contents
 
    1.  Motivation  . . . . . . . . . . . . . . . . . . . . . . . . .   3
-   2.  History . . . . . . . . . . . . . . . . . . . . . . . . . . .   3
-   3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   2.  History . . . . . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   5
    4.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   5
    5.  Functional Requirements . . . . . . . . . . . . . . . . . . .   6
      5.1.  Grouping of Packets (into "tubes")  . . . . . . . . . . .   6
      5.2.  Endpoint to Path Signaling  . . . . . . . . . . . . . . .   7
-     5.3.  Path to Endpoint Signaling  . . . . . . . . . . . . . . .   7
-     5.4.  Tube Start and End Signaling  . . . . . . . . . . . . . .   7
+     5.3.  Path to Endpoint Signaling  . . . . . . . . . . . . . . .   8
+     5.4.  Tube Start and End Signaling  . . . . . . . . . . . . . .   8
      5.5.  SPUD Support Discovery  . . . . . . . . . . . . . . . . .   8
      5.6.  Extensibility . . . . . . . . . . . . . . . . . . . . . .   8
-     5.7.  Authentication  . . . . . . . . . . . . . . . . . . . . .   8
-     5.8.  Proof a device is on-path . . . . . . . . . . . . . . . .   8
-     5.9.  Integrity . . . . . . . . . . . . . . . . . . . . . . . .   8
-     5.10. Privacy . . . . . . . . . . . . . . . . . . . . . . . . .   9
-   6.  Technical Requirements  . . . . . . . . . . . . . . . . . . .   9
-     6.1.  Middlebox Traversal . . . . . . . . . . . . . . . . . . .   9
-     6.2.  Low Overhead in Network Processing  . . . . . . . . . . .   9
-     6.3.  Implementability in User-Space  . . . . . . . . . . . . .   9
+     5.7.  Authentication  . . . . . . . . . . . . . . . . . . . . .   9
+     5.8.  Proof a device is on-path . . . . . . . . . . . . . . . .   9
+     5.9.  Integrity . . . . . . . . . . . . . . . . . . . . . . . .   9
+     5.10. Privacy . . . . . . . . . . . . . . . . . . . . . . . . .  10
+   6.  Technical Requirements  . . . . . . . . . . . . . . . . . . .  10
+     6.1.  Middlebox Traversal . . . . . . . . . . . . . . . . . . .  10
+     6.2.  Low Overhead in Network Processing  . . . . . . . . . . .  10
+     6.3.  Implementability in User-Space  . . . . . . . . . . . . .  10
      6.4.  Incremental Deployability in an Untrusted, Unreliable
-           Environment . . . . . . . . . . . . . . . . . . . . . . .   9
-     6.5.  Protection against trivial abuse  . . . . . . . . . . . .  10
-     6.6.  No unnecessary restrictions on the superstrate  . . . . .  10
-     6.7.  Minimal additional start-up latency . . . . . . . . . . .  11
-     6.8.  Minimal Header Overhead . . . . . . . . . . . . . . . . .  11
-     6.9.  Minimal non-productive traffic  . . . . . . . . . . . . .  11
-     6.10. Preservation of Security Properties . . . . . . . . . . .  11
-     6.11. Reliability, Fragmentation, and Duplication . . . . . . .  11
-     6.12. Interoperability with non-encapsulated superstrates . . .  11
-   7.  Open questions and discussion . . . . . . . . . . . . . . . .  12
-     7.1.  Property binding  . . . . . . . . . . . . . . . . . . . .  12
-     7.2.  Tradeoffs in integrity protection . . . . . . . . . . . .  12
+           Environment . . . . . . . . . . . . . . . . . . . . . . .  10
+     6.5.  Protection against trivial abuse  . . . . . . . . . . . .  11
+     6.6.  No unnecessary restrictions on the superstrate  . . . . .  11
+     6.7.  Minimal additional start-up latency . . . . . . . . . . .  12
+     6.8.  Minimal Header Overhead . . . . . . . . . . . . . . . . .  12
+     6.9.  Minimal non-productive traffic  . . . . . . . . . . . . .  12
+     6.10. Preservation of Security Properties . . . . . . . . . . .  12
+     6.11. Reliability, Fragmentation, MTU, and Duplication  . . . .  12
+     6.12. Interoperability with non-encapsulated superstrates . . .  13
+   7.  Open questions and discussion . . . . . . . . . . . . . . . .  13
+     7.1.  Property binding  . . . . . . . . . . . . . . . . . . . .  13
+     7.2.  Tradeoffs in integrity protection . . . . . . . . . . . .  14
      7.3.  In-band, out-of-band, piggybacked, interleaved, and
-           reflected signaling . . . . . . . . . . . . . . . . . . .  13
-     7.4.  Continuum of trust among endpoints and middleboxes  . . .  14
-     7.5.  Discovery and capability exposure . . . . . . . . . . . .  14
-     7.6.  Hard state vs. soft state . . . . . . . . . . . . . . . .  14
-     7.7.  Tube vs. superstrate association lifetime . . . . . . . .  15
-   8.  Notes from MAMI Plenary Meeting . . . . . . . . . . . . . . .  15
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
-   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
-   11. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  16
+           reflected signaling . . . . . . . . . . . . . . . . . . .  14
+     7.4.  Continuum of trust among endpoints and middleboxes  . . .  15
+     7.5.  Discovery and capability exposure . . . . . . . . . . . .  16
+     7.6.  Hard state vs. soft state . . . . . . . . . . . . . . . .  16
+     7.7.  Tube vs. superstrate association lifetime . . . . . . . .  16
+     7.8.  Remaining open issues from MAMI Plenary Meeting . . . . .  17
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
+   10. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  17
 
 
 
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 2]
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 2]
 
-Internet-Draft              SPUD requirements               January 2016
+Internet-Draft              SPUD requirements                 March 2016
 
 
-   12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
-   13. Informative References  . . . . . . . . . . . . . . . . . . .  17
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
+   11. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  17
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  18
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  19
 
 1.  Motivation
 
@@ -147,6 +147,33 @@ Internet-Draft              SPUD requirements               January 2016
    possibly chartering a working group for specific protocol engineering
    work.
 
+   Within this document, requirements are presented as for a facility
+   implementable as an encapsulation protocol, atop which new transports
+   ("superstrates") can be built.  Alternately, these could be viewed as
+   a set of requirements for future transport protocol development
+   without a layer separation between the transport and the superstrate.
+
+   The final intention of this work is to make it possible to define and
+   deploy new transport protocols that use encryption to protect their
+   own operation as well as the confidentiality, authenticity,
+   integrity, and linkability resistance of their payloads, replacing
+   the current regime of middlebox inspection and modification of
+   transport and application-layer headers and payload with one that
+   allows inspection only of information explicitly exposed by the
+   endpoints, and modification of such information only under endpoint
+   control.  This should simultaneously allow the continued expansion of
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 3]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
+   the deployment of encryption in the Internet while maintaining
+   facilities for appropriate in- network functionality via explicit
+   endpoint-middlebox cooperation.
+
 2.  History
 
    An outcome of the IAB workshop on Stack Evolution in a Middlebox
@@ -162,14 +189,6 @@ Internet-Draft              SPUD requirements               January 2016
    maintenance.  This facility could also provide minimal application-
    to- path and path-to-application signaling, though there was less
    agreement about what should or could be signaled here.  Further
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 3]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    transport semantics would be used by the protocol running atop this
    facility, but would only be visible to the endpoints, as the
    transport protocol headers themselves would be encrypted, along with
@@ -196,6 +215,17 @@ Internet-Draft              SPUD requirements               January 2016
    privacy and trust concerns as well as the need for strong incentives
    for middlebox cooperation based on the information that are exposed.
 
+
+
+
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 4]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
 3.  Terminology
 
    This document uses the following terms:
@@ -216,15 +246,6 @@ Internet-Draft              SPUD requirements               January 2016
 
    o  Path: : The sequence of Internet Protocol nodes and links that a
       given packet traverses from endpoint to endpoint.
-
-
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 4]
-
-Internet-Draft              SPUD requirements               January 2016
-
 
    o  Middlebox: : As defined in [RFC3234], a middlebox is any
       intermediary device performing functions other than the normal,
@@ -253,6 +274,14 @@ Internet-Draft              SPUD requirements               January 2016
    superstrate encryption.  In this application, properties would be
    expressed in terms of network-relevant parameters (intended
    bandwidth, latency and loss sensitivity, etc.) as opposed to
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 5]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    application-relevant semantics.  See
    [I-D.trammell-stackevo-explicit-coop] for discussion on limitations
    in signaling in untrusted environments.
@@ -274,13 +303,8 @@ Internet-Draft              SPUD requirements               January 2016
    present on the path) could also be signaled using this path-to-
    endpoint facility.
 
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 5]
-
-Internet-Draft              SPUD requirements               January 2016
-
+   Further use cases are outlined in more detail in
+   [I-D.kuehlewind-spud-use-cases].
 
 5.  Functional Requirements
 
@@ -306,6 +330,14 @@ Internet-Draft              SPUD requirements               January 2016
    directly encode the identifier in a packet header, but instead
    provide it in a way that it is simple to derive from other
    information available in the packet at the endpoints and along the
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 6]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    path, are also possible.  In any cases, for the purposes of this
    requirement we treat this identifier as a simple vector of N bits.
    The properties of the tube identifier are subject to tradeoffs on the
@@ -330,14 +362,6 @@ Internet-Draft              SPUD requirements               January 2016
    globally unique tube identifiers would also introduce new
    possibilities for user and node tracking, with a serious negative
    impact on privacy.  We note that global identifiers for mobility,
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 6]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    when necessary to expose to the path, can be supported separately
    from the tube identification mechanism, by using a generic tube-
    grouping application-to-path signaling bound to the tube.
@@ -362,6 +386,14 @@ Internet-Draft              SPUD requirements               January 2016
    SPUD must be able to provide information scoped to a tube from the
    end- point(s) to all SPUD-aware nodes on the path about the packets
    in that tube.  Since it is implausible that an endpoint has pre-
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 7]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    existing trust relationships to all SPUD-aware middleboxes on a
    certain path in the context of the Internet, SPUD must provide in-
    band signaling.  SPUD may in addition also offer mechanisms for out-
@@ -375,8 +407,9 @@ Internet-Draft              SPUD requirements               January 2016
    the same way that endpoint to path signaling is, as the middleboxes
    do not originate the packets in a tube, it is still associated with a
    tube, in terms of "the properties of the path(s) this tube will
-   traverse".  Path to endpoint signaling need not be in-band; see
-   Section 7.3 for more discussion.
+   traverse".  Path to endpoint signaling need not be in-band; see {{in-
+   band-out-of-band-piggybacked-interleaved-and-reflected- signaling}}
+   for more discussion.
 
 5.4.  Tube Start and End Signaling
 
@@ -386,14 +419,6 @@ Internet-Draft              SPUD requirements               January 2016
    state can be forgotten by the path.  Given unreliable signaling (see
    {{reliability-fragmentation-and- duplication}}) both endpoints and
    devices on the path must be resilient to the loss of any of these
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 7]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    signals.  Specifically, timeouts are still necessary to clean up
    stale state.  See Section 7.6 and {{tube-vs- superstrate-association-
    lifetime}} for more discussion on tube start and end signaling.
@@ -414,6 +439,20 @@ Internet-Draft              SPUD requirements               January 2016
    path declarations without requiring updates to SPUD implementations
    in middleboxes.
 
+   The use of SPUD for experimental signaling must be possible either
+   without the registration of codepoints or namespaces with IANA, or
+
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 8]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
+   with trivially easy (First Come, First Served [RFC5226] registration
+   of such codepoints.
+
 5.7.  Authentication
 
    The basic SPUD protocol must not require any authentication or a
@@ -423,6 +462,10 @@ Internet-Draft              SPUD requirements               January 2016
    relationship already exists, or can be easily established, either in-
    band or out-of-band, and use this information where possible and
    appropriate.
+
+   Given the advisory nature of the signaling it supports, SPUD may also
+   support eventual authentication: authentication of a signal after the
+   reception of a packet after that containing the signal.
 
 5.8.  Proof a device is on-path
 
@@ -441,20 +484,27 @@ Internet-Draft              SPUD requirements               January 2016
 
    SPUD must provide integrity protection of exposed information in
    SPUD- encapsulated packets, though the details of this integrity
-   protection are still open; see Section 7.2.  Endpoints should be able
+   protection are still open; see Section 7.2.
+
+   Endpoints should be able to detect changes to headers SPUD uses for
+   its own signaling (whether due to error, accidental modification, or
+   malicious modification), as well as the injection of packets into a
+   SPUD flow (defined by 5-tuple) or tube by nodes other than the remote
+   endpoints.  Errors and accidental modifications can be detected using
+   a simple checksum over the SPUD header, while detecting malicious
+   modifications requires cryptographic integrity protection.
+
+   Integrity protection of the superstrate is left up to the
+   superstrate.
 
 
 
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 8]
+
+
+Trammell & Kuehlewind  Expires September 12, 2016               [Page 9]
 
-Internet-Draft              SPUD requirements               January 2016
+Internet-Draft              SPUD requirements                 March 2016
 
-
-   to detect changes to headers SPUD uses for its own signaling (whether
-   due to error, accidental modification, or malicious modification), as
-   well as the injection of packets into a SPUD flow (defined by
-   5-tuple) or tube by nodes other than the remote endpoint.  Integrity
-   protection of the superstrate is left up to the superstrate.
 
 5.10.  Privacy
 
@@ -475,38 +525,43 @@ Internet-Draft              SPUD requirements               January 2016
    implement some form of probing to determine in advance which
    transport protocols will be accepted on a certain path.  This
    encapsulation will require port numbers to support NAPT- connected
-   endpoints.  UDP encapsulation is the only mechanism that meets these
+   endpoints.  We note that UDP encapsulation would meet these
    requirements.
 
 6.2.  Low Overhead in Network Processing
 
    SPUD must be low-overhead, specifically requiring very little effort
    to recognize that a packet is a SPUD packet and to determine the tube
-   it is associated with.
+   it is associated with.  We note that a "magic number" or other
+   pattern of bits in an encapsulation-layer header, with a low
+   probability of collision with other protocols using the same
+   encapsulation, would meet the recognition requirement.  Tube
+   identifiers appearing directly in the encapsulation-layer header
+   would meet the tube association requirement.
 
 6.3.  Implementability in User-Space
 
    To enable fast deployment SPUD and superstrates must be implementable
    without requiring kernel replacements or modules on the endpoints,
    and without having special privilege (root or "jailbreak") on the
-   endpoints.  Usually all operating systems will allow a user to open a
-   UDP socket.  This indicates UDP- based encapsulation, either
-   exclusively or as a mandatory-to-implement feature.
+   endpoints.  We note here that UDP would meet this requirement, as
+   nearly all operating systems and application development platforms
+   allow a userspace application to open UDP sockets.
 
 6.4.  Incremental Deployability in an Untrusted, Unreliable Environment
 
    SPUD must operate in the present Internet.  In order to maximize
    deployment, it should also be useful between endpoints even before
    the deployment of middleboxes that understand it.  The information
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                 [Page 9]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    exposed over SPUD must provide incentives for adoption by both
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 10]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    endpoints and middleboxes, and must maximize privacy (by minimizing
    information exposed).  Further, SPUD must be robust to packet loss,
    duplication and reordering by the underlying network service.  SPUD
@@ -529,20 +584,24 @@ Internet-Draft              SPUD requirements               January 2016
    provide minimal protection against this trivial abuse.  This probably
    implies that SPUD should provide:
 
-   o  a proof of return routability,
+   o  a proof of return routability, that the endpoint identified by a
+      packet's source address receives packets sent to that address;
 
-   o  a feedback channel between endpoints,
+   o  a feedback channel between endpoints;
 
    o  a method to probabilistically discriminiate legitimate SPUD
-      traffic from reflected malicious traffic, and
+      traffic from reflected malicious traffic; and
 
    o  mechanisms to protect against state exhaustion and other denial-
       of-service attacks.
 
-   We note that return routability excludes use of a UDP source port
-   that does not accept traffic (i.e., for one-way communication, as is
-   commonly done for unidirectional UDP tunnels, e.g., MPLS in UDP
-   [RFC7510], as an entropy input.)
+   We note that using a "magic number" as in {{low-overhead-in-network-
+   processing}} has the nice additional property that, if said number
+   does not appear in any widely deployed protocol using the
+   encapsulation, no existing node in the Internet can be induced to
+   reflect traffic containing it.  This allows the "magic number" to
+   provide probabilistic assurance that a given packet is not reflected,
+   assisting in meeting this requirement.
 
 6.6.  No unnecessary restrictions on the superstrate
 
@@ -551,16 +610,17 @@ Internet-Draft              SPUD requirements               January 2016
    impose only minimal restrictions on the transport protocols it
    encapsulates.  However, to serve as a substrate, it is necessary to
    factor out the information that middleboxes commonly rely on and
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 11]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    endpoints are commonly willing to expose.  This information should be
    included in SPUD, and might itself impose additional restrictions to
    the superstrate.
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 10]
-
-Internet-Draft              SPUD requirements               January 2016
-
 
 6.7.  Minimal additional start-up latency
 
@@ -581,23 +641,48 @@ Internet-Draft              SPUD requirements               January 2016
 
 6.10.  Preservation of Security Properties
 
-   The use of SPUD must not weaken the security properties of the
-   superstrate.  If the superstrate includes payload encryption for
-   confidentiality, for example, the use of SPUD must not allow deep
-   packet inspection systems to have access to the plaintext.  While a
-   box along the path may indicate a particular flow is adminstratively
-   prohibited or why it is prohibited, SPUD itself must not be used to
-   negotiate the means to lift the prohibition.
+   The use of SPUD must not weaken the essential security properties of
+   the superstrate: confidentiality, integrity, authenticity, and
+   defense against linkability.  If the superstrate includes payload
+   encryption for confidentiality, for example, the use of SPUD must not
+   allow deep packet inspection systems to have access to the plaintext.
+   Likewise, the use of SPUD must not create additional opportunities
+   for linkability not already existing in the superstrate.
 
-6.11.  Reliability, Fragmentation, and Duplication
+   With respect to access control, SPUD itself must not be used to
+   negotiate the means to lift administrative prohibition of certain
+   traffic, although it could be used to provide more useful information
+
+   While a box along the path may indicate a particular flow is
+   adminstratively prohibited or why it is prohibited,
+
+6.11.  Reliability, Fragmentation, MTU, and Duplication
 
    As any information provided by SPUD is anyway opportunistic, SPUD
    need not provide reliable signaling for the information associated
    with a tube.  Signals must be idempotent; all middleboxes and
    endpoints must gracefully handle receiving duplicate signal
-   information.  To avoid issues with fragment reassembly, all in-band
-   SPUD signaling information must fit within a single packet.  Any
-   facilities requiring more than an MTU's worth of data in a single
+   information.  SPUD must continue working in the presence of IPv4
+   fragmentation on path, but in order to reduce the impact of requiring
+   fragments reassembly at middleboxes for signals to be intelligible,
+
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 12]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
+   endpoints using SPUD should attempt to fit all signals into single
+   MTU-sized packets.
+
+   Given the importance of good path MTU information to SPUD's own
+   signaling, SPUD should implement packetization layer path MTU
+   discovery [RFC4821], providing this where appropriate as a service to
+   its superstrates.
+
+   Any facilities requiring more than an MTU's worth of data in a single
    signal should use an out-of-band method which does provide
    reliability - this method may be an existing transport or
    superstrate/SPUD combination, or a "minimal transport" defined by
@@ -610,14 +695,6 @@ Internet-Draft              SPUD requirements               January 2016
    the application should be equivalent, and the two wire protocols
    should be freely transcodeable between each other, with the caveat
    that the variant without SPUD would not necessarily support features
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 11]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    enabling communication with the path.  However, there is no
    requirement that the headers the superstrate uses be the same in the
    SPUD and non-SPUD variants.  Headers that the superstrate chooses
@@ -639,12 +716,24 @@ Internet-Draft              SPUD requirements               January 2016
    packets by endpoints.  SPUD may support both per-tube properties as
    well as per-packet properties.  Properties signaled per packet reduce
    state requirements at middleboxes, but also increase per-packet
-   overhead.  It is likely that both types of property binding are
-   necessary, but the selection of which properties to bind how must be
-   undertaken carefully.  It is also possible that SPUD will provide a
-   very limited set of per-packet signals (such as ECN) using flags in
-   the SPUD header, and require all more complicated properties to be
-   bound per- tube.
+   overhead.  Small signal size (in bits of entropy) and encoding
+   efficiency (in bits on the wire) is therefore more important for per-
+   packet signaling that per-tube signaling.
+
+   It is likely that both types of property binding are useful, but the
+   selection of which properties to bind how must be undertaken
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 13]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
+   carefully.  It is also possible that SPUD will provide a very limited
+   set of per-packet signals (such as ECN) using flags in the SPUD
+   header, and require all more complicated properties to be bound per-
+   tube.
 
 7.2.  Tradeoffs in integrity protection
 
@@ -665,14 +754,6 @@ Internet-Draft              SPUD requirements               January 2016
    middlebox as an endpoint for the authentication protocol) than in-
    band (treating the middlebox as a participant in a 3+ party
    communication).
-
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 12]
-
-Internet-Draft              SPUD requirements               January 2016
-
 
 7.3.  In-band, out-of-band, piggybacked, interleaved, and reflected
       signaling
@@ -697,6 +778,14 @@ Internet-Draft              SPUD requirements               January 2016
    protocol.  Piggybacked signaling uses some number of bits in each
    packet generated by the overlying transport.  It requires either
    reducing the MTU available to the encapsulated transport and/or
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 14]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    opportunistically using "headroom" as it is available: bits between
    the network-layer MTU and the bits actually used by the transport.
    For use cases that accumulate information from devices on path in the
@@ -722,14 +811,6 @@ Internet-Draft              SPUD requirements               January 2016
    words, the middlebox would need to use the recipient's address as the
    source address of the direct message.  This would not necessarily
    traverse the same path as packets from the receiver back to the
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 13]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    sender would.  Second, the middlebox could send the signal forward to
    the receiver (piggybacked or interleaved), requesting the receiver
    reflect it back to the sender.  Such a facility would require careful
@@ -753,6 +834,14 @@ Internet-Draft              SPUD requirements               January 2016
    context based on levels of trust between end and middle - is the
    middlebox on the same network as the endpoint, under control of the
    same owner?  Is there some contract between the application user and
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 15]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
    the middlebox operator?  SPUD should support different levels of
    trust than the default ("untrusted, but presumed honest due to
    limitations on the signaling vocabulary") and fully-authenticated;
@@ -778,14 +867,6 @@ Internet-Draft              SPUD requirements               January 2016
    of a SPUD tube and is torn down when the middlebox observes the end
    (stop) of a SPUD tube.  Such state can be abandoned as a result of
    network topology changes (e.g., routing update in response to link or
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 14]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
    node failure).  An alternative is a "soft state" approach that
    requires periodic refresh of state in middleboxes, but cleanly times
    out and discards abandoned state.  SPUD has the opportunity to use
@@ -808,98 +889,56 @@ Internet-Draft              SPUD requirements               January 2016
    association may need to be treated differently by endpoints and path
    devices than a tube creation coincident with an association creation.
 
-8.  Notes from MAMI Plenary Meeting
-
-   o  Note that 5.6 Extensibility includes support for experimentation:
-      it must be possible to use the protocol for experimental signaling
-      without registration, or with trivially easy registration, of
-      codepoints.
-
-   o  Emphasize that control always lies at the endpoint (?)
-
-   o  Split integrity protection into a non-optional checksum and MTI
-      (opportunistic) crypto integrity protection.
-
-   o  in 6.1 "note that UDP meets requirements" (weaken "the only way to
-      do this is UDP").
-
-   o  in 6.2 "note that fixed length tube ID + magic number does this."
-
-   o  in 6.3 "note that UDP works here"
-
-   o  in 6.5 explain return routability, remove Gorry's tunnel-relevant
-      comment
-
-   o  6.10 note we want confidentiality, integrity, authenticity, and
-      defense against linkability
 
 
 
 
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 15]
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 16]
 
-Internet-Draft              SPUD requirements               January 2016
+Internet-Draft              SPUD requirements                 March 2016
 
 
-   o  6.11 mention plpmtud - SPUD should probably support this, as the
-      "under the packetization layer"
-
-   o  7.4 per packet info must be small
-
-   o  note that we want to keep SPUD segments under MTU but that
-      everything should continue working in a fragmented world.
-
-   o  open possibility of eventual/delayed authenticity
+7.8.  Remaining open issues from MAMI Plenary Meeting
 
    o  security and privacy requirements go into a separate section
 
-   o  (probably not for reqt's): explore difference between hop count or
-      network segment location addressing and path-function addressing
-      for bootstrapping full OOB transport.
+   o  explore difference between hop count or network segment location
+      addressing and path-function addressing for bootstrapping full OOB
+      transport.
 
-   o  (probably not for reqt's): determine whether delayed authenticity
-      is something LURK could help with
+   o  determine whether delayed authenticity is something LURK could
+      help with.
 
-9.  Security Considerations
+8.  Security Considerations
 
    The security-relevant requirements for SPUD deal mainly with endpoint
    authentication and the integrity of exposed information (Section 5.7,
    Section 5.9, Section 5.10, and Section 7.2); protection against
-   attacks (Section 5.8, and Section 6.5); and the trust relationships
-   among endpoints and middleboxes Section 7.4.  These will be further
-   addressed in protocol definition work following from these
-   requirements.
+   attacks (Section 5.8, and {{protection- against-trivial-abuse}});
+   preservation of security properties of its superstrates
+   (Section 6.10); and the trust relationships among endpoints and
+   middleboxes ({{continuum-of-trust-among- endpoints-and-
+   middleboxes}}).  These will be further addressed in protocol
+   definition work following from these requirements.
 
-10.  IANA Considerations
+9.  IANA Considerations
 
    This document has no actions for IANA.
 
-11.  Contributors
+10.  Contributors
 
    In addition to the editors, this document is the work of David Black,
    Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric
    Rescorla.
 
-12.  Acknowledgments
+11.  Acknowledgments
 
-   Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn
-   Gillmor, Tom Herbert, and Christian Huitema for feedback and comments
-   on these requirements, as well as to the participants at the SPUD BoF
-   at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for
-   the discussions leading to this work.  Thanks as well to the
-   contributors to the H2020 MAMI project plenary discussion about this
-
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 16]
-
-Internet-Draft              SPUD requirements               January 2016
-
-
-   work: Ozgu Alay, Diego Lopez, Gorry Fairhurst, Iain Learmonth, and
-   Matteo Varvelli.
+   Thanks to Ozgu Alay, Roland Bless, Cameron Byrne, Toerless Eckert,
+   Gorry Fairhurst, Daniel Kahn Gillmor, Tom Herbert, Christian Huitema,
+   Iain Learmonth, Diego Lopez, and Matteo Varvelli for feedback and
+   comments on these requirements, as well as to the participants at the
+   SPUD BoF at IETF 92 meeting in Dallas and the IAB SEMI workshop in
+   Zurich for the discussions leading to this work.
 
    This work is supported by the European Commission under Horizon 2020
    grant agreement no. 688421 Measurement and Architecture for a
@@ -907,7 +946,15 @@ Internet-Draft              SPUD requirements               January 2016
    Education, Research, and Innovation under contract no. 15.0268.  This
    support does not imply endorsement.
 
-13.  Informative References
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 17]
+
+Internet-Draft              SPUD requirements                 March 2016
+
+
+12.  Informative References
 
    [RFC0792]  Postel, J., "Internet Control Message Protocol", STD 5,
               RFC 792, DOI 10.17487/RFC0792, September 1981,
@@ -926,6 +973,15 @@ Internet-Draft              SPUD requirements               January 2016
               Unique IDentifier (UUID) URN Namespace", RFC 4122,
               DOI 10.17487/RFC4122, July 2005,
               <http://www.rfc-editor.org/info/rfc4122>.
+
+   [RFC4821]  Mathis, M. and J. Heffner, "Packetization Layer Path MTU
+              Discovery", RFC 4821, DOI 10.17487/RFC4821, March 2007,
+              <http://www.rfc-editor.org/info/rfc4821>.
+
+   [RFC5226]  Narten, T. and H. Alvestrand, "Guidelines for Writing an
+              IANA Considerations Section in RFCs", BCP 26, RFC 5226,
+              DOI 10.17487/RFC5226, May 2008,
+              <http://www.rfc-editor.org/info/rfc5226>.
 
    [RFC6347]  Rescorla, E. and N. Modadugu, "Datagram Transport Layer
               Security Version 1.2", RFC 6347, DOI 10.17487/RFC6347,
@@ -949,10 +1005,15 @@ Internet-Draft              SPUD requirements               January 2016
 
 
 
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 17]
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 18]
 
-Internet-Draft              SPUD requirements               January 2016
+Internet-Draft              SPUD requirements                 March 2016
 
+
+   [I-D.kuehlewind-spud-use-cases]
+              Kuehlewind, M. and B. Trammell, "SPUD Use Cases", draft-
+              kuehlewind-spud-use-cases-00 (work in progress), July
+              2015.
 
    [I-D.huitema-tls-dtls-as-subtransport]
               Huitema, C., Rescorla, E., and J. Jana, "DTLS as
@@ -1000,9 +1061,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-Trammell & Kuehlewind     Expires July 25, 2016                [Page 18]
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 19]
