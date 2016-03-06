@@ -478,7 +478,7 @@ ul.toc a:first-child {
 <link href="#rfc.section.6.8" rel="Chapter" title="6.8 Minimal Header Overhead"/>
 <link href="#rfc.section.6.9" rel="Chapter" title="6.9 Minimal non-productive traffic"/>
 <link href="#rfc.section.6.10" rel="Chapter" title="6.10 Preservation of Security Properties"/>
-<link href="#rfc.section.6.11" rel="Chapter" title="6.11 Reliability, Fragmentation, and Duplication"/>
+<link href="#rfc.section.6.11" rel="Chapter" title="6.11 Reliability, Fragmentation, MTU, and Duplication"/>
 <link href="#rfc.section.6.12" rel="Chapter" title="6.12 Interoperability with non-encapsulated superstrates"/>
 <link href="#rfc.section.7" rel="Chapter" title="7 Open questions and discussion"/>
 <link href="#rfc.section.7.1" rel="Chapter" title="7.1 Property binding"/>
@@ -488,12 +488,12 @@ ul.toc a:first-child {
 <link href="#rfc.section.7.5" rel="Chapter" title="7.5 Discovery and capability exposure"/>
 <link href="#rfc.section.7.6" rel="Chapter" title="7.6 Hard state vs. soft state"/>
 <link href="#rfc.section.7.7" rel="Chapter" title="7.7 Tube vs. superstrate association lifetime"/>
-<link href="#rfc.section.8" rel="Chapter" title="8 Notes from MAMI Plenary Meeting"/>
-<link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
-<link href="#rfc.section.10" rel="Chapter" title="10 IANA Considerations"/>
-<link href="#rfc.section.11" rel="Chapter" title="11 Contributors"/>
-<link href="#rfc.section.12" rel="Chapter" title="12 Acknowledgments"/>
-<link href="#rfc.references" rel="Chapter" title="13 Informative References"/>
+<link href="#rfc.section.7.8" rel="Chapter" title="7.8 Remaining open issues from MAMI Plenary Meeting"/>
+<link href="#rfc.section.8" rel="Chapter" title="8 Security Considerations"/>
+<link href="#rfc.section.9" rel="Chapter" title="9 IANA Considerations"/>
+<link href="#rfc.section.10" rel="Chapter" title="10 Contributors"/>
+<link href="#rfc.section.11" rel="Chapter" title="11 Acknowledgments"/>
+<link href="#rfc.references" rel="Chapter" title="12 Informative References"/>
 <link href="#rfc.authors" rel="Chapter"/>
 
 
@@ -502,7 +502,7 @@ ul.toc a:first-child {
 
   <meta name="dct.creator" content="Trammell, B., Ed. and M. Kuehlewind, Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-trammell-spud-req-02" />
-  <meta name="dct.issued" scheme="ISO8601" content="2016-1-22" />
+  <meta name="dct.issued" scheme="ISO8601" content="2016-3-11" />
   <meta name="dct.abstract" content="The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document proposes an initial set of requirements for such a protocol, and discusses tradeoffs to be made in further refining these requirements." />
   <meta name="description" content="The Substrate Protocol for User Datagrams (SPUD) BoF session at the IETF 92 meeting in Dallas in March 2015 identified the potential need for a UDP-based encapsulation protocol to allow explicit cooperation with middleboxes while using new, encrypted transport protocols. This document proposes an initial set of requirements for such a protocol, and discusses tradeoffs to be made in further refining these requirements." />
 
@@ -526,8 +526,8 @@ ul.toc a:first-child {
   <td class="right">ETH Zurich</td>
 </tr>
 <tr>
-  <td class="left">Expires: July 25, 2016</td>
-  <td class="right">January 22, 2016</td>
+  <td class="left">Expires: September 12, 2016</td>
+  <td class="right">March 11, 2016</td>
 </tr>
 
     	
@@ -547,7 +547,7 @@ ul.toc a:first-child {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on July 25, 2016.</p>
+<p>This Internet-Draft will expire on September 12, 2016.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -585,7 +585,7 @@ ul.toc a:first-child {
 <li>6.8.   <a href="#rfc.section.6.8">Minimal Header Overhead</a></li>
 <li>6.9.   <a href="#rfc.section.6.9">Minimal non-productive traffic</a></li>
 <li>6.10.   <a href="#rfc.section.6.10">Preservation of Security Properties</a></li>
-<li>6.11.   <a href="#rfc.section.6.11">Reliability, Fragmentation, and Duplication</a></li>
+<li>6.11.   <a href="#rfc.section.6.11">Reliability, Fragmentation, MTU, and Duplication</a></li>
 <li>6.12.   <a href="#rfc.section.6.12">Interoperability with non-encapsulated superstrates</a></li>
 </ul><li>7.   <a href="#rfc.section.7">Open questions and discussion</a></li>
 <ul><li>7.1.   <a href="#rfc.section.7.1">Property binding</a></li>
@@ -595,12 +595,12 @@ ul.toc a:first-child {
 <li>7.5.   <a href="#rfc.section.7.5">Discovery and capability exposure</a></li>
 <li>7.6.   <a href="#rfc.section.7.6">Hard state vs. soft state</a></li>
 <li>7.7.   <a href="#rfc.section.7.7">Tube vs. superstrate association lifetime</a></li>
-</ul><li>8.   <a href="#rfc.section.8">Notes from MAMI Plenary Meeting</a></li>
-<li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
-<li>10.   <a href="#rfc.section.10">IANA Considerations</a></li>
-<li>11.   <a href="#rfc.section.11">Contributors</a></li>
-<li>12.   <a href="#rfc.section.12">Acknowledgments</a></li>
-<li>13.   <a href="#rfc.references">Informative References</a></li>
+<li>7.8.   <a href="#rfc.section.7.8">Remaining open issues from MAMI Plenary Meeting</a></li>
+</ul><li>8.   <a href="#rfc.section.8">Security Considerations</a></li>
+<li>9.   <a href="#rfc.section.9">IANA Considerations</a></li>
+<li>10.   <a href="#rfc.section.10">Contributors</a></li>
+<li>11.   <a href="#rfc.section.11">Acknowledgments</a></li>
+<li>12.   <a href="#rfc.references">Informative References</a></li>
 <li><a href="#rfc.authors">Authors' Addresses</a></li>
 
 
@@ -610,6 +610,8 @@ ul.toc a:first-child {
 <p id="rfc.section.1.p.1">A number of efforts to create new transport protocols or experiment with new network behaviors in the Internet have been built on top of UDP, as it traverses firewalls and other middleboxes more readily than new protocols do.  Each such effort must, however, either manage its flows within common middlebox assumptions for UDP or train the middleboxes on the new protocol (thus losing the benefit of using UDP). A common Substrate Protocol for User Datagrams (SPUD) would allow each effort to re-use a set of shared methods for notifying middleboxes of the flows&#8217; semantics, thus avoiding both the limitations of current flow semantics and the need to re-invent the mechanism for notifying the middlebox of the new semantics.</p>
 <p id="rfc.section.1.p.2">As a concrete example, it is common for some middleboxes to tear down required state (such as NAT bindings) very rapidly for UDP flows. By notifying the path that a particular transport using UDP maintains session state and explicitly signals session start and stop using the substrate, the using protocol may reduce or avoid the need for heartbeat traffic.</p>
 <p id="rfc.section.1.p.3">This document defines a specific set of requirements for a SPUD facility, based on analysis on a target set of applications to be developed on SPUD developing experience with a prototype described in <a href="#I-D.hildebrand-spud-prototype">[I-D.hildebrand-spud-prototype]</a>. It is intended as the basis for determining the next steps to make progress in this space, including possibly chartering a working group for specific protocol engineering work.</p>
+<p id="rfc.section.1.p.4">Within this document, requirements are presented as for a facility implementable as an encapsulation protocol, atop which new transports (&#8220;superstrates&#8221;) can be built. Alternately, these could be viewed as a set of requirements for future transport protocol development without a layer separation between the transport and the superstrate.</p>
+<p id="rfc.section.1.p.5">The final intention of this work is to make it possible to define and deploy new transport protocols that use encryption to protect their own operation as well as the confidentiality, authenticity, integrity, and linkability resistance of their payloads, replacing the current regime of middlebox inspection and modification of transport and application-layer headers and payload with one that allows inspection only of information explicitly exposed by the endpoints, and modification of such information only under endpoint control. This should simultaneously allow the continued expansion of the deployment of encryption in the Internet while maintaining facilities for appropriate in- network functionality via explicit endpoint-middlebox cooperation.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#history" id="history">History</a></h1>
 <p id="rfc.section.2.p.1">An outcome of the IAB workshop on Stack Evolution in a Middlebox Internet (SEMI) <a href="#RFC7663">[RFC7663]</a>, held in Zurich in January 2015, was a discussion on the creation of a substrate protocol to support the deployment of new transport protocols in the Internet. Assuming that a way forward for transport evolution in user space would involve encapsulation in UDP datagrams, the workshop noted that it may be useful to have a facility built atop UDP to provide minimal signaling of the semantics of a flow that would otherwise be available in TCP. At the very least, indications of first and last packets in a flow may assist firewalls and NATs in policy decision and state maintenance.  This facility could also provide minimal application-to- path and path-to-application signaling, though there was less agreement about what should or could be signaled here. Further transport semantics would be used by the protocol running atop this facility, but would only be visible to the endpoints, as the transport protocol headers themselves would be encrypted, along with the payload, to prevent inspection or modification.  This encryption might be accomplished by using DTLS <a href="#RFC6347">[RFC6347]</a> as a subtransport <a href="#I-D.huitema-tls-dtls-as-subtransport">[I-D.huitema-tls-dtls-as-subtransport]</a> or by other suitable methods.</p>
 <p id="rfc.section.2.p.2">The Substrate Protocol for User Datagrams (SPUD) BoF was held at IETF 92 in Dallas in March 2015 to develop this concept further. It is clear from discussion before and during the SPUD BoF that any selective exposure of traffic metadata outside a relatively restricted trust domain must be advisory, non-negotiated, and declarative rather than imperative. This conclusion matches experience with previous endpoint-to-middle and middle-to-endpoint signaling approaches. As with other metadata systems, exposure of specific elements must be carefully assessed for privacy risks and the total of exposed elements must be so assessed.  Each exposed parameter should also be independently verifiable, so that each entity can assign its own trust to other entities. Basic transport over the substrate must continue working even if signaling is ignored or stripped, to support incremental deployment. These restrictions on vocabulary are discussed further in <a href="#I-D.trammell-stackevo-explicit-coop">[I-D.trammell-stackevo-explicit-coop]</a>. This discussion includes privacy and trust concerns as well as the need for strong incentives for middlebox cooperation based on the information that are exposed.</p>
@@ -628,6 +630,7 @@ ul.toc a:first-child {
 <p id="rfc.section.4.p.2">SPUD could also be used to provide information relevant for network treatment for middleboxes as a replacement for deep packet inspection for traffic classification purposes, rendered ineffective by superstrate encryption. In this application, properties would be expressed in terms of network-relevant parameters (intended bandwidth, latency and loss sensitivity, etc.) as opposed to application-relevant semantics. See <a href="#I-D.trammell-stackevo-explicit-coop">[I-D.trammell-stackevo-explicit-coop]</a> for discussion on limitations in signaling in untrusted environments.</p>
 <p id="rfc.section.4.p.3">SPUD may also provide some facility for SPUD-aware nodes on the path to signal some property of the path relative to a tube to the endpoints and other SPUD- aware nodes on the path. The primary use case for path to application signaling is parallel to the use of ICMP <a href="#RFC0792">[RFC0792]</a>, in that it describes a set of conditions (including errors) that applies to the datagrams as they traverse the path. This usage is, however, not a pure replacement for ICMP but a &#8220;5-tuple ICMP&#8221; for error messages which should be application-visible; these would traverse NATs in the same way as the traffic related to it, and be deliverable to the application with appropriate tube information.</p>
 <p id="rfc.section.4.p.4">Link-layer characteristics of use to the transport layer (e.g., whether a high-transient-delay, highly-buffered link such as LTE is present on the path) could also be signaled using this path-to-endpoint facility.</p>
+<p id="rfc.section.4.p.5">Further use cases are outlined in more detail in <a href="#I-D.kuehlewind-spud-use-cases">[I-D.kuehlewind-spud-use-cases]</a>.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#functional-requirements" id="functional-requirements">Functional Requirements</a></h1>
 <p id="rfc.section.5.p.1">The following requirements detail the services that SPUD must provide to superstrates, endpoints, and middleboxes using SPUD.</p>
 <h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#grouping-of-packets-into-tubes" id="grouping-of-packets-into-tubes">Grouping of Packets (into &#8220;tubes&#8221;)</a></h1>
@@ -640,29 +643,33 @@ ul.toc a:first-child {
 <h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#endpoint-to-path-signaling" id="endpoint-to-path-signaling">Endpoint to Path Signaling</a></h1>
 <p id="rfc.section.5.2.p.1">SPUD must be able to provide information scoped to a tube from the end- point(s) to all SPUD-aware nodes on the path about the packets in that tube.  Since it is implausible that an endpoint has pre-existing trust relationships to all SPUD-aware middleboxes on a certain path in the context of the Internet, SPUD must provide in-band signaling. SPUD may in addition also offer mechanisms for out-of-band signaling when appropriate.  See <a href="#in-band-out-of-band-piggybacked-interleaved-and-reflected-signaling">Section 7.3</a> for more discussion.</p>
 <h1 id="rfc.section.5.3"><a href="#rfc.section.5.3">5.3.</a> <a href="#path-to-endpoint-signaling" id="path-to-endpoint-signaling">Path to Endpoint Signaling</a></h1>
-<p id="rfc.section.5.3.p.1">SPUD must be able to provide information from a SPUD-aware middlebox to the endpoint. Though this information is not scoped to a tube in the same way that endpoint to path signaling is, as the middleboxes do not originate the packets in a tube, it is still associated with a tube, in terms of &#8220;the properties of the path(s) this tube will traverse&#8221;. Path to endpoint signaling need not be in-band; see <a href="#in-band-out-of-band-piggybacked-interleaved-and-reflected-signaling">Section 7.3</a> for more discussion.</p>
+<p id="rfc.section.5.3.p.1">SPUD must be able to provide information from a SPUD-aware middlebox to the endpoint. Though this information is not scoped to a tube in the same way that endpoint to path signaling is, as the middleboxes do not originate the packets in a tube, it is still associated with a tube, in terms of &#8220;the properties of the path(s) this tube will traverse&#8221;. Path to endpoint signaling need not be in-band; see {{in-band-out-of-band-piggybacked-interleaved-and-reflected- signaling}} for more discussion.</p>
 <h1 id="rfc.section.5.4"><a href="#rfc.section.5.4">5.4.</a> <a href="#tube-start-and-end-signaling" id="tube-start-and-end-signaling">Tube Start and End Signaling</a></h1>
 <p id="rfc.section.5.4.p.1">SPUD must provide a facility for endpoints to signal that a tube has started, that the start of the tube has been acknowledged and accepted by the remote endpoint(s), and that a tube has ended and its state can be forgotten by the path. Given unreliable signaling (see {{reliability-fragmentation-and- duplication}}) both endpoints and devices on the path must be resilient to the loss of any of these signals. Specifically, timeouts are still necessary to clean up stale state. See <a href="#hard-state-vs-soft-state">Section 7.6</a> and {{tube-vs- superstrate-association-lifetime}} for more discussion on tube start and end signaling.</p>
 <h1 id="rfc.section.5.5"><a href="#rfc.section.5.5">5.5.</a> <a href="#spud-support-discovery" id="spud-support-discovery">SPUD Support Discovery</a></h1>
 <p id="rfc.section.5.5.p.1">A SPUD endpoint must be able to easily determine whether a remote endpoint with which it wants to communicate using SPUD as a substrate can support SPUD, and whether path to the remote endpoint as well as the return path from the remote endpoint will pass SPUD packets. If SPUD is not usable on a path to an endpoint, a SPUD sender needs to be able to fall back to some other approach to achieve the goals of the superstrate.</p>
 <h1 id="rfc.section.5.6"><a href="#rfc.section.5.6">5.6.</a> <a href="#extensibility" id="extensibility">Extensibility</a></h1>
 <p id="rfc.section.5.6.p.1">SPUD must enable multiple new transport semantics and application/path declarations without requiring updates to SPUD implementations in middleboxes.</p>
+<p id="rfc.section.5.6.p.2">The use of SPUD for experimental signaling must be possible either without the registration of codepoints or namespaces with IANA, or with trivially easy (First Come, First Served <a href="#RFC5226">[RFC5226]</a> registration of such codepoints.</p>
 <h1 id="rfc.section.5.7"><a href="#rfc.section.5.7">5.7.</a> <a href="#authentication" id="authentication">Authentication</a></h1>
 <p id="rfc.section.5.7.p.1">The basic SPUD protocol must not require any authentication or a priori trust relationship between endpoints and middleboxes to function.  However, SPUD should interoperate with the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established, either in-band or out-of-band, and use this information where possible and appropriate.</p>
+<p id="rfc.section.5.7.p.2">Given the advisory nature of the signaling it supports, SPUD may also support eventual authentication: authentication of a signal after the reception of a packet after that containing the signal.</p>
 <h1 id="rfc.section.5.8"><a href="#rfc.section.5.8">5.8.</a> <a href="#proof-a-device-is-on-path" id="proof-a-device-is-on-path">Proof a device is on-path</a></h1>
 <p id="rfc.section.5.8.p.1">Devices may make assertions of network characteristics relevant to a flow. One way these assertions can be assessed is by a demonstration that the device making it is on-path to the flow and so could adjust the characteristics to match the assertion.  SPUD must therefore allow endpoints to distinguish on- path devices from devices not on the path. Network elements may also need to confirm that application-to-path assertions are made by the source indicated in the flow.  In both cases, return routability (as in {{protection-against- trivial-abuse}}) may offer one incrementally deployable method of testing the topology to make this confirmation.</p>
 <h1 id="rfc.section.5.9"><a href="#rfc.section.5.9">5.9.</a> <a href="#integrity" id="integrity">Integrity</a></h1>
-<p id="rfc.section.5.9.p.1">SPUD must provide integrity protection of exposed information in SPUD- encapsulated packets, though the details of this integrity protection are still open; see <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>. Endpoints should be able to detect changes to headers SPUD uses for its own signaling (whether due to error, accidental modification, or malicious modification), as well as the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoint. Integrity protection of the superstrate is left up to the superstrate.</p>
+<p id="rfc.section.5.9.p.1">SPUD must provide integrity protection of exposed information in SPUD- encapsulated packets, though the details of this integrity protection are still open; see <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>.</p>
+<p id="rfc.section.5.9.p.2">Endpoints should be able to detect changes to headers SPUD uses for its own signaling (whether due to error, accidental modification, or malicious modification), as well as the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoints. Errors and accidental modifications can be detected using a simple checksum over the SPUD header, while detecting malicious modifications requires cryptographic integrity protection.</p>
+<p id="rfc.section.5.9.p.3">Integrity protection of the superstrate is left up to the superstrate.</p>
 <h1 id="rfc.section.5.10"><a href="#rfc.section.5.10">5.10.</a> <a href="#privacy" id="privacy">Privacy</a></h1>
 <p id="rfc.section.5.10.p.1">SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#technical-requirements" id="technical-requirements">Technical Requirements</a></h1>
 <p id="rfc.section.6.p.1">The following requirements detail the constraints on how the SPUD facility must meet its functional requirements.</p>
 <h1 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> <a href="#middlebox-traversal" id="middlebox-traversal">Middlebox Traversal</a></h1>
-<p id="rfc.section.6.1.p.1">SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is known to be accepted on a large fraction of paths in the Internet, or implement some form of probing to determine in advance which transport protocols will be accepted on a certain path. This encapsulation will require port numbers to support NAPT- connected endpoints. UDP encapsulation is the only mechanism that meets these requirements.</p>
+<p id="rfc.section.6.1.p.1">SPUD must be able to traverse middleboxes that are not SPUD-aware. Therefore SPUD must be encapsulated in a transport protocol that is known to be accepted on a large fraction of paths in the Internet, or implement some form of probing to determine in advance which transport protocols will be accepted on a certain path. This encapsulation will require port numbers to support NAPT- connected endpoints. We note that UDP encapsulation would meet these requirements.</p>
 <h1 id="rfc.section.6.2"><a href="#rfc.section.6.2">6.2.</a> <a href="#low-overhead-in-network-processing" id="low-overhead-in-network-processing">Low Overhead in Network Processing</a></h1>
-<p id="rfc.section.6.2.p.1">SPUD must be low-overhead, specifically requiring very little effort to recognize that a packet is a SPUD packet and to determine the tube it is associated with.</p>
+<p id="rfc.section.6.2.p.1">SPUD must be low-overhead, specifically requiring very little effort to recognize that a packet is a SPUD packet and to determine the tube it is associated with. We note that a &#8220;magic number&#8221; or other pattern of bits in an encapsulation-layer header, with a low probability of collision with other protocols using the same encapsulation, would meet the recognition requirement. Tube identifiers appearing directly in the encapsulation-layer header would meet the tube association requirement.</p>
 <h1 id="rfc.section.6.3"><a href="#rfc.section.6.3">6.3.</a> <a href="#implementability-in-user-space" id="implementability-in-user-space">Implementability in User-Space</a></h1>
-<p id="rfc.section.6.3.p.1">To enable fast deployment SPUD and superstrates must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or &#8220;jailbreak&#8221;) on the endpoints. Usually all operating systems will allow a user to open a UDP socket. This indicates UDP- based encapsulation, either exclusively or as a mandatory-to-implement feature.</p>
+<p id="rfc.section.6.3.p.1">To enable fast deployment SPUD and superstrates must be implementable without requiring kernel replacements or modules on the endpoints, and without having special privilege (root or &#8220;jailbreak&#8221;) on the endpoints. We note here that UDP would meet this requirement, as nearly all operating systems and application development platforms allow a userspace application to open UDP sockets.</p>
 <h1 id="rfc.section.6.4"><a href="#rfc.section.6.4">6.4.</a> <a href="#incremental-deployability-in-an-untrusted-unreliable-environment" id="incremental-deployability-in-an-untrusted-unreliable-environment">Incremental Deployability in an Untrusted, Unreliable Environment</a></h1>
 <p id="rfc.section.6.4.p.1">SPUD must operate in the present Internet. In order to maximize deployment, it should also be useful between endpoints even before the deployment of middleboxes that understand it. The information exposed over SPUD must provide incentives for adoption by both endpoints and middleboxes, and must maximize privacy (by minimizing information exposed). Further, SPUD must be robust to packet loss, duplication and reordering by the underlying network service.  SPUD must work in multipath, multicast, and endpoint multi- homing environments.</p>
 <p id="rfc.section.6.4.p.2">Incremental deployability likely requires limitations of the vocabulary used in signaling, to ensure that each actor in a nontrusted environment has incentives to participate in the signaling protocol honestly; see <a href="#I-D.trammell-stackevo-explicit-coop">[I-D.trammell-stackevo-explicit-coop]</a> for more.</p>
@@ -671,12 +678,12 @@ ul.toc a:first-child {
 <p/>
 
 <ul>
-  <li>a proof of return routability,</li>
-  <li>a feedback channel between endpoints,</li>
-  <li>a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic, and</li>
+  <li>a proof of return routability, that the endpoint identified by a packet&#8217;s source address receives packets sent to that address;</li>
+  <li>a feedback channel between endpoints;</li>
+  <li>a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic; and</li>
   <li>mechanisms to protect against state exhaustion and other denial-of-service attacks.</li>
 </ul>
-<p id="rfc.section.6.5.p.3">We note that return routability excludes use of a UDP source port that does not accept traffic (i.e., for one-way communication, as is commonly done for unidirectional UDP tunnels, e.g., MPLS in UDP <a href="#RFC7510">[RFC7510]</a>, as an entropy input.)</p>
+<p id="rfc.section.6.5.p.3">We note that using a &#8220;magic number&#8221; as in {{low-overhead-in-network- processing}} has the nice additional property that, if said number does not appear in any widely deployed protocol using the encapsulation, no existing node in the Internet can be induced to reflect traffic containing it. This allows the &#8220;magic number&#8221; to provide probabilistic assurance that a given packet is not reflected, assisting in meeting this requirement.</p>
 <h1 id="rfc.section.6.6"><a href="#rfc.section.6.6">6.6.</a> <a href="#no-unnecessary-restrictions-on-the-superstrate" id="no-unnecessary-restrictions-on-the-superstrate">No unnecessary restrictions on the superstrate</a></h1>
 <p id="rfc.section.6.6.p.1">Beyond those restrictions deemed necessary as common features of any secure, responsible transport protocol (see <a href="#protection-against-trivial-abuse">Section 6.5</a>), SPUD must impose only minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necessary to factor out the information that middleboxes commonly rely on and endpoints are commonly willing to expose. This information should be included in SPUD, and might itself impose additional restrictions to the superstrate.</p>
 <h1 id="rfc.section.6.7"><a href="#rfc.section.6.7">6.7.</a> <a href="#minimal-additional-start-up-latency" id="minimal-additional-start-up-latency">Minimal additional start-up latency</a></h1>
@@ -686,15 +693,20 @@ ul.toc a:first-child {
 <h1 id="rfc.section.6.9"><a href="#rfc.section.6.9">6.9.</a> <a href="#minimal-non-productive-traffic" id="minimal-non-productive-traffic">Minimal non-productive traffic</a></h1>
 <p id="rfc.section.6.9.p.1">SPUD should minimize additional non-productive traffic (e.g. keepalives), and should provide mechanisms to allow its superstrates to minimize their reliance on non-productive traffic.</p>
 <h1 id="rfc.section.6.10"><a href="#rfc.section.6.10">6.10.</a> <a href="#preservation-of-security-properties" id="preservation-of-security-properties">Preservation of Security Properties</a></h1>
-<p id="rfc.section.6.10.p.1">The use of SPUD must not weaken the security properties of the superstrate.  If the superstrate includes payload encryption for confidentiality, for example, the use of SPUD must not allow deep packet inspection systems to have access to the plaintext.  While a box along the path may indicate a particular flow is adminstratively prohibited or why it is prohibited, SPUD itself must not be used to negotiate the means to lift the prohibition.</p>
-<h1 id="rfc.section.6.11"><a href="#rfc.section.6.11">6.11.</a> <a href="#reliability-fragmentation-and-duplication" id="reliability-fragmentation-and-duplication">Reliability, Fragmentation, and Duplication</a></h1>
-<p id="rfc.section.6.11.p.1">As any information provided by SPUD is anyway opportunistic, SPUD need not provide reliable signaling for the information associated with a tube. Signals must be idempotent; all middleboxes and endpoints must gracefully handle receiving duplicate signal information. To avoid issues with fragment reassembly, all in-band SPUD signaling information must fit within a single packet. Any facilities requiring more than an MTU&#8217;s worth of data in a single signal should use an out-of-band method which does provide reliability &#8211; this method may be an existing transport or superstrate/SPUD combination, or a &#8220;minimal transport&#8221; defined by SPUD for its own use.</p>
+<p id="rfc.section.6.10.p.1">The use of SPUD must not weaken the essential security properties of the superstrate: confidentiality, integrity, authenticity, and defense against linkability. If the superstrate includes payload encryption for confidentiality, for example, the use of SPUD must not allow deep packet inspection systems to have access to the plaintext. Likewise, the use of SPUD must not create additional opportunities for linkability not already existing in the superstrate.</p>
+<p id="rfc.section.6.10.p.2">With respect to access control, SPUD itself must not be used to negotiate the means to lift administrative prohibition of certain traffic, although it could be used to provide more useful information</p>
+<p id="rfc.section.6.10.p.3">While a box along the path may indicate a particular flow is adminstratively prohibited or why it is prohibited,</p>
+<h1 id="rfc.section.6.11"><a href="#rfc.section.6.11">6.11.</a> <a href="#reliability-fragmentation-mtu-and-duplication" id="reliability-fragmentation-mtu-and-duplication">Reliability, Fragmentation, MTU, and Duplication</a></h1>
+<p id="rfc.section.6.11.p.1">As any information provided by SPUD is anyway opportunistic, SPUD need not provide reliable signaling for the information associated with a tube. Signals must be idempotent; all middleboxes and endpoints must gracefully handle receiving duplicate signal information. SPUD must continue working in the presence of IPv4 fragmentation on path, but in order to reduce the impact of requiring fragments reassembly at middleboxes for signals to be intelligible, endpoints using SPUD should attempt to fit all signals into single MTU-sized packets.</p>
+<p id="rfc.section.6.11.p.2">Given the importance of good path MTU information to SPUD&#8217;s own signaling, SPUD should implement packetization layer path MTU discovery <a href="#RFC4821">[RFC4821]</a>, providing this where appropriate as a service to its superstrates.</p>
+<p id="rfc.section.6.11.p.3">Any facilities requiring more than an MTU&#8217;s worth of data in a single signal should use an out-of-band method which does provide reliability &#8211; this method may be an existing transport or superstrate/SPUD combination, or a &#8220;minimal transport&#8221; defined by SPUD for its own use.</p>
 <h1 id="rfc.section.6.12"><a href="#rfc.section.6.12">6.12.</a> <a href="#interoperability-with-non-encapsulated-superstrates" id="interoperability-with-non-encapsulated-superstrates">Interoperability with non-encapsulated superstrates</a></h1>
 <p id="rfc.section.6.12.p.1">It is presumed that &#8220;superstrate X with SPUD&#8221; is a distinct entity on the wire from &#8220;superstrate X&#8221;. The APIs the superstrate presents to the application should be equivalent, and the two wire protocols should be freely transcodeable between each other, with the caveat that the variant without SPUD would not necessarily support features enabling communication with the path. However, there is no requirement that the headers the superstrate uses be the same in the SPUD and non-SPUD variants. Headers that the superstrate chooses always to expose to the path can therefore be encoded in the SPUD layer but not appear in an upper-layer header.</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#open-questions-and-discussion" id="open-questions-and-discussion">Open questions and discussion</a></h1>
 <p id="rfc.section.7.p.1">The preceding requirements reflect the present best understanding of the authors of the functional and technical requirements on an encapsulation-based protocol for common middlebox-endpoint cooperation for superstrates. There remain a few large open questions and points for discussion, detailed in the subsections below.</p>
 <h1 id="rfc.section.7.1"><a href="#rfc.section.7.1">7.1.</a> <a href="#property-binding" id="property-binding">Property binding</a></h1>
-<p id="rfc.section.7.1.p.1">Related to identifier scope is the scope of properties bound to SPUD packets by endpoints. SPUD may support both per-tube properties as well as per-packet properties. Properties signaled per packet reduce state requirements at middleboxes, but also increase per-packet overhead. It is likely that both types of property binding are necessary, but the selection of which properties to bind how must be undertaken carefully. It is also possible that SPUD will provide a very limited set of per-packet signals (such as ECN) using flags in the SPUD header, and require all more complicated properties to be bound per- tube.</p>
+<p id="rfc.section.7.1.p.1">Related to identifier scope is the scope of properties bound to SPUD packets by endpoints. SPUD may support both per-tube properties as well as per-packet properties. Properties signaled per packet reduce state requirements at middleboxes, but also increase per-packet overhead. Small signal size (in bits of entropy) and encoding efficiency (in bits on the wire) is therefore more important for per-packet signaling that per-tube signaling.</p>
+<p id="rfc.section.7.1.p.2">It is likely that both types of property binding are useful, but the selection of which properties to bind how must be undertaken carefully. It is also possible that SPUD will provide a very limited set of per-packet signals (such as ECN) using flags in the SPUD header, and require all more complicated properties to be bound per-tube.</p>
 <h1 id="rfc.section.7.2"><a href="#rfc.section.7.2">7.2.</a> <a href="#tradeoffs-in-integrity-protection" id="tradeoffs-in-integrity-protection">Tradeoffs in integrity protection</a></h1>
 <p id="rfc.section.7.2.p.1">In order to protect the integrity of information carried by SPUD against forging by malicious devices along the path, it would be necessary to be able to authenticate the originator of that information. We presume that the authentication of endpoints is a generally desirable property, and to be handled by the superstrate; in this case, SPUD may be able borrow that authentication to protect the integrity of endpoint-originated information.</p>
 <p id="rfc.section.7.2.p.2">However, in the Internet, it is not in the general case possible for the endpoint to authenticate every middlebox that might see packets it sends and receives. In this case information produced by middleboxes may enjoy less integrity protection than that produced by endpoints.  In addition, endpoint authentication of middleboxes and vice-versa may be better conducted out-of- band (treating the middlebox as an endpoint for the authentication protocol) than in-band (treating the middlebox as a participant in a 3+ party communication).</p>
@@ -712,36 +724,24 @@ ul.toc a:first-child {
 <p id="rfc.section.7.6.p.1">The initial thinking on signaling envisions &#8220;hard state&#8221; in middleboxes that is established when the middlebox observes the start of a SPUD tube and is torn down when the middlebox observes the end (stop) of a SPUD tube.  Such state can be abandoned as a result of network topology changes (e.g., routing update in response to link or node failure).  An alternative is a &#8220;soft state&#8221; approach that requires periodic refresh of state in middleboxes, but cleanly times out and discards abandoned state.  SPUD has the opportunity to use different timeouts than the defaults that are required for current NAT and firewall pinhole maintenance. Of course, applications will still have to detect non-SPUD middleboxes that use shorter timers.</p>
 <h1 id="rfc.section.7.7"><a href="#rfc.section.7.7">7.7.</a> <a href="#tube-vs-superstrate-association-lifetime" id="tube-vs-superstrate-association-lifetime">Tube vs. superstrate association lifetime</a></h1>
 <p id="rfc.section.7.7.p.1">The requirements as presently defined use tube start and stop signaling for two things: (1) setting up and tearing down state along the path, and (2) signaling superstrate such as association startup, acceptance, and teardown, which may have security implications. These may require separate signaling.  Specifically, if tube start acknowledgment is to be used to provide explicit guarantees to the path about the acceptability of a tube to a remote endpoint, it cannot be a completely unreliable signal. Second, the lifetime of a tube may be much shorter than the lifetime of a superstrate association, and the creation of a new tube over an existing association may need to be treated differently by endpoints and path devices than a tube creation coincident with an association creation.</p>
-<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#notes-from-mami-plenary-meeting" id="notes-from-mami-plenary-meeting">Notes from MAMI Plenary Meeting</a></h1>
+<h1 id="rfc.section.7.8"><a href="#rfc.section.7.8">7.8.</a> <a href="#remaining-open-issues-from-mami-plenary-meeting" id="remaining-open-issues-from-mami-plenary-meeting">Remaining open issues from MAMI Plenary Meeting</a></h1>
 <p/>
 
 <ul>
-  <li>Note that 5.6 Extensibility includes support for experimentation: it must be possible to use the protocol for experimental signaling without registration, or with trivially easy registration, of codepoints.</li>
-  <li>Emphasize that control always lies at the endpoint (?)</li>
-  <li>Split integrity protection into a non-optional checksum and MTI (opportunistic) crypto integrity protection.</li>
-  <li>in 6.1 &#8220;note that UDP meets requirements&#8221; (weaken &#8220;the only way to do this is UDP&#8221;).</li>
-  <li>in 6.2 &#8220;note that fixed length tube ID + magic number does this.&#8221;</li>
-  <li>in 6.3 &#8220;note that UDP works here&#8221;</li>
-  <li>in 6.5 explain return routability, remove Gorry&#8217;s tunnel-relevant comment</li>
-  <li>6.10 note we want confidentiality, integrity, authenticity, and defense against linkability</li>
-  <li>6.11 mention plpmtud &#8211; SPUD should probably support this, as the &#8220;under the packetization layer&#8221;</li>
-  <li>7.4 per packet info must be small</li>
-  <li>note that we want to keep SPUD segments under MTU but that everything should continue working in a fragmented world.</li>
-  <li>open possibility of eventual/delayed authenticity</li>
   <li>security and privacy requirements go into a separate section</li>
-  <li>(probably not for reqt&#8217;s): explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.</li>
-  <li>(probably not for reqt&#8217;s): determine whether delayed authenticity is something LURK could help with</li>
+  <li>explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.</li>
+  <li>determine whether delayed authenticity is something LURK could help with.</li>
 </ul>
-<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
-<p id="rfc.section.9.p.1">The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information (<a href="#authentication">Section 5.7</a>, <a href="#integrity">Section 5.9</a>, <a href="#privacy">Section 5.10</a>, and <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>); protection against attacks (<a href="#proof-a-device-is-on-path">Section 5.8</a>, and <a href="#protection-against-trivial-abuse">Section 6.5</a>); and the trust relationships among endpoints and middleboxes <a href="#continuum-of-trust-among-endpoints-and-middleboxes">Section 7.4</a>. These will be further addressed in protocol definition work following from these requirements.</p>
-<h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
-<p id="rfc.section.10.p.1">This document has no actions for IANA.</p>
-<h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
-<p id="rfc.section.11.p.1">In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.</p>
-<h1 id="rfc.section.12"><a href="#rfc.section.12">12.</a> <a href="#acknowledgments" id="acknowledgments">Acknowledgments</a></h1>
-<p id="rfc.section.12.p.1">Thanks to Roland Bless, Cameron Byrne, Toerless Eckert, Daniel Kahn Gillmor, Tom Herbert, and Christian Huitema for feedback and comments on these requirements, as well as to the participants at the SPUD BoF at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions leading to this work. Thanks as well to the contributors to the H2020 MAMI project plenary discussion about this work: Ozgu Alay, Diego Lopez, Gorry Fairhurst, Iain Learmonth, and Matteo Varvelli.</p>
-<p id="rfc.section.12.p.2">This work is supported by the European Commission under Horizon 2020 grant agreement no. 688421 Measurement and Architecture for a Middleboxed Internet (MAMI), and by the Swiss State Secretariat for Education, Research, and Innovation under contract no. 15.0268. This support does not imply endorsement.</p>
-<h1 id="rfc.references"><a href="#rfc.references">13.</a> Informative References</h1>
+<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
+<p id="rfc.section.8.p.1">The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information (<a href="#authentication">Section 5.7</a>, <a href="#integrity">Section 5.9</a>, <a href="#privacy">Section 5.10</a>, and <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>); protection against attacks (<a href="#proof-a-device-is-on-path">Section 5.8</a>, and {{protection- against-trivial-abuse}}); preservation of security properties of its superstrates (<a href="#preservation-of-security-properties">Section 6.10</a>); and the trust relationships among endpoints and middleboxes ({{continuum-of-trust-among- endpoints-and-middleboxes}}). These will be further addressed in protocol definition work following from these requirements.</p>
+<h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
+<p id="rfc.section.9.p.1">This document has no actions for IANA.</p>
+<h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
+<p id="rfc.section.10.p.1">In addition to the editors, this document is the work of David Black, Ken Calvert, Ted Hardie, Joe Hildebrand, Jana Iyengar, and Eric Rescorla.</p>
+<h1 id="rfc.section.11"><a href="#rfc.section.11">11.</a> <a href="#acknowledgments" id="acknowledgments">Acknowledgments</a></h1>
+<p id="rfc.section.11.p.1">Thanks to Ozgu Alay, Roland Bless, Cameron Byrne, Toerless Eckert, Gorry Fairhurst, Daniel Kahn Gillmor, Tom Herbert, Christian Huitema, Iain Learmonth, Diego Lopez, and Matteo Varvelli for feedback and comments on these requirements, as well as to the participants at the SPUD BoF at IETF 92 meeting in Dallas and the IAB SEMI workshop in Zurich for the discussions leading to this work.</p>
+<p id="rfc.section.11.p.2">This work is supported by the European Commission under Horizon 2020 grant agreement no. 688421 Measurement and Architecture for a Middleboxed Internet (MAMI), and by the Swiss State Secretariat for Education, Research, and Innovation under contract no. 15.0268. This support does not imply endorsement.</p>
+<h1 id="rfc.references"><a href="#rfc.references">12.</a> Informative References</h1>
 <table>
   <tbody>
     <tr>
@@ -770,6 +770,18 @@ ul.toc a:first-child {
     </tr>
     <tr>
       <td class="reference">
+        <b id="RFC4821">[RFC4821]</b>
+      </td>
+      <td class="top"><a>Mathis, M.</a> and <a>J. Heffner</a>, "<a href="http://tools.ietf.org/html/rfc4821">Packetization Layer Path MTU Discovery</a>", RFC 4821, DOI 10.17487/RFC4821, March 2007.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC5226">[RFC5226]</b>
+      </td>
+      <td class="top"><a>Narten, T.</a> and <a>H. Alvestrand</a>, "<a href="http://tools.ietf.org/html/rfc5226">Guidelines for Writing an IANA Considerations Section in RFCs</a>", BCP 26, RFC 5226, DOI 10.17487/RFC5226, May 2008.</td>
+    </tr>
+    <tr>
+      <td class="reference">
         <b id="RFC6347">[RFC6347]</b>
       </td>
       <td class="top"><a>Rescorla, E.</a> and <a>N. Modadugu</a>, "<a href="http://tools.ietf.org/html/rfc6347">Datagram Transport Layer Security Version 1.2</a>", RFC 6347, DOI 10.17487/RFC6347, January 2012.</td>
@@ -791,6 +803,12 @@ ul.toc a:first-child {
         <b id="I-D.hildebrand-spud-prototype">[I-D.hildebrand-spud-prototype]</b>
       </td>
       <td class="top"><a>Hildebrand, J.</a> and <a>B. Trammell</a>, "<a href="http://tools.ietf.org/html/draft-hildebrand-spud-prototype-03">Substrate Protocol for User Datagrams (SPUD) Prototype</a>", Internet-Draft draft-hildebrand-spud-prototype-03, March 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.kuehlewind-spud-use-cases">[I-D.kuehlewind-spud-use-cases]</b>
+      </td>
+      <td class="top"><a>Kuehlewind, M.</a> and <a>B. Trammell</a>, "<a href="http://tools.ietf.org/html/draft-kuehlewind-spud-use-cases-00">SPUD Use Cases</a>", Internet-Draft draft-kuehlewind-spud-use-cases-00, July 2015.</td>
     </tr>
     <tr>
       <td class="reference">
