@@ -288,30 +288,11 @@ declarations without requiring updates to SPUD implementations in middleboxes.
 The use of SPUD for experimental signaling must be possible either without the
 registration of codepoints or namespaces with IANA, or with trivially easy (First Come, First Served {{RFC5226}} registration of such codepoints.
 
-## Authentication
+## Privacy
 
-The basic SPUD protocol must not require any authentication or a priori trust
-relationship between endpoints and middleboxes to function.  However, SPUD
-should interoperate with the presentation/exchange of authentication
-information in environments where a trust relationship already exists, or can
-be easily established, either in-band or out-of-band, and use this information
-where possible and appropriate.
-
-Given the advisory nature of the signaling it supports, SPUD may also support
-eventual authentication: authentication of a signal after the reception of a
-packet after that containing the signal.
-
-## Proof a device is on-path
-
-Devices may make assertions of network characteristics relevant to a flow. One
-way these assertions can be assessed is by a demonstration that the device
-making it is on-path to the flow and so could adjust the characteristics to
-match the assertion.  SPUD must therefore allow endpoints to distinguish on-
-path devices from devices not on the path. Network elements may also need to
-confirm that application-to-path assertions are made by the source indicated
-in the flow.  In both cases, return routability (as in {{protection-against-
-trivial-abuse}}) may offer one incrementally deployable method of testing the
-topology to make this confirmation.
+SPUD must allow endpoints to control the amount of information exposed to
+middleboxes, with the default being the minimum necessary for correct
+functioning.
 
 ## Integrity
 
@@ -329,11 +310,40 @@ integrity protection.
 
 Integrity protection of the superstrate is left up to the superstrate.
 
-## Privacy
+## Authentication
 
-SPUD must allow endpoints to control the amount of information exposed to
-middleboxes, with the default being the minimum necessary for correct
-functioning.
+The basic SPUD protocol must not require any authentication or a priori trust
+relationship between endpoints and middleboxes to function.  However, SPUD
+should interoperate with the presentation/exchange of authentication
+information in environments where a trust relationship already exists, or can
+be easily established, either in-band or out-of-band, and use this information
+where possible and appropriate.
+
+Given the advisory nature of the signaling it supports, SPUD may also support
+eventual authentication: authentication of a signal after the reception of a
+packet after that containing the signal.
+
+## Encrypted Feedback 
+
+Some use cases involve collecting information along a forward path from a
+sending endpoint to a receiving endpoint. In cases where this information is
+also useful to the sending endpoint, SPUD must provide a feedback channel to
+communicate this information back to the sender. As this information does not
+need to be exposed to the path, this feedback channel should be encrypted for
+confidentiality and authenticity, when available (see {{authentication}}).
+
+## Proof a device is on-path
+
+Devices may make assertions of network characteristics relevant to a flow. One
+way these assertions can be assessed is by a demonstration that the device
+making it is on-path to the flow and so could adjust the characteristics to
+match the assertion.  SPUD must therefore allow endpoints to distinguish on-
+path devices from devices not on the path. Network elements may also need to
+confirm that application-to-path assertions are made by the source indicated
+in the flow.  In both cases, return routability (as in {{protection-against-
+trivial-abuse}}) may offer one incrementally deployable method of testing the
+topology to make this confirmation.
+
 
 # Technical Requirements
 
@@ -419,7 +429,7 @@ itself impose additional restrictions to the superstrate.
 
 SPUD should not introduce additional start-up latency for superstrates.
 
-## Minimal Header Overhead
+## Minimal header overhead
 
 To avoid reducing network performance, the information and coding used in SPUD
 should be designed to use the minimum necessary amount of additional space in
