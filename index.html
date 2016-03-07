@@ -463,10 +463,11 @@ ul.toc a:first-child {
 <link href="#rfc.section.5.4" rel="Chapter" title="5.4 Tube Start and End Signaling"/>
 <link href="#rfc.section.5.5" rel="Chapter" title="5.5 SPUD Support Discovery"/>
 <link href="#rfc.section.5.6" rel="Chapter" title="5.6 Extensibility"/>
-<link href="#rfc.section.5.7" rel="Chapter" title="5.7 Authentication"/>
-<link href="#rfc.section.5.8" rel="Chapter" title="5.8 Proof a device is on-path"/>
-<link href="#rfc.section.5.9" rel="Chapter" title="5.9 Integrity"/>
-<link href="#rfc.section.5.10" rel="Chapter" title="5.10 Privacy"/>
+<link href="#rfc.section.5.7" rel="Chapter" title="5.7 Privacy"/>
+<link href="#rfc.section.5.8" rel="Chapter" title="5.8 Integrity"/>
+<link href="#rfc.section.5.9" rel="Chapter" title="5.9 Authentication"/>
+<link href="#rfc.section.5.10" rel="Chapter" title="5.10 Encrypted Feedback"/>
+<link href="#rfc.section.5.11" rel="Chapter" title="5.11 Proof a device is on-path"/>
 <link href="#rfc.section.6" rel="Chapter" title="6 Technical Requirements"/>
 <link href="#rfc.section.6.1" rel="Chapter" title="6.1 Middlebox Traversal"/>
 <link href="#rfc.section.6.2" rel="Chapter" title="6.2 Low Overhead in Network Processing"/>
@@ -475,7 +476,7 @@ ul.toc a:first-child {
 <link href="#rfc.section.6.5" rel="Chapter" title="6.5 Protection against trivial abuse"/>
 <link href="#rfc.section.6.6" rel="Chapter" title="6.6 No unnecessary restrictions on the superstrate"/>
 <link href="#rfc.section.6.7" rel="Chapter" title="6.7 Minimal additional start-up latency"/>
-<link href="#rfc.section.6.8" rel="Chapter" title="6.8 Minimal Header Overhead"/>
+<link href="#rfc.section.6.8" rel="Chapter" title="6.8 Minimal header overhead"/>
 <link href="#rfc.section.6.9" rel="Chapter" title="6.9 Minimal non-productive traffic"/>
 <link href="#rfc.section.6.10" rel="Chapter" title="6.10 Preservation of Security Properties"/>
 <link href="#rfc.section.6.11" rel="Chapter" title="6.11 Reliability, Fragmentation, MTU, and Duplication"/>
@@ -570,10 +571,11 @@ ul.toc a:first-child {
 <li>5.4.   <a href="#rfc.section.5.4">Tube Start and End Signaling</a></li>
 <li>5.5.   <a href="#rfc.section.5.5">SPUD Support Discovery</a></li>
 <li>5.6.   <a href="#rfc.section.5.6">Extensibility</a></li>
-<li>5.7.   <a href="#rfc.section.5.7">Authentication</a></li>
-<li>5.8.   <a href="#rfc.section.5.8">Proof a device is on-path</a></li>
-<li>5.9.   <a href="#rfc.section.5.9">Integrity</a></li>
-<li>5.10.   <a href="#rfc.section.5.10">Privacy</a></li>
+<li>5.7.   <a href="#rfc.section.5.7">Privacy</a></li>
+<li>5.8.   <a href="#rfc.section.5.8">Integrity</a></li>
+<li>5.9.   <a href="#rfc.section.5.9">Authentication</a></li>
+<li>5.10.   <a href="#rfc.section.5.10">Encrypted Feedback</a></li>
+<li>5.11.   <a href="#rfc.section.5.11">Proof a device is on-path</a></li>
 </ul><li>6.   <a href="#rfc.section.6">Technical Requirements</a></li>
 <ul><li>6.1.   <a href="#rfc.section.6.1">Middlebox Traversal</a></li>
 <li>6.2.   <a href="#rfc.section.6.2">Low Overhead in Network Processing</a></li>
@@ -582,7 +584,7 @@ ul.toc a:first-child {
 <li>6.5.   <a href="#rfc.section.6.5">Protection against trivial abuse</a></li>
 <li>6.6.   <a href="#rfc.section.6.6">No unnecessary restrictions on the superstrate</a></li>
 <li>6.7.   <a href="#rfc.section.6.7">Minimal additional start-up latency</a></li>
-<li>6.8.   <a href="#rfc.section.6.8">Minimal Header Overhead</a></li>
+<li>6.8.   <a href="#rfc.section.6.8">Minimal header overhead</a></li>
 <li>6.9.   <a href="#rfc.section.6.9">Minimal non-productive traffic</a></li>
 <li>6.10.   <a href="#rfc.section.6.10">Preservation of Security Properties</a></li>
 <li>6.11.   <a href="#rfc.section.6.11">Reliability, Fragmentation, MTU, and Duplication</a></li>
@@ -638,7 +640,7 @@ ul.toc a:first-child {
 <p id="rfc.section.5.1.p.2">The simplest mechanisms for association involve the addition of an identifier to each packet in a tube. Other mechanisms that don&#8217;t directly encode the identifier in a packet header, but instead provide it in a way that it is simple to derive from other information available in the packet at the endpoints and along the path, are also possible. In any cases, for the purposes of this requirement we treat this identifier as a simple vector of N bits. The properties of the tube identifier are subject to tradeoffs on the requirements for privacy, security, ease of implementation, and header overhead efficiency.</p>
 <p id="rfc.section.5.1.p.3">In determining the optimal size and scope for this tube identifier, we first assume that the 5-tuple of source and destination IP address, UDP port, and IP protocol identifier (17 for UDP) is used in the Internet as an existing flow identifier, due to the widespread deployment of network address and port translation. We conclude that SPUD tube IDs should be scoped to this 5-tuple.</p>
 <p id="rfc.section.5.1.p.4">While a globally-unique identifier would allow easier state comparison and migration for mobility use cases, it would have two serious disadvantages.  First, N would need to be sufficiently large to minimize the probability of collision among multiple tubes having the same identifier along the same path during some period of time. A 128-bit UUID <a href="#RFC4122">[RFC4122]</a> or an identifier of equivalent size generated using an equivalent algorithm would probably be sufficient, at the cost of 128 bits of header space in every packet. Second, globally unique tube identifiers would also introduce new possibilities for user and node tracking, with a serious negative impact on privacy. We note that global identifiers for mobility, when necessary to expose to the path, can be supported separately from the tube identification mechanism, by using a generic tube-grouping application-to-path signaling bound to the tube.</p>
-<p id="rfc.section.5.1.p.5">Even when tube IDs are scoped to 5-tuples, N must still be sufficiently large, and the bits in the identifier sufficiently random, that possession of a valid tube ID implies that a node can observe packets belonging to the tube (see <a href="#proof-a-device-is-on-path">Section 5.8</a>). This reduces the chances of success of blind packet injection attacks of packets with guessed valid tube IDs.</p>
+<p id="rfc.section.5.1.p.5">Even when tube IDs are scoped to 5-tuples, N must still be sufficiently large, and the bits in the identifier sufficiently random, that possession of a valid tube ID implies that a node can observe packets belonging to the tube (see <a href="#proof-a-device-is-on-path">Section 5.11</a>). This reduces the chances of success of blind packet injection attacks of packets with guessed valid tube IDs.</p>
 <p id="rfc.section.5.1.p.6">When scoped to 5-tuples, the forward and backward directions of a bidirectional connection will have different tube IDs, since these will necessarily take different paths and may interact with a different set of middleboxes due to asymmetric routing. SPUD will therefore require some facility to note that one tube is the &#8220;reverse&#8221; direction of another, a general case of the tube grouping signal above.</p>
 <h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#endpoint-to-path-signaling" id="endpoint-to-path-signaling">Endpoint to Path Signaling</a></h1>
 <p id="rfc.section.5.2.p.1">SPUD must be able to provide information scoped to a tube from the end- point(s) to all SPUD-aware nodes on the path about the packets in that tube.  Since it is implausible that an endpoint has pre-existing trust relationships to all SPUD-aware middleboxes on a certain path in the context of the Internet, SPUD must provide in-band signaling. SPUD may in addition also offer mechanisms for out-of-band signaling when appropriate.  See <a href="#in-band-out-of-band-piggybacked-interleaved-and-reflected-signaling">Section 7.3</a> for more discussion.</p>
@@ -651,17 +653,19 @@ ul.toc a:first-child {
 <h1 id="rfc.section.5.6"><a href="#rfc.section.5.6">5.6.</a> <a href="#extensibility" id="extensibility">Extensibility</a></h1>
 <p id="rfc.section.5.6.p.1">SPUD must enable multiple new transport semantics and application/path declarations without requiring updates to SPUD implementations in middleboxes.</p>
 <p id="rfc.section.5.6.p.2">The use of SPUD for experimental signaling must be possible either without the registration of codepoints or namespaces with IANA, or with trivially easy (First Come, First Served <a href="#RFC5226">[RFC5226]</a> registration of such codepoints.</p>
-<h1 id="rfc.section.5.7"><a href="#rfc.section.5.7">5.7.</a> <a href="#authentication" id="authentication">Authentication</a></h1>
-<p id="rfc.section.5.7.p.1">The basic SPUD protocol must not require any authentication or a priori trust relationship between endpoints and middleboxes to function.  However, SPUD should interoperate with the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established, either in-band or out-of-band, and use this information where possible and appropriate.</p>
-<p id="rfc.section.5.7.p.2">Given the advisory nature of the signaling it supports, SPUD may also support eventual authentication: authentication of a signal after the reception of a packet after that containing the signal.</p>
-<h1 id="rfc.section.5.8"><a href="#rfc.section.5.8">5.8.</a> <a href="#proof-a-device-is-on-path" id="proof-a-device-is-on-path">Proof a device is on-path</a></h1>
-<p id="rfc.section.5.8.p.1">Devices may make assertions of network characteristics relevant to a flow. One way these assertions can be assessed is by a demonstration that the device making it is on-path to the flow and so could adjust the characteristics to match the assertion.  SPUD must therefore allow endpoints to distinguish on- path devices from devices not on the path. Network elements may also need to confirm that application-to-path assertions are made by the source indicated in the flow.  In both cases, return routability (as in {{protection-against- trivial-abuse}}) may offer one incrementally deployable method of testing the topology to make this confirmation.</p>
-<h1 id="rfc.section.5.9"><a href="#rfc.section.5.9">5.9.</a> <a href="#integrity" id="integrity">Integrity</a></h1>
-<p id="rfc.section.5.9.p.1">SPUD must provide integrity protection of exposed information in SPUD- encapsulated packets, though the details of this integrity protection are still open; see <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>.</p>
-<p id="rfc.section.5.9.p.2">Endpoints should be able to detect changes to headers SPUD uses for its own signaling (whether due to error, accidental modification, or malicious modification), as well as the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoints. Errors and accidental modifications can be detected using a simple checksum over the SPUD header, while detecting malicious modifications requires cryptographic integrity protection.</p>
-<p id="rfc.section.5.9.p.3">Integrity protection of the superstrate is left up to the superstrate.</p>
-<h1 id="rfc.section.5.10"><a href="#rfc.section.5.10">5.10.</a> <a href="#privacy" id="privacy">Privacy</a></h1>
-<p id="rfc.section.5.10.p.1">SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.</p>
+<h1 id="rfc.section.5.7"><a href="#rfc.section.5.7">5.7.</a> <a href="#privacy" id="privacy">Privacy</a></h1>
+<p id="rfc.section.5.7.p.1">SPUD must allow endpoints to control the amount of information exposed to middleboxes, with the default being the minimum necessary for correct functioning.</p>
+<h1 id="rfc.section.5.8"><a href="#rfc.section.5.8">5.8.</a> <a href="#integrity" id="integrity">Integrity</a></h1>
+<p id="rfc.section.5.8.p.1">SPUD must provide integrity protection of exposed information in SPUD- encapsulated packets, though the details of this integrity protection are still open; see <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>.</p>
+<p id="rfc.section.5.8.p.2">Endpoints should be able to detect changes to headers SPUD uses for its own signaling (whether due to error, accidental modification, or malicious modification), as well as the injection of packets into a SPUD flow (defined by 5-tuple) or tube by nodes other than the remote endpoints. Errors and accidental modifications can be detected using a simple checksum over the SPUD header, while detecting malicious modifications requires cryptographic integrity protection.</p>
+<p id="rfc.section.5.8.p.3">Integrity protection of the superstrate is left up to the superstrate.</p>
+<h1 id="rfc.section.5.9"><a href="#rfc.section.5.9">5.9.</a> <a href="#authentication" id="authentication">Authentication</a></h1>
+<p id="rfc.section.5.9.p.1">The basic SPUD protocol must not require any authentication or a priori trust relationship between endpoints and middleboxes to function.  However, SPUD should interoperate with the presentation/exchange of authentication information in environments where a trust relationship already exists, or can be easily established, either in-band or out-of-band, and use this information where possible and appropriate.</p>
+<p id="rfc.section.5.9.p.2">Given the advisory nature of the signaling it supports, SPUD may also support eventual authentication: authentication of a signal after the reception of a packet after that containing the signal.</p>
+<h1 id="rfc.section.5.10"><a href="#rfc.section.5.10">5.10.</a> <a href="#encrypted-feedback" id="encrypted-feedback">Encrypted Feedback</a></h1>
+<p id="rfc.section.5.10.p.1">Some use cases involve collecting information along a forward path from a sending endpoint to a receiving endpoint. In cases where this information is also useful to the sending endpoint, SPUD must provide a feedback channel to communicate this information back to the sender. As this information does not need to be exposed to the path, this feedback channel should be encrypted for confidentiality and authenticity, when available (see <a href="#authentication">Section 5.9</a>).</p>
+<h1 id="rfc.section.5.11"><a href="#rfc.section.5.11">5.11.</a> <a href="#proof-a-device-is-on-path" id="proof-a-device-is-on-path">Proof a device is on-path</a></h1>
+<p id="rfc.section.5.11.p.1">Devices may make assertions of network characteristics relevant to a flow. One way these assertions can be assessed is by a demonstration that the device making it is on-path to the flow and so could adjust the characteristics to match the assertion.  SPUD must therefore allow endpoints to distinguish on- path devices from devices not on the path. Network elements may also need to confirm that application-to-path assertions are made by the source indicated in the flow.  In both cases, return routability (as in {{protection-against- trivial-abuse}}) may offer one incrementally deployable method of testing the topology to make this confirmation.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#technical-requirements" id="technical-requirements">Technical Requirements</a></h1>
 <p id="rfc.section.6.p.1">The following requirements detail the constraints on how the SPUD facility must meet its functional requirements.</p>
 <h1 id="rfc.section.6.1"><a href="#rfc.section.6.1">6.1.</a> <a href="#middlebox-traversal" id="middlebox-traversal">Middlebox Traversal</a></h1>
@@ -688,7 +692,7 @@ ul.toc a:first-child {
 <p id="rfc.section.6.6.p.1">Beyond those restrictions deemed necessary as common features of any secure, responsible transport protocol (see <a href="#protection-against-trivial-abuse">Section 6.5</a>), SPUD must impose only minimal restrictions on the transport protocols it encapsulates. However, to serve as a substrate, it is necessary to factor out the information that middleboxes commonly rely on and endpoints are commonly willing to expose. This information should be included in SPUD, and might itself impose additional restrictions to the superstrate.</p>
 <h1 id="rfc.section.6.7"><a href="#rfc.section.6.7">6.7.</a> <a href="#minimal-additional-start-up-latency" id="minimal-additional-start-up-latency">Minimal additional start-up latency</a></h1>
 <p id="rfc.section.6.7.p.1">SPUD should not introduce additional start-up latency for superstrates.</p>
-<h1 id="rfc.section.6.8"><a href="#rfc.section.6.8">6.8.</a> <a href="#minimal-header-overhead" id="minimal-header-overhead">Minimal Header Overhead</a></h1>
+<h1 id="rfc.section.6.8"><a href="#rfc.section.6.8">6.8.</a> <a href="#minimal-header-overhead" id="minimal-header-overhead">Minimal header overhead</a></h1>
 <p id="rfc.section.6.8.p.1">To avoid reducing network performance, the information and coding used in SPUD should be designed to use the minimum necessary amount of additional space in encapsulation headers.</p>
 <h1 id="rfc.section.6.9"><a href="#rfc.section.6.9">6.9.</a> <a href="#minimal-non-productive-traffic" id="minimal-non-productive-traffic">Minimal non-productive traffic</a></h1>
 <p id="rfc.section.6.9.p.1">SPUD should minimize additional non-productive traffic (e.g. keepalives), and should provide mechanisms to allow its superstrates to minimize their reliance on non-productive traffic.</p>
@@ -733,7 +737,7 @@ ul.toc a:first-child {
   <li>determine whether delayed authenticity is something LURK could help with.</li>
 </ul>
 <h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
-<p id="rfc.section.8.p.1">The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information (<a href="#authentication">Section 5.7</a>, <a href="#integrity">Section 5.9</a>, <a href="#privacy">Section 5.10</a>, and <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>); protection against attacks (<a href="#proof-a-device-is-on-path">Section 5.8</a>, and {{protection- against-trivial-abuse}}); preservation of security properties of its superstrates (<a href="#preservation-of-security-properties">Section 6.10</a>); and the trust relationships among endpoints and middleboxes ({{continuum-of-trust-among- endpoints-and-middleboxes}}). These will be further addressed in protocol definition work following from these requirements.</p>
+<p id="rfc.section.8.p.1">The security-relevant requirements for SPUD deal mainly with endpoint authentication and the integrity of exposed information (<a href="#authentication">Section 5.9</a>, <a href="#integrity">Section 5.8</a>, <a href="#privacy">Section 5.7</a>, and <a href="#tradeoffs-in-integrity-protection">Section 7.2</a>); protection against attacks (<a href="#proof-a-device-is-on-path">Section 5.11</a>, and {{protection- against-trivial-abuse}}); preservation of security properties of its superstrates (<a href="#preservation-of-security-properties">Section 6.10</a>); and the trust relationships among endpoints and middleboxes ({{continuum-of-trust-among- endpoints-and-middleboxes}}). These will be further addressed in protocol definition work following from these requirements.</p>
 <h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
 <p id="rfc.section.9.p.1">This document has no actions for IANA.</p>
 <h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#contributors" id="contributors">Contributors</a></h1>
