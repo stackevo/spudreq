@@ -257,11 +257,13 @@ requirement.
 SPUD must provide a facility for endpoints to signal that a tube has started,
 that the start of the tube has been acknowledged and accepted by the remote
 endpoint(s), and that a tube has ended and its state can be forgotten by the
-path. Given unreliable signaling (see {{reliability-fragmentation-and-
-duplication}}) both endpoints and devices on the path must be resilient to the
+path. Given unreliable signaling (see 
+{{reliability-fragmentation-mtu-and-duplication}}) 
+both endpoints and devices on the path must be resilient to the
 loss of any of these signals. Specifically, timeouts are still necessary to
-clean up stale state. See {{hard-state-vs-soft-state}} and {{tube-vs-
-superstrate-association-lifetime}} for more discussion on tube start and end
+clean up stale state. See {{hard-state-vs-soft-state}} and 
+{{tube-vs-superstrate-association-lifetime}} 
+for more discussion on tube start and end
 signaling.
 
 ## Declarative signaling
@@ -281,18 +283,6 @@ declarations without requiring updates to SPUD implementations in middleboxes.
 The use of SPUD for experimental signaling must be possible either without the
 registration of codepoints or namespaces with IANA, or with trivially easy
 (First Come, First Served {{RFC5226}} registration of such codepoints.
-
-## Proof a device is on-path
-
-Devices may make assertions of network characteristics relevant to a flow. One
-way these assertions can be assessed is by a demonstration that the device
-making it is on-path to the flow and so could adjust the characteristics to
-match the assertion.  SPUD must therefore allow endpoints to distinguish on-
-path devices from devices not on the path. Network elements may also need to
-confirm that application-to-path assertions are made by the source indicated
-in the flow.  In both cases, return routability (as in {{protection-against-
-trivial-abuse}}) may offer one incrementally deployable method of testing the
-topology to make this confirmation.
 
 # Security Requirements
 
@@ -357,6 +347,40 @@ With respect to access control, SPUD itself must not be used to negotiate the
 means to lift administrative prohibition of certain traffic, although it could
 be used to provide more useful information why it is prohibited.
 
+## Proof a device is on-path
+
+Devices may make assertions of network characteristics relevant to a flow. One
+way these assertions can be assessed is by a demonstration that the device
+making it is on-path to the flow and so could adjust the characteristics to
+match the assertion.  SPUD must therefore allow endpoints to distinguish on-
+path devices from devices not on the path. Network elements may also need to
+confirm that application-to-path assertions are made by the source indicated
+in the flow.  In both cases, return routability (as in 
+{{protection-against-trivial-abuse}}) 
+may offer one incrementally deployable method of testing the
+topology to make this confirmation.
+
+## Protection against trivial abuse
+
+Malicious background traffic is a serious problem for UDP-based protocols
+due to the ease of forging source addresses in UDP together with only
+limited deployment of network egress filtering {{RFC2827}}. Trivial abuse
+includes flooding and state exhaustion attacks, as well as reflection and
+amplification attacks.  SPUD must provide minimal protection against this
+trivial abuse. This probably implies that SPUD should provide:
+
+- a proof of return routability, that the endpoint identified by a packet's source address receives packets sent to that address;
+- a feedback channel between endpoints;
+- a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic; and
+- mechanisms to protect against state exhaustion and other denial-of-service attacks.
+
+We note that using a "magic number" or other pattern of bits in an
+encapsulation-layer header not used in any widely deployed protocol has the
+nice property that no existing node in the Internet can be induced to reflect
+traffic containing it. This allows the magic number to provide probabilistic
+assurance that a given packet is not reflected, assisting in meeting this
+requirement.
+
 # Technical Requirements
 
 The following requirements detail the constraints on how the SPUD facility must meet its functional requirements.
@@ -377,11 +401,12 @@ encapsulation would meet these requirements.
 
 SPUD must be low-overhead, specifically requiring very little effort to
 recognize that a packet is a SPUD packet and to determine the tube it is
-associated with. We note that a "magic number" or other pattern of bits in an
-encapsulation-layer header, with a low probability of collision with other
-protocols using the same encapsulation, would meet the recognition
-requirement. Tube identifiers appearing directly in the encapsulation-layer
-header would meet the tube association requirement.
+associated with. We note that a magic number as in 
+{{protection-against-trivial-abuse}} 
+would also have a low probability of colliding with any non-
+SPUD traffic, therefore meeting the recognition requirement. Tube identifiers
+appearing directly in the encapsulation-layer header would meet the tube
+association requirement.
 
 ## Implementability in User-Space
 
@@ -408,26 +433,6 @@ in signaling, to ensure that each actor in a non-trusted environment has
 incentives to participate in the signaling protocol honestly; see 
 {{I-D.trammell-stackevo-explicit-coop}} for more.
 
-## Protection against trivial abuse
-
-Malicious background traffic is a serious problem for UDP-based protocols
-due to the ease of forging source addresses in UDP together with only
-limited deployment of network egress filtering {{RFC2827}}. Trivial abuse
-includes flooding and state exhaustion attacks, as well as reflection and
-amplification attacks.  SPUD must provide minimal protection against this
-trivial abuse. This probably implies that SPUD should provide:
-
-- a proof of return routability, that the endpoint identified by a packet's source address receives packets sent to that address;
-- a feedback channel between endpoints;
-- a method to probabilistically discriminiate legitimate SPUD traffic from reflected malicious traffic; and
-- mechanisms to protect against state exhaustion and other denial-of-service attacks.
-
-We note that using a "magic number" as in {{low-overhead-in-network-
-processing}} has the nice additional property that, if said number does not
-appear in any widely deployed protocol using the encapsulation, no existing
-node in the Internet can be induced to reflect traffic containing it. This
-allows the "magic number" to provide probabilistic assurance that a given
-packet is not reflected, assisting in meeting this requirement.
 
 ## No unnecessary restrictions on the superstrate
 
@@ -539,8 +544,9 @@ than in-band (treating the middlebox as a participant in a 3+ party communicatio
 
 ## Piggybacked, interleaved, and reflected signaling
 
-The requirements in {{endpoint-to-path-signaling}} and {{path-to-endpoint-
-signaling}} are best met by in-band signaling: packets carrying the same
+The requirements in {{endpoint-to-path-signaling}} and 
+{{path-to-endpoint-signaling}} 
+are best met by in-band signaling: packets carrying the same
 6-tuple as packets containing superstrate headers and payload.
 
 Path-to-endpoint signaling can be piggybacked  and/or interleaved (where SPUD
@@ -623,7 +629,7 @@ whether path to the remote endpoint as well as the return path from the remote
 endpoint will pass SPUD packets. 
 
 It is not clear whether this is a requirement of SPUD, or a requirement of the
-superstrate / application over SPUD.s
+superstrate / application over SPUD.
 
 ## Remaining open issues from MAMI Plenary Meeting
 
@@ -632,14 +638,12 @@ superstrate / application over SPUD.s
 
 # Security Considerations
 
-The security-relevant requirements for SPUD deal mainly with endpoint
-authentication and the integrity of exposed information ({{authentication}},
-{{integrity}}, {{privacy}}, and {{tradeoffs-in-integrity-protection}});
-protection against attacks ({{proof-a-device-is-on-path}}, and {{protection-
-against-trivial-abuse}}); preservation of security properties of its
-superstrates ({{preservation-of-security-properties}}); and the trust
-relationships among endpoints and middleboxes ({{continuum-of-trust-among-
-endpoints-and-middleboxes}}). These will be further addressed in protocol
+The security-relevant requirements for SPUD are outlined in 
+{{security-requirements}}. 
+In addition, security-relevant open issues are discussed in 
+{{tradeoffs-in-integrity-protection}} and 
+{{continuum-of-trust-among-endpoints-and-middleboxes}}
+These will be further addressed in protocol
 definition work following from these requirements.
 
 # IANA Considerations
