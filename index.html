@@ -492,7 +492,6 @@ ul.toc a:first-child {
 <link href="#rfc.section.8.6" rel="Chapter" title="8.6 Hard state vs. soft state"/>
 <link href="#rfc.section.8.7" rel="Chapter" title="8.7 Tube vs. superstrate association lifetime"/>
 <link href="#rfc.section.8.8" rel="Chapter" title="8.8 SPUD Support Discovery"/>
-<link href="#rfc.section.8.9" rel="Chapter" title="8.9 Remaining open issues from MAMI Plenary Meeting"/>
 <link href="#rfc.section.9" rel="Chapter" title="9 Security Considerations"/>
 <link href="#rfc.section.10" rel="Chapter" title="10 IANA Considerations"/>
 <link href="#rfc.section.11" rel="Chapter" title="11 Contributors"/>
@@ -603,7 +602,6 @@ ul.toc a:first-child {
 <li>8.6.   <a href="#rfc.section.8.6">Hard state vs. soft state</a></li>
 <li>8.7.   <a href="#rfc.section.8.7">Tube vs. superstrate association lifetime</a></li>
 <li>8.8.   <a href="#rfc.section.8.8">SPUD Support Discovery</a></li>
-<li>8.9.   <a href="#rfc.section.8.9">Remaining open issues from MAMI Plenary Meeting</a></li>
 </ul><li>9.   <a href="#rfc.section.9">Security Considerations</a></li>
 <li>10.   <a href="#rfc.section.10">IANA Considerations</a></li>
 <li>11.   <a href="#rfc.section.11">Contributors</a></li>
@@ -737,13 +735,6 @@ ul.toc a:first-child {
 <h1 id="rfc.section.8.8"><a href="#rfc.section.8.8">8.8.</a> <a href="#spud-support-discovery" id="spud-support-discovery">SPUD Support Discovery</a></h1>
 <p id="rfc.section.8.8.p.1">If SPUD is not usable on a path to an endpoint, a SPUD sender needs to be able to fall back to some other approach to achieve the goals of the superstrate; a SPUD endpoint must be able to easily determine whether a remote endpoint with which it wants to communicate using SPUD as a substrate can support SPUD, and whether path to the remote endpoint as well as the return path from the remote endpoint will pass SPUD packets.</p>
 <p id="rfc.section.8.8.p.2">It is not clear whether this is a requirement of SPUD, or a requirement of the superstrate / application over SPUD.</p>
-<h1 id="rfc.section.8.9"><a href="#rfc.section.8.9">8.9.</a> <a href="#remaining-open-issues-from-mami-plenary-meeting" id="remaining-open-issues-from-mami-plenary-meeting">Remaining open issues from MAMI Plenary Meeting</a></h1>
-<p/>
-
-<ul>
-  <li>explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.</li>
-  <li>determine whether delayed authenticity is something LURK could help with.</li>
-</ul>
 <h1 id="rfc.section.9"><a href="#rfc.section.9">9.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
 <p id="rfc.section.9.p.1">The security-relevant requirements for SPUD are outlined in <a href="#security-requirements">Section 6</a>.  In addition, security-relevant open issues are discussed in <a href="#tradeoffs-in-integrity-protection">Section 8.2</a> and <a href="#continuum-of-trust-among-endpoints-and-middleboxes">Section 8.4</a> These will be further addressed in protocol definition work following from these requirements.</p>
 <h1 id="rfc.section.10"><a href="#rfc.section.10">10.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>

@@ -105,7 +105,7 @@ Table of Contents
      8.6.  Hard state vs. soft state . . . . . . . . . . . . . . . .  16
      8.7.  Tube vs. superstrate association lifetime . . . . . . . .  16
      8.8.  SPUD Support Discovery  . . . . . . . . . . . . . . . . .  16
-     8.9.  Remaining open issues from MAMI Plenary Meeting . . . . .  17
+   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
 
 
 
@@ -114,7 +114,6 @@ Trammell & Kuehlewind  Expires September 12, 2016               [Page 2]
 Internet-Draft              SPUD requirements                 March 2016
 
 
-   9.  Security Considerations . . . . . . . . . . . . . . . . . . .  17
    10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  17
    11. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  17
    12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  17
@@ -162,6 +161,7 @@ Internet-Draft              SPUD requirements                 March 2016
    integrity, and linkability resistance of their payloads.  The
    accelerating deployment of encryption will render obsolete network
    operations techniques that rely on packet inspection and modification
+   based upon assumptions about the protocols in use.  This work will
 
 
 
@@ -170,7 +170,6 @@ Trammell & Kuehlewind  Expires September 12, 2016               [Page 3]
 Internet-Draft              SPUD requirements                 March 2016
 
 
-   based upon assumptions about the protocols in use.  This work will
    allow the replacement the current regime of middlebox inspection and
    modification of transport and application- layer headers and payload
    with one that allows inspection only of information explicitly
@@ -217,6 +216,7 @@ Internet-Draft              SPUD requirements                 March 2016
    [I-D.trammell-stackevo-explicit-coop].  This discussion includes
    privacy and trust concerns as well as the need for strong incentives
    for middlebox cooperation based on the information that are exposed.
+
 
 
 
@@ -898,15 +898,6 @@ Trammell & Kuehlewind  Expires September 12, 2016              [Page 16]
 Internet-Draft              SPUD requirements                 March 2016
 
 
-8.9.  Remaining open issues from MAMI Plenary Meeting
-
-   o  explore difference between hop count or network segment location
-      addressing and path-function addressing for bootstrapping full OOB
-      transport.
-
-   o  determine whether delayed authenticity is something LURK could
-      help with.
-
 9.  Security Considerations
 
    The security-relevant requirements for SPUD are outlined in
@@ -945,15 +936,6 @@ Internet-Draft              SPUD requirements                 March 2016
               RFC 792, DOI 10.17487/RFC0792, September 1981,
               <http://www.rfc-editor.org/info/rfc792>.
 
-
-
-
-
-Trammell & Kuehlewind  Expires September 12, 2016              [Page 17]
-
-Internet-Draft              SPUD requirements                 March 2016
-
-
    [RFC2827]  Ferguson, P. and D. Senie, "Network Ingress Filtering:
               Defeating Denial of Service Attacks which employ IP Source
               Address Spoofing", BCP 38, RFC 2827, DOI 10.17487/RFC2827,
@@ -962,6 +944,15 @@ Internet-Draft              SPUD requirements                 March 2016
    [RFC3234]  Carpenter, B. and S. Brim, "Middleboxes: Taxonomy and
               Issues", RFC 3234, DOI 10.17487/RFC3234, February 2002,
               <http://www.rfc-editor.org/info/rfc3234>.
+
+
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 17]
+
+Internet-Draft              SPUD requirements                 March 2016
+
 
    [RFC4122]  Leach, P., Mealling, M., and R. Salz, "A Universally
               Unique IDentifier (UUID) URN Namespace", RFC 4122,
@@ -1001,15 +992,6 @@ Internet-Draft              SPUD requirements                 March 2016
               kuehlewind-spud-use-cases-00 (work in progress), July
               2015.
 
-
-
-
-
-Trammell & Kuehlewind  Expires September 12, 2016              [Page 18]
-
-Internet-Draft              SPUD requirements                 March 2016
-
-
    [I-D.huitema-tls-dtls-as-subtransport]
               Huitema, C., Rescorla, E., and J. Jana, "DTLS as
               Subtransport protocol", draft-huitema-tls-dtls-as-
@@ -1020,6 +1002,13 @@ Internet-Draft              SPUD requirements                 March 2016
               Evolution with Explicit Path Cooperation", draft-trammell-
               stackevo-explicit-coop-00 (work in progress), September
               2015.
+
+
+
+Trammell & Kuehlewind  Expires September 12, 2016              [Page 18]
+
+Internet-Draft              SPUD requirements                 March 2016
+
 
 Authors' Addresses
 
@@ -1039,6 +1028,17 @@ Authors' Addresses
    Switzerland
 
    Email: mirja.kuehlewind@tik.ee.ethz.ch
+
+
+
+
+
+
+
+
+
+
+
 
 
 
