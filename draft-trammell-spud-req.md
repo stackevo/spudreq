@@ -631,11 +631,6 @@ endpoint will pass SPUD packets.
 It is not clear whether this is a requirement of SPUD, or a requirement of the
 superstrate / application over SPUD.
 
-## Remaining open issues from MAMI Plenary Meeting
-
-- explore difference between hop count or network segment location addressing and path-function addressing for bootstrapping full OOB transport.
-- determine whether delayed authenticity is something LURK could help with.
-
 # Security Considerations
 
 The security-relevant requirements for SPUD are outlined in 
