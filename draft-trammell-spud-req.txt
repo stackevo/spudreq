@@ -902,7 +902,7 @@ Internet-Draft              SPUD requirements                 March 2016
 
    The security-relevant requirements for SPUD are outlined in
    Section 6.  In addition, security-relevant open issues are discussed
-   in Section 8.2 and Section 8.4 These will be further addressed in
+   in Section 8.2 and Section 8.4.  These will be further addressed in
    protocol definition work following from these requirements.
 
 10.  IANA Considerations
