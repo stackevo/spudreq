@@ -637,7 +637,7 @@ The security-relevant requirements for SPUD are outlined in
 {{security-requirements}}. 
 In addition, security-relevant open issues are discussed in 
 {{tradeoffs-in-integrity-protection}} and 
-{{continuum-of-trust-among-endpoints-and-middleboxes}}
+{{continuum-of-trust-among-endpoints-and-middleboxes}}.
 These will be further addressed in protocol
 definition work following from these requirements.
 
