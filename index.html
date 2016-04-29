@@ -697,6 +697,7 @@ ul.toc a:first-child {
   <li>the ability to deploy mechanisms to protect against state exhaustion and other denial-of-service attacks against SPUD itself.</li>
 </ul>
 <p id="rfc.section.7.6.p.3">We note that using a &#8220;magic number&#8221; or other pattern of bits in an encapsulation-layer header not used in any widely deployed protocol has the nice property that no existing node in the Internet can be induced to reflect traffic containing it. This allows the magic number to provide probabilistic assurance that a given packet is not reflected, assisting in meeting this requirement.</p>
+<p id="rfc.section.7.6.p.4">If SPUD is implemented over UDP, see <a href="#I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</a> for guidelines on the safe usage of UDP in the Internet, which addresses some of these issues.</p>
 <h1 id="rfc.section.7.7"><a href="#rfc.section.7.7">7.7.</a> <a href="#continuum-of-trust-among-endpoints-and-middleboxes" id="continuum-of-trust-among-endpoints-and-middleboxes">Continuum of trust among endpoints and middleboxes</a></h1>
 <p id="rfc.section.7.7.p.1">There are different security considerations for different security contexts.  The end-to-end context is one; anything that only needs to be seen by the path shouldn&#8217;t be exposed in SPUD, but rather by the superstrate. There are multiple different types of end-to-middle context based on levels of trust between end and middle &#8211; is the middlebox on the same network as the endpoint, under control of the same owner? Is there some contract between the application user and the middlebox operator? SPUD should support different levels of trust than the default (&#8220;untrusted, but presumed honest due to limitations on the signaling vocabulary&#8221;) and fully-authenticated; how these points along the continuum are to be implemented and how they relate to each other needs to be explored further.</p>
 <p id="rfc.section.7.7.p.2">In the Internet, it is not in the general case possible for the endpoint to authenticate every middlebox that might see packets it sends and receives. In this case information produced by middleboxes may enjoy less integrity protection than that produced by endpoints.  In addition, endpoint authentication of middleboxes and vice-versa may be better conducted out-of- band (treating the middlebox as an endpoint for the authentication protocol) than in-band (treating the middlebox as a participant in a 3+ party communication).</p>
@@ -802,6 +803,12 @@ ul.toc a:first-child {
         <b id="RFC7663">[RFC7663]</b>
       </td>
       <td class="top"><a>Trammell, B.</a> and <a>M. Kuehlewind</a>, "<a href="http://tools.ietf.org/html/rfc7663">Report from the IAB Workshop on Stack Evolution in a Middlebox Internet (SEMI)</a>", RFC 7663, DOI 10.17487/RFC7663, October 2015.</td>
+    </tr>
+    <tr>
+      <td class="reference">
+        <b id="I-D.ietf-tsvwg-rfc5405bis">[I-D.ietf-tsvwg-rfc5405bis]</b>
+      </td>
+      <td class="top"><a>Eggert, L.</a>, <a>Fairhurst, G.</a> and <a>G. Shepherd</a>, "<a href="http://tools.ietf.org/html/draft-ietf-tsvwg-rfc5405bis-11">UDP Usage Guidelines</a>", Internet-Draft draft-ietf-tsvwg-rfc5405bis-11, April 2016.</td>
     </tr>
     <tr>
       <td class="reference">
