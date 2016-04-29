@@ -91,20 +91,20 @@ Table of Contents
    8.  Technical Requirements  . . . . . . . . . . . . . . . . . . .  13
      8.1.  Middlebox Traversal . . . . . . . . . . . . . . . . . . .  13
      8.2.  Low Overhead in Network Processing  . . . . . . . . . . .  13
-     8.3.  Implementability in User-Space  . . . . . . . . . . . . .  13
+     8.3.  Implementability in User-Space  . . . . . . . . . . . . .  14
      8.4.  Incremental Deployability . . . . . . . . . . . . . . . .  14
      8.5.  No unnecessary restrictions on the superstrate  . . . . .  14
      8.6.  Minimal additional start-up latency . . . . . . . . . . .  14
-     8.7.  Minimal header overhead . . . . . . . . . . . . . . . . .  14
+     8.7.  Minimal header overhead . . . . . . . . . . . . . . . . .  15
      8.8.  Minimal non-productive traffic  . . . . . . . . . . . . .  15
      8.9.  Endpoint Control  . . . . . . . . . . . . . . . . . . . .  15
      8.10. On Reliability, Fragmentation, MTU, and Duplication . . .  15
-     8.11. SPUD Support Discovery  . . . . . . . . . . . . . . . . .  15
+     8.11. SPUD Support Discovery  . . . . . . . . . . . . . . . . .  16
    9.  Security Considerations . . . . . . . . . . . . . . . . . . .  16
    10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
    11. Contributors  . . . . . . . . . . . . . . . . . . . . . . . .  16
    12. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  16
-   13. Informative References  . . . . . . . . . . . . . . . . . . .  16
+   13. Informative References  . . . . . . . . . . . . . . . . . . .  17
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  18
 
 
@@ -654,6 +654,10 @@ Internet-Draft              SPUD requirements                 April 2016
    number to provide probabilistic assurance that a given packet is not
    reflected, assisting in meeting this requirement.
 
+   If SPUD is implemented over UDP, see [I-D.ietf-tsvwg-rfc5405bis] for
+   guidelines on the safe usage of UDP in the Internet, which addresses
+   some of these issues.
+
 7.7.  Continuum of trust among endpoints and middleboxes
 
    There are different security considerations for different security
@@ -662,10 +666,6 @@ Internet-Draft              SPUD requirements                 April 2016
    superstrate.  There are multiple different types of end-to-middle
    context based on levels of trust between end and middle - is the
    middlebox on the same network as the endpoint, under control of the
-   same owner?  Is there some contract between the application user and
-   the middlebox operator?  SPUD should support different levels of
-   trust than the default ("untrusted, but presumed honest due to
-   limitations on the signaling vocabulary") and fully-authenticated;
 
 
 
@@ -674,6 +674,10 @@ Trammell & Kuehlewind   Expires October 31, 2016               [Page 12]
 Internet-Draft              SPUD requirements                 April 2016
 
 
+   same owner?  Is there some contract between the application user and
+   the middlebox operator?  SPUD should support different levels of
+   trust than the default ("untrusted, but presumed honest due to
+   limitations on the signaling vocabulary") and fully-authenticated;
    how these points along the continuum are to be implemented and how
    they relate to each other needs to be explored further.
 
@@ -715,12 +719,8 @@ Internet-Draft              SPUD requirements                 April 2016
    Tube identifiers appearing directly in the encapsulation-layer header
    would meet the tube association requirement.
 
-8.3.  Implementability in User-Space
 
-   To enable fast deployment SPUD and superstrates must be implementable
-   without requiring kernel replacements or modules on the endpoints,
-   and without having special privilege (such as is required for raw
-   packet transmission, i.e. root or "jailbreak") on the endpoints.
+
 
 
 
@@ -729,6 +729,13 @@ Trammell & Kuehlewind   Expires October 31, 2016               [Page 13]
 
 Internet-Draft              SPUD requirements                 April 2016
 
+
+8.3.  Implementability in User-Space
+
+   To enable fast deployment SPUD and superstrates must be implementable
+   without requiring kernel replacements or modules on the endpoints,
+   and without having special privilege (such as is required for raw
+   packet transmission, i.e. root or "jailbreak") on the endpoints.
 
    We note here that UDP would meet this requirement, as nearly all
    operating systems and application development platforms allow a
@@ -772,19 +779,18 @@ Internet-Draft              SPUD requirements                 April 2016
    superstrates.  Specifically, superstrates which can send data on an
    initial packet must be able to do so when encapsulated within SPUD.
 
-8.7.  Minimal header overhead
-
-   To avoid reducing network performance, the information and coding
-   used in SPUD should be designed to use the minimum necessary amount
-   of additional space in encapsulation headers.
-
-
 
 
 Trammell & Kuehlewind   Expires October 31, 2016               [Page 14]
 
 Internet-Draft              SPUD requirements                 April 2016
 
+
+8.7.  Minimal header overhead
+
+   To avoid reducing network performance, the information and coding
+   used in SPUD should be designed to use the minimum necessary amount
+   of additional space in encapsulation headers.
 
 8.8.  Minimal non-productive traffic
 
@@ -826,13 +832,7 @@ Internet-Draft              SPUD requirements                 April 2016
    superstrate/SPUD combination, or a "minimal transport" defined by
    SPUD for its own use.
 
-8.11.  SPUD Support Discovery
 
-   If SPUD is not usable on a path to an endpoint, a SPUD sender needs
-   to be able to fall back to some other approach to achieve the goals
-   of the superstrate; a SPUD endpoint must be able to easily determine
-   whether a remote endpoint with which it wants to communicate using
-   SPUD as a substrate can support SPUD, and whether path to the remote
 
 
 
@@ -842,6 +842,13 @@ Trammell & Kuehlewind   Expires October 31, 2016               [Page 15]
 Internet-Draft              SPUD requirements                 April 2016
 
 
+8.11.  SPUD Support Discovery
+
+   If SPUD is not usable on a path to an endpoint, a SPUD sender needs
+   to be able to fall back to some other approach to achieve the goals
+   of the superstrate; a SPUD endpoint must be able to easily determine
+   whether a remote endpoint with which it wants to communicate using
+   SPUD as a substrate can support SPUD, and whether path to the remote
    endpoint as well as the return path from the remote endpoint will
    pass SPUD packets.
 
@@ -879,6 +886,18 @@ Internet-Draft              SPUD requirements                 April 2016
    Education, Research, and Innovation under contract no. 15.0268.  This
    support does not imply endorsement.
 
+
+
+
+
+
+
+
+Trammell & Kuehlewind   Expires October 31, 2016               [Page 16]
+
+Internet-Draft              SPUD requirements                 April 2016
+
+
 13.  Informative References
 
    [RFC0792]  Postel, J., "Internet Control Message Protocol", STD 5,
@@ -889,14 +908,6 @@ Internet-Draft              SPUD requirements                 April 2016
               Defeating Denial of Service Attacks which employ IP Source
               Address Spoofing", BCP 38, RFC 2827, DOI 10.17487/RFC2827,
               May 2000, <http://www.rfc-editor.org/info/rfc2827>.
-
-
-
-
-Trammell & Kuehlewind   Expires October 31, 2016               [Page 16]
-
-Internet-Draft              SPUD requirements                 April 2016
-
 
    [RFC3234]  Carpenter, B. and S. Brim, "Middleboxes: Taxonomy and
               Issues", RFC 3234, DOI 10.17487/RFC3234, February 2002,
@@ -936,6 +947,18 @@ Internet-Draft              SPUD requirements                 April 2016
               (SEMI)", RFC 7663, DOI 10.17487/RFC7663, October 2015,
               <http://www.rfc-editor.org/info/rfc7663>.
 
+
+
+Trammell & Kuehlewind   Expires October 31, 2016               [Page 17]
+
+Internet-Draft              SPUD requirements                 April 2016
+
+
+   [I-D.ietf-tsvwg-rfc5405bis]
+              Eggert, L., Fairhurst, G., and G. Shepherd, "UDP Usage
+              Guidelines", draft-ietf-tsvwg-rfc5405bis-11 (work in
+              progress), April 2016.
+
    [I-D.kuehlewind-spud-use-cases]
               K&#258;&#378;hlewind, M. and B. Trammell, "Use Cases for a
               Substrate Protocol for User Datagrams (SPUD)", draft-
@@ -946,13 +969,6 @@ Internet-Draft              SPUD requirements                 April 2016
               Huitema, C., Rescorla, E., and J. Jana, "DTLS as
               Subtransport protocol", draft-huitema-tls-dtls-as-
               subtransport-00 (work in progress), March 2015.
-
-
-
-Trammell & Kuehlewind   Expires October 31, 2016               [Page 17]
-
-Internet-Draft              SPUD requirements                 April 2016
-
 
    [I-D.trammell-stackevo-explicit-coop]
               Trammell, B., "Architectural Considerations for Transport
@@ -978,22 +994,6 @@ Authors' Addresses
    Switzerland
 
    Email: mirja.kuehlewind@tik.ee.ethz.ch
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

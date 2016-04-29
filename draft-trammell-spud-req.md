@@ -37,6 +37,7 @@ informative:
   RFC6347:
   RFC7510:
   RFC7663:
+  I-D.ietf-tsvwg-rfc5405bis:
   I-D.kuehlewind-spud-use-cases:
   I-D.huitema-tls-dtls-as-subtransport:
   I-D.trammell-stackevo-explicit-coop:
@@ -453,6 +454,9 @@ nice property that no existing node in the Internet can be induced to reflect
 traffic containing it. This allows the magic number to provide probabilistic
 assurance that a given packet is not reflected, assisting in meeting this
 requirement.
+
+If SPUD is implemented over UDP, see {{I-D.ietf-tsvwg-rfc5405bis}} for
+guidelines on the safe usage of UDP in the Internet, which addresses some of these issues.
 
 ## Continuum of trust among endpoints and middleboxes
 
